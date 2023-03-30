@@ -6,7 +6,7 @@ framework:
 
 messenger_cache:
     pools:
-        messenger_mapper.cache: messenger_mapper.cache
+        messenger_mapper: messenger_mapper.cache
 
 services:
     messenger_mapper.cache.adapter.php_files:
