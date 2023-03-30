@@ -1,0 +1,7 @@
+includes:
+	- fpm-baseline.neon
+
+parameters:
+    level: 8
+    checkGenericClassInNonGenericObjectType: false
+    treatPhpDocTypesAsCertain: false

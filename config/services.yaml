@@ -1,0 +1,27 @@
+framework:
+    handle_all_throwables: true
+    http_method_override: false
+    php_errors:
+        log: true
+    secret: '%env(APP_SECRET)%'
+    test: true
+
+services:
+    _defaults:
+        autowire: true      
+        autoconfigure: true 
+
+    PBaszak\MessengerDoctrineDTOBundle\Tests\Helper\:
+        resource: '../tests/Helper/'
+        exclude:
+            - '../tests/Helper/Application/Entity/'
+            - '../tests/Helper/Kernel.php'
+
+    messenger_doctrine_dto.cache.adapter.php_files:
+        class: Symfony\Component\Cache\Adapter\PhpFilesAdapter
+        public: true
+        arguments:
+            - messenger_mapper
+            - 0
+            - null
+            - true

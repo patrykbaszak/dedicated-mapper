@@ -1,0 +1,9 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    PBaszak\MessengerMapperBundle\:
+        resource: '../../*'
+        exclude:
+            - '../../{Resources,DependencyInjection,MessengerMapperBundle.php}'
