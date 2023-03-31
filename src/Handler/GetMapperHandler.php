@@ -16,8 +16,18 @@ class GetMapperHandler
     public function __invoke(GetMapper $query): string
     {
         $this->validateInput($query);
-
-        return '';
+        $expressions = $this->createExpressions(
+            $query->from,
+            $query->to,
+            $query->fromType,
+            $query->toType,
+            $query->useValidator
+        );
+        
+        if ($query->useValidator) {
+            return sprintf(GetMapper::MAPPER_TEMPLATE_WITH_VALIDATOR, '', implode('', $expressions));
+        }
+        return sprintf(GetMapper::MAPPER_TEMPLATE, implode('', $expressions));
     }
 
     private function validateInput(GetMapper $query): void
@@ -56,5 +66,10 @@ class GetMapperHandler
                 )
             );
         }
+    }
+
+    private function createExpressions(mixed $from, mixed $to, ?string $fromType = null, ?string $toType = null, bool $useValidator = false): array
+    {
+        return [];
     }
 }

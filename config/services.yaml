@@ -16,12 +16,3 @@ services:
         exclude:
             - '../tests/Helper/Application/Entity/'
             - '../tests/Helper/Kernel.php'
-
-    messenger_doctrine_dto.cache.adapter.php_files:
-        class: Symfony\Component\Cache\Adapter\PhpFilesAdapter
-        public: true
-        arguments:
-            - messenger_mapper
-            - 0
-            - null
-            - true
