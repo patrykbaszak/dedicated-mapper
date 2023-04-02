@@ -80,7 +80,7 @@ class Mapper
         ?string $classTemplate = null,
         string $fromType = 'array',
         string $toType = 'array',
-        bool $useValidator
+        bool $useValidator = false,
     ): array {
         return $this->map($data, 'array', $classTemplate ?? 'array', $fromType, $toType, $useValidator);
     }

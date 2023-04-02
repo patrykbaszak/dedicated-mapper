@@ -7,3 +7,6 @@ services:
         resource: '../../*'
         exclude:
             - '../../{Resources,DependencyInjection,MessengerMapperBundle.php}'
+
+    PBaszak\MessengerMapperBundle\Mapper:
+        public: true

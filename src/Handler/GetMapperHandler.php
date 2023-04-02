@@ -50,7 +50,7 @@ class GetMapperHandler
                 case 'map':
                 case 'array':
                 case 'object':
-                    continue;
+                    continue 2;
             }
 
             /** @var string $argument */
