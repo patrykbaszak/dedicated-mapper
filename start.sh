@@ -2,9 +2,9 @@
 
 sudo chown -R $USER .
 
-docker-compose --env-file .env down --volumes --remove-orphans
+docker-compose down --volumes --remove-orphans
 
-docker-compose --env-file .env up -d 
+docker-compose up -d 
 
 rm -rf var/cache
 

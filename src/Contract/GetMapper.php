@@ -6,12 +6,13 @@ namespace PBaszak\MessengerMapperBundle\Contract;
 
 use PBaszak\MessengerCacheBundle\Attribute\Cache;
 use PBaszak\MessengerCacheBundle\Contract\Required\Cacheable;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[Cache(pool: 'messenger_mapper')]
 class GetMapper implements Cacheable
 {
     public const MAPPER_TEMPLATE = 'return function (mixed $data): mixed {%s};';
-    public const MAPPER_TEMPLATE_WITH_VALIDATOR = 'return function (mixed $data, $validator): mixed {%s};';
+    public const MAPPER_TEMPLATE_WITH_VALIDATOR = 'return function (mixed $data) use ($validator): mixed {%s};';
 
     /**
      * @param class-string|'array'|'object' $from associative array or object or class name
@@ -38,9 +39,12 @@ class GetMapper implements Cacheable
         public readonly ?string $fromType = null,
         public readonly ?string $toType = null,
         public readonly bool $useValidator = false,
+        public readonly ?array $validatorGroups = null,
+        public readonly bool $useSerializer = false,
+        public readonly ?array $serializerGroups = null, 
     ) {}
 
-    public function map(string $mapper, mixed $data): mixed
+    public function map(string $mapper, mixed $data, ?ValidatorInterface $validator = null): mixed
     {
         $mapper = eval($mapper);
 

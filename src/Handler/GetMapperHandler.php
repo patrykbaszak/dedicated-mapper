@@ -12,16 +12,20 @@ class GetMapperHandler
 {
     private ?string $fromMapSeparator = null;
     private ?string $toMapSeparator = null;
+    private bool $useSerializer;
+    private bool $useValidator;
 
     public function __invoke(GetMapper $query): string
     {
+        $this->useSerializer = $query->useSerializer;
+        $this->useValidator = $query->useValidator;
+
         $this->validateInput($query);
         $expressions = $this->createExpressions(
             $query->from,
             $query->to,
             $query->fromType,
             $query->toType,
-            $query->useValidator
         );
         
         if ($query->useValidator) {
@@ -68,8 +72,13 @@ class GetMapperHandler
         }
     }
 
-    private function createExpressions(mixed $from, mixed $to, ?string $fromType = null, ?string $toType = null, bool $useValidator = false): array
-    {
+    private function createExpressions(
+        mixed $from, 
+        mixed $to, 
+        ?string $fromType = null, 
+        ?string $toType = null,
+    ): array {
+        
         return [];
     }
 }
