@@ -17,7 +17,7 @@ class Serializer
      * @param Context[] $contexts
      */
     public function __construct(
-        public array $contexts = [], // not used
+        // public array $contexts = [], // not used
         public ?Groups $groups = null, // used
         public ?Ignore $ignore = null, // used
         public ?MaxDepth $maxDepth = null, // not used

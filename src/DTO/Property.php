@@ -30,6 +30,8 @@ class Property
     ];
 
     private readonly ?self $mirror;
+    /** @var self[] $children */
+    private array $children = [];
 
     public function __construct(
         public string $name,
@@ -46,6 +48,15 @@ class Property
         if (!in_array($origin, self::ORIGINS)) {
             throw new \InvalidArgumentException(sprintf('Invalid origin: %s. Allowed: %s.', $origin, implode(', ', self::ORIGINS)));
         }
+
+        if ($parent) {
+            $parent->addChild($this);
+        }
+    }
+
+    public function addChild(self $property): void
+    {
+        $this->children[$property->name] = $property;
     }
 
     public function getMirrorProperty(): self
@@ -93,6 +104,10 @@ class Property
 
     public function isNullable(): bool
     {
+        if (str_starts_with($this->type, '?') || $this->type === 'mixed' || false !== strpos($this->type, 'null')) {
+            return true;
+        }
+
         if ($this->reflection instanceof \ReflectionParameter) {
             return $this->reflection->allowsNull();
         }

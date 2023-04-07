@@ -33,8 +33,8 @@ class GetMapper implements Cacheable
      * </code>
      */
     public function __construct(
-        public readonly mixed $from,
-        public readonly mixed $to,
+        public readonly string $from,
+        public readonly string $to,
         public readonly ?string $fromType = null,
         public readonly ?string $toType = null,
         public readonly bool $useValidator = false,
