@@ -15,17 +15,16 @@ class GetMapper implements Cacheable
     public const MAPPER_TEMPLATE_WITH_VALIDATOR = 'return function (mixed $data) use ($validator): mixed {%s};';
 
     /**
-     * @param class-string|'array'|'object' $from associative array or object or class name
-     * @param class-string|'array'|'object' $to associative array or object or class name
-     * 
-     * @param 'array'|'object'|'map{%s}'|null $fromType type of data which will be delivered 
-     *      to mapper, %s - separator for nested array/object
-     * @param 'array'|'object'|'map{%s}'|null $toType type of data which mapper must return, 
-     *      %s - separator for nested array/object
-     * 
+     * @param class-string|'array'|'object'   $from     associative array or object or class name
+     * @param class-string|'array'|'object'   $to       associative array or object or class name
+     * @param 'array'|'object'|'map{%s}'|null $fromType type of data which will be delivered
+     *                                                  to mapper, %s - separator for nested array/object
+     * @param 'array'|'object'|'map{%s}'|null $toType   type of data which mapper must return,
+     *                                                  %s - separator for nested array/object
+     *
      * @example map{.} - map from array/object or to array/object which nested keys are separated by dot
      * <code>
-     * # map 
+     * # map
      * $from = [
      *   'key' => 'value',
      *   'key.nested' => ['value']
@@ -41,8 +40,9 @@ class GetMapper implements Cacheable
         public readonly bool $useValidator = false,
         public readonly ?array $validatorGroups = null,
         public readonly bool $useSerializer = false,
-        public readonly ?array $serializerGroups = null, 
-    ) {}
+        public readonly ?array $serializerGroups = null,
+    ) {
+    }
 
     public function map(string $mapper, mixed $data, ?ValidatorInterface $validator = null): mixed
     {

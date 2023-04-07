@@ -146,7 +146,7 @@ class MapfromClassObjectMapperTest extends KernelTestCase
             self::assertEquals($object->nullableObject, $mappedObject->nullableObject);
             self::assertEquals($object->getNullableDateTime(), $mappedObject->getNullableDateTime());
             self::assertEquals($object->dateTime, $mappedObject->dateTime);
-            
+
             $nestedObject = $mappedObject->simpleDataSet;
             self::assertEquals($object->simpleDataSet->text, $nestedObject->text);
             self::assertEquals($object->simpleDataSet->number, $nestedObject->getNumber());
@@ -222,7 +222,7 @@ class MapfromClassObjectMapperTest extends KernelTestCase
             self::assertEquals($object->nullableObject, $mappedObject['nullableObject']);
             self::assertEquals($object->getNullableDateTime(), $mappedObject['nullableDateTime']);
             self::assertEquals($object->dateTime, $mappedObject['dateTime']);
-            
+
             $nestedObject = $mappedObject['someTargetedProperty'];
             self::assertEquals($object->simpleDataSet->text, $nestedObject['text']);
             self::assertEquals($object->simpleDataSet->number, $nestedObject['number']);
@@ -260,7 +260,7 @@ class MapfromClassObjectMapperTest extends KernelTestCase
             self::assertEquals($object->nullableObject, $mappedObject['nullableObject']);
             self::assertEquals($object->getNullableDateTime(), $mappedObject['nullableDateTime']);
             self::assertEquals($object->dateTime, $mappedObject['dateTime']);
-            
+
             self::assertEquals($object->simpleDataSet->text, $mappedObject['someTargetedProperty.text']);
             self::assertEquals($object->simpleDataSet->number, $mappedObject['someTargetedProperty.number']);
             self::assertEquals($object->simpleDataSet->bool, $mappedObject['someTargetedProperty.bool']);

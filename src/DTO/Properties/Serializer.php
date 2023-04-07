@@ -23,5 +23,6 @@ class Serializer
         public ?MaxDepth $maxDepth = null, // not used
         public ?SerializedName $serializedName = null, // used
         public ?SerializedPath $serializedPath = null, // used
-    ) {}
+    ) {
+    }
 }

@@ -99,7 +99,6 @@ class NestedDataSet
 
     public static function getDataSet(): array
     {
-
         return [
             'class' => NestedDataSet::class,
             'objects' => [
@@ -267,8 +266,8 @@ class NestedDataSet
                         null,
                         new \DateTime(),
                         'test2'
-                    )
-                ]
+                    ),
+                ],
             ],
             'maps' => [
                 'map{.}' => [
@@ -318,8 +317,8 @@ class NestedDataSet
                     'someTargetedProperty_nullableObject' => null,
                     'someTargetedProperty_nullableDateTime' => null,
                     'someTargetedProperty_dateTime' => '2021-01-01T00:00:00+00:00',
-                ]
-            ]
+                ],
+            ],
         ];
     }
 }

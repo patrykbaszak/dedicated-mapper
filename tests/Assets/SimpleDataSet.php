@@ -182,7 +182,7 @@ class SimpleDataSet
                     'nullableDateTime' => null,
                     'dateTime' => new \DateTime(),
                     'someTargetedProperty' => 'test2',
-                ]
+                ],
             ],
             'maps' => [
                 'map{.}' => [
@@ -212,8 +212,8 @@ class SimpleDataSet
                     'nullableDateTime' => null,
                     'dateTime' => new \DateTime(),
                     'someTargetedProperty' => 'test2',
-                ]
-            ]
+                ],
+            ],
         ];
     }
 }

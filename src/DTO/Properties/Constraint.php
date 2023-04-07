@@ -9,5 +9,6 @@ class Constraint
     public function __construct(
         public readonly string $className,
         public readonly array $arguments = [],
-    ) {}
+    ) {
+    }
 }

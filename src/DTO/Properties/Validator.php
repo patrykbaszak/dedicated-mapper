@@ -11,5 +11,6 @@ class Validator
      */
     public function __construct(
         public array $constraints
-    ) {}
+    ) {
+    }
 }

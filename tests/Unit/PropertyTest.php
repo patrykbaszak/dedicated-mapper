@@ -7,7 +7,6 @@ namespace PBaszak\MessengerMapperBundle\Tests\Unit;
 use PBaszak\MessengerMapperBundle\Attribute\Accessor;
 use PBaszak\MessengerMapperBundle\DTO\Property;
 use PHPUnit\Framework\TestCase;
-use ReflectionProperty;
 
 class TestClass
 {
@@ -109,7 +108,7 @@ class PropertyTest extends TestCase
 
     public function testIsPublic(): void
     {
-        $reflectionProperty = new ReflectionProperty(Property::class, 'name');
+        $reflectionProperty = new \ReflectionProperty(Property::class, 'name');
         $property = new Property(
             name: 'test',
             type: 'string',
@@ -132,7 +131,7 @@ class PropertyTest extends TestCase
 
     public function testIsNullable(): void
     {
-        $reflectionProperty = new ReflectionProperty(Property::class, 'name');
+        $reflectionProperty = new \ReflectionProperty(Property::class, 'name');
         $property = new Property(
             name: 'test',
             type: 'string',
@@ -217,13 +216,19 @@ class PropertyTest extends TestCase
 
     public function testGetSetterExpression(): void
     {
+        $mirrorProperty = new Property(
+            name: 'test',
+            type: 'string',
+            origin: Property::ORIGIN_ARRAY
+        );
+
         // Test for ORIGIN_ARRAY
         $propertyArray = new Property(
             name: 'test',
             type: 'string',
             origin: Property::ORIGIN_ARRAY
         );
-
+        $propertyArray->setMirrorProperty($mirrorProperty);
         $this->assertEquals('$variableName[\'test\'] = $getterExpression;', $propertyArray->getSetterExpression('$getterExpression', 'variableName'));
 
         // Test for ORIGIN_OBJECT
@@ -232,7 +237,7 @@ class PropertyTest extends TestCase
             type: 'string',
             origin: Property::ORIGIN_OBJECT
         );
-
+        $propertyObject->setMirrorProperty($mirrorProperty);
         $this->assertEquals('$variableName->test = $getterExpression;', $propertyObject->getSetterExpression('$getterExpression', 'variableName'));
 
         // Test for ORIGIN_MAP
@@ -241,7 +246,7 @@ class PropertyTest extends TestCase
             type: 'string',
             origin: Property::ORIGIN_MAP
         );
-
+        $propertyMap->setMirrorProperty($mirrorProperty);
         $this->assertEquals('$variableName[\'test\'] = $getterExpression;', $propertyMap->getSetterExpression('$getterExpression', 'variableName', '.'));
 
         // Test for ORIGIN_MAP_OBJECT
@@ -250,7 +255,7 @@ class PropertyTest extends TestCase
             type: 'string',
             origin: Property::ORIGIN_MAP_OBJECT
         );
-
+        $propertyMapObject->setMirrorProperty($mirrorProperty);
         $this->assertEquals('$variableName->test = $getterExpression;', $propertyMapObject->getSetterExpression('$getterExpression', 'variableName', '.'));
 
         // Test for ORIGIN_CLASS_OBJECT
@@ -260,7 +265,7 @@ class PropertyTest extends TestCase
             origin: Property::ORIGIN_CLASS_OBJECT,
             originClass: TestClass::class
         );
-
+        $propertyClassObject->setMirrorProperty($mirrorProperty);
         // Assuming there's a setter method in TestClass for 'test' property.
         $this->assertEquals('$variableName->setTest($getterExpression);', $propertyClassObject->getSetterExpression('$getterExpression', 'variableName'));
     }

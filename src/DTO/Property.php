@@ -9,19 +9,17 @@ use PBaszak\MessengerMapperBundle\DTO\Properties\Constraint;
 use PBaszak\MessengerMapperBundle\DTO\Properties\Mapper;
 use PBaszak\MessengerMapperBundle\DTO\Properties\Serializer;
 use PBaszak\MessengerMapperBundle\DTO\Properties\Validator;
-use ReflectionParameter;
-use ReflectionProperty;
 
 class Property
 {
-    public const AS_DESTINATION         = 'to';
-    public const AS_SOURCE              = 'from';
+    public const AS_SOURCE = 1;
+    public const AS_DESTINATION = 2;
 
-    public const ORIGIN_ARRAY           = 'array';
-    public const ORIGIN_MAP             = 'map';
-    public const ORIGIN_MAP_OBJECT      = 'map_object'; // anonymous object of map
-    public const ORIGIN_OBJECT          = 'object'; // anonymous object
-    public const ORIGIN_CLASS_OBJECT    = 'class_object'; // object of class
+    public const ORIGIN_ARRAY = 'array';
+    public const ORIGIN_MAP = 'map';
+    public const ORIGIN_MAP_OBJECT = 'map_object'; // anonymous object of map
+    public const ORIGIN_OBJECT = 'object'; // anonymous object
+    public const ORIGIN_CLASS_OBJECT = 'class_object'; // object of class
 
     private const ORIGINS = [
         self::ORIGIN_ARRAY,
@@ -40,7 +38,7 @@ class Property
         public ?string $originClass = null,
         public bool $isCollection = false,
         public string $origin = self::ORIGIN_ARRAY,
-        public null|ReflectionProperty|ReflectionParameter $reflection = null,
+        public null|\ReflectionProperty|\ReflectionParameter $reflection = null,
         public null|Mapper $mapper = null,
         public null|Serializer $serializer = null,
         public null|Validator $validator = null,
@@ -95,7 +93,7 @@ class Property
 
     public function isNullable(): bool
     {
-        if ($this->reflection instanceof ReflectionParameter) {
+        if ($this->reflection instanceof \ReflectionParameter) {
             return $this->reflection->allowsNull();
         }
 
@@ -116,8 +114,35 @@ class Property
         return in_array($group, $this->mirror->serializer->groups->getGroups());
     }
 
+    public function getSelfMappingCallbacks(int $activateOnMapping): array
+    {
+        $callbacks = [];
+
+        if (null !== $this->mapper) {
+            foreach ($this->mapper->mappingCallbacks as $callback) {
+                if ($callback->activateOnMapping & $activateOnMapping) {
+                    $callbacks[] = $callback;
+                }
+            }
+        }
+
+        return $callbacks;
+    }
+
     public function getGetterExpression(string $variableName, ?string $mapSeparator = null): string
     {
+        try {
+            $defaultValue = $this->reflection?->getDefaultValue();
+        } catch (\ReflectionException $e) {
+            unset($defaultValue, $e);
+        }
+
+        if (isset($defaultValue)) {
+            return $this->isNullable()
+                ? sprintf('%s ?? %s ?? null', $this->doGetGetterExpression($variableName, $mapSeparator), var_export($defaultValue, true))
+                : sprintf('%s ?? %s', $this->doGetGetterExpression($variableName, $mapSeparator), var_export($defaultValue, true));
+        }
+
         return $this->isNullable()
             ? sprintf('%s ?? null', $this->doGetGetterExpression($variableName, $mapSeparator))
             : $this->doGetGetterExpression($variableName, $mapSeparator);
@@ -153,8 +178,8 @@ class Property
             $getterMethods = array_filter(
                 [
                     $this->mapper?->accessor?->getter,
-                    'get' . ucfirst($this->name),
-                    'is' . ucfirst($this->name),
+                    'get'.ucfirst($this->name),
+                    'is'.ucfirst($this->name),
                     $this->name,
                 ],
                 fn ($method) => $method && method_exists($this->originClass, $method)
@@ -189,20 +214,31 @@ class Property
                 ),
                 $validatorGroups ? var_export($validatorGroups, true) : 'null',
                 $this->getPath('.'),
-                $this->isNullable() 
-                    ? sprintf('%s ?? null', $this->doGetSetterExpression('$var', $variableName, $mapSeparator)) 
+                $this->isNullable()
+                    ? sprintf('%s ?? null', $this->doGetSetterExpression('$var', $variableName, $mapSeparator))
                     : $this->doGetSetterExpression('$var', $variableName, $mapSeparator)
             );
+        }
+        try {
+            $defaultValue = $this->reflection?->getDefaultValue();
+        } catch (\ReflectionException $e) {
+            unset($defaultValue, $e);
+        }
+
+        if (isset($defaultValue)) {
+            return $this->isNullable()
+                ? sprintf('%s ?? %s ?? null', $this->doGetSetterExpression($getterExpression, $variableName, $mapSeparator), var_export($defaultValue, true))
+                : sprintf('%s ?? %s', $this->doGetSetterExpression($getterExpression, $variableName, $mapSeparator), var_export($defaultValue, true));
         }
 
         return ($this->isNullable()
             ? sprintf('%s ?? null', $this->doGetSetterExpression($getterExpression, $variableName, $mapSeparator))
-            : $this->doGetSetterExpression($getterExpression, $variableName, $mapSeparator)) . ';';
+            : $this->doGetSetterExpression($getterExpression, $variableName, $mapSeparator)).';';
     }
 
     private function doGetSetterExpression(string $getterExpression, string $variableName, ?string $mapSeparator = null): string
     {
-        $getterExpression = $this->decorateGetterExpressionWithCallbacks($getterExpression);
+        $getterExpression = $this->decorateGetterExpressionWithCallbacks(self::AS_DESTINATION, $getterExpression);
         if (self::ORIGIN_ARRAY === $this->origin) {
             return sprintf('$%s[\'%s\'] = %s', $variableName, $this->getPath('\'][\''), $getterExpression);
         }
@@ -231,7 +267,7 @@ class Property
             $setterMethods = array_filter(
                 [
                     $this->mapper?->accessor?->setter,
-                    'set' . ucfirst($this->name),
+                    'set'.ucfirst($this->name),
                     $this->name,
                 ],
                 fn ($method) => $method && method_exists($this->originClass, $method)
@@ -251,13 +287,16 @@ class Property
         throw new \InvalidArgumentException(sprintf('Invalid origin: %s. Allowed: %s.', $this->origin, implode(', ', self::ORIGINS)));
     }
 
-    private function decorateGetterExpressionWithCallbacks(string $getterExpression, ?string $variableName = null): string
+    private function decorateGetterExpressionWithCallbacks(int $as, string $getterExpression, ?string $variableName = null): string
     {
-        if (!$this->mapper?->mappingCallbacks) {
+        $mirrorAs = $as ^ (self::AS_SOURCE | self::AS_DESTINATION);
+        if (empty($selfCallbacks = $this->getSelfMappingCallbacks($as)) && empty($mirrorCallbacks = $this->mirror?->getSelfMappingCallbacks($mirrorAs))) {
             return $getterExpression;
         }
 
-        foreach ($this->sortCallbacks($this->mapper?->mappingCallbacks) as $callback) {
+        $callbacks = array_merge($selfCallbacks, $mirrorCallbacks);
+
+        foreach ($this->sortCallbacks($callbacks) as $callback) {
             if (false !== strpos($callback->callback, '%s')) {
                 $getterExpression = sprintf($callback->callback, $getterExpression);
             } elseif (false !== strpos($callback->callback, '::')) {

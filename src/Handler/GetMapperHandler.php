@@ -21,17 +21,8 @@ class GetMapperHandler
         $this->useValidator = $query->useValidator;
 
         $this->validateInput($query);
-        $expressions = $this->createExpressions(
-            $query->from,
-            $query->to,
-            $query->fromType,
-            $query->toType,
-        );
-        
-        if ($query->useValidator) {
-            return sprintf(GetMapper::MAPPER_TEMPLATE_WITH_VALIDATOR, '', implode('', $expressions));
-        }
-        return sprintf(GetMapper::MAPPER_TEMPLATE, implode('', $expressions));
+
+        return '';
     }
 
     private function validateInput(GetMapper $query): void
@@ -59,26 +50,11 @@ class GetMapperHandler
 
             /** @var string $argument */
             if (preg_match('/^map\{(?<separator>.+)\}$/', $argument, $matches)) {
-                $this->{$key . 'MapSeparator'} = $matches['separator'];
+                $this->{$key.'MapSeparator'} = $matches['separator'];
                 continue;
             }
 
-            throw new \InvalidArgumentException(
-                sprintf(
-                    'Invalid %sType argument. Allowed: `null`, `array`, `object`, `map`, `map{<separator>}`.',
-                    $key
-                )
-            );
+            throw new \InvalidArgumentException(sprintf('Invalid %sType argument. Allowed: `null`, `array`, `object`, `map`, `map{<separator>}`.', $key));
         }
-    }
-
-    private function createExpressions(
-        mixed $from, 
-        mixed $to, 
-        ?string $fromType = null, 
-        ?string $toType = null,
-    ): array {
-        
-        return [];
     }
 }

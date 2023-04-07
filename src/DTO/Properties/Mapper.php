@@ -17,5 +17,6 @@ class Mapper
         public ?Accessor $accessor = null,
         public ?TargetProperty $targetProperty = null,
         public array $mappingCallbacks = [],
-    ) {}
+    ) {
+    }
 }
