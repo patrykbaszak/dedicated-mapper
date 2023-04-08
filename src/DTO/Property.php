@@ -30,7 +30,7 @@ class Property
     ];
 
     private readonly ?self $mirror;
-    /** @var self[] $children */
+    /** @var self[] */
     private array $children = [];
 
     public function __construct(
@@ -104,7 +104,7 @@ class Property
 
     public function isNullable(): bool
     {
-        if (str_starts_with($this->type, '?') || $this->type === 'mixed' || false !== strpos($this->type, 'null')) {
+        if (str_starts_with($this->type, '?') || 'mixed' === $this->type || false !== strpos($this->type, 'null')) {
             return true;
         }
 

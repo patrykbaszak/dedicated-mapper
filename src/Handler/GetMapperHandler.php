@@ -12,13 +12,9 @@ use PBaszak\MessengerMapperBundle\DTO\Properties\Mapper;
 use PBaszak\MessengerMapperBundle\DTO\Properties\Serializer;
 use PBaszak\MessengerMapperBundle\DTO\Properties\Validator;
 use PBaszak\MessengerMapperBundle\DTO\Property;
-use phpDocumentor\Reflection\DocBlock\Tag;
 use phpDocumentor\Reflection\DocBlock\Tags\Var_;
 use phpDocumentor\Reflection\DocBlockFactory;
 use phpDocumentor\Reflection\Types\Array_;
-use ReflectionAttribute;
-use ReflectionProperty;
-use ReflectionType;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\Ignore;
@@ -80,7 +76,7 @@ class GetMapperHandler
 
             /** @var string $argument */
             if (preg_match('/^map\{(?<separator>.+)\}$/', $argument, $matches)) {
-                $this->{$key . 'MapSeparator'} = $matches['separator'];
+                $this->{$key.'MapSeparator'} = $matches['separator'];
                 continue;
             }
 
@@ -96,26 +92,26 @@ class GetMapperHandler
 
     private function calculateOrigin(string $value, ?string $type): string
     {
-        if ($value === 'array') {
-            if ($type === null || $type === Property::ORIGIN_ARRAY) {
+        if ('array' === $value) {
+            if (null === $type || Property::ORIGIN_ARRAY === $type) {
                 return Property::ORIGIN_ARRAY;
-            } elseif ($type !== null && str_starts_with($type, Property::ORIGIN_MAP)) {
+            } elseif (null !== $type && str_starts_with($type, Property::ORIGIN_MAP)) {
                 return Property::ORIGIN_MAP;
             } else {
                 throw new \InvalidArgumentException(sprintf('Invalid %sType argument. Allowed: `null`, `array`, `map{<separator>}`.', $type));
             }
-        } elseif ($value === 'object') {
-            if ($type === null || $type === Property::ORIGIN_OBJECT) {
+        } elseif ('object' === $value) {
+            if (null === $type || Property::ORIGIN_OBJECT === $type) {
                 return Property::ORIGIN_OBJECT;
-            } elseif ($type !== null && str_starts_with($type, Property::ORIGIN_MAP)) {
+            } elseif (null !== $type && str_starts_with($type, Property::ORIGIN_MAP)) {
                 return Property::ORIGIN_MAP_OBJECT;
             } else {
                 throw new \InvalidArgumentException(sprintf('Invalid %sType argument. Allowed: `null`, `object`, `map{<separator>}`.', $type));
             }
         } else { // class-string
-            if ($type === Property::ORIGIN_OBJECT) {
+            if (Property::ORIGIN_OBJECT === $type) {
                 return Property::ORIGIN_OBJECT;
-            } elseif ($type !== null && str_starts_with($type, Property::ORIGIN_MAP)) {
+            } elseif (null !== $type && str_starts_with($type, Property::ORIGIN_MAP)) {
                 return Property::ORIGIN_MAP;
             } else {
                 return Property::ORIGIN_CLASS_OBJECT;
@@ -151,19 +147,19 @@ class GetMapperHandler
                 $origin,
                 $parameter ?? $property ?? null,
                 new Mapper(
-                    ($property->getAttributes(Accessor::class))[0]?->newInstance() ?? null,
-                    ($property->getAttributes(TargetProperty::class))[0]?->newInstance() ?? null,
-                    array_filter(array_map(fn (ReflectionAttribute $attr) => is_subclass_of($attr->getName(), MappingCallback::class) ? $attr->newInstance() : null, ($property->getAttributes())))
+                    $property->getAttributes(Accessor::class)[0]?->newInstance() ?? null,
+                    $property->getAttributes(TargetProperty::class)[0]?->newInstance() ?? null,
+                    array_filter(array_map(fn (\ReflectionAttribute $attr) => is_subclass_of($attr->getName(), MappingCallback::class) ? $attr->newInstance() : null, $property->getAttributes()))
                 ),
                 new Serializer(
-                    ($property->getAttributes(Groups::class))[0]?->newInstance() ?? null,
-                    ($property->getAttributes(Ignore::class))[0]?->newInstance() ?? null,
-                    ($property->getAttributes(MaxDepth::class))[0]?->newInstance() ?? null,
-                    ($property->getAttributes(SerializedName::class))[0]?->newInstance() ?? null,
-                    ($property->getAttributes(SerializedPath::class))[0]?->newInstance() ?? null,
+                    $property->getAttributes(Groups::class)[0]?->newInstance() ?? null,
+                    $property->getAttributes(Ignore::class)[0]?->newInstance() ?? null,
+                    $property->getAttributes(MaxDepth::class)[0]?->newInstance() ?? null,
+                    $property->getAttributes(SerializedName::class)[0]?->newInstance() ?? null,
+                    $property->getAttributes(SerializedPath::class)[0]?->newInstance() ?? null,
                 ),
                 new Validator(
-                    array_filter(array_map(fn (ReflectionAttribute $attr) => is_subclass_of($attr->getName(), Constraint::class) ? $attr->newInstance() : null, ($property->getAttributes())))
+                    array_filter(array_map(fn (\ReflectionAttribute $attr) => is_subclass_of($attr->getName(), Constraint::class) ? $attr->newInstance() : null, $property->getAttributes()))
                 )
             );
             $output[] = $currentProperty;
@@ -173,7 +169,7 @@ class GetMapperHandler
                 if ($classType && class_exists($classType)) {
                     $output = array_merge($output, $this->extractProperties($classType, $origin, $currentProperty));
                 }
-            } elseif (($classType = $this->getClassIfClassType($type))) {
+            } elseif ($classType = $this->getClassIfClassType($type)) {
                 $output = array_merge($output, $this->extractProperties($classType, $origin, $currentProperty));
             }
         }
@@ -181,9 +177,9 @@ class GetMapperHandler
         return $output;
     }
 
-    private function isCollection(?ReflectionType $type): bool
+    private function isCollection(?\ReflectionType $type): bool
     {
-        if ($type === null) {
+        if (null === $type) {
             return false;
         }
 
@@ -195,6 +191,7 @@ class GetMapperHandler
                 'Iterator',
                 'Traversable',
             ];
+
             return in_array($typeName, $collectionTypes, true);
         }
 
@@ -210,9 +207,9 @@ class GetMapperHandler
         return false;
     }
 
-    private function getClassIfClassType(?ReflectionType $type): ?string
+    private function getClassIfClassType(?\ReflectionType $type): ?string
     {
-        if ($type === null) {
+        if (null === $type) {
             return null;
         }
 
@@ -227,7 +224,7 @@ class GetMapperHandler
             $typeList = $type->getTypes();
             foreach ($typeList as $innerType) {
                 $class = $this->getClassIfClassType($innerType);
-                if ($class !== null) {
+                if (null !== $class) {
                     return $class;
                 }
             }
@@ -236,14 +233,14 @@ class GetMapperHandler
         return null;
     }
 
-    private function getCollectionItemType(?ReflectionProperty $property): ?string
+    private function getCollectionItemType(?\ReflectionProperty $property): ?string
     {
-        if ($property === null) {
+        if (null === $property) {
             return null;
         }
 
         $docComment = $property->getDocComment();
-        if ($docComment === false) {
+        if (false === $docComment) {
             return null;
         }
 
@@ -252,13 +249,14 @@ class GetMapperHandler
         /** @var Var_[] $varTags */
         $varTags = $docBlock->getTagsByName('var');
 
-        if (count($varTags) === 0) {
+        if (0 === count($varTags)) {
             return null;
         }
 
         $type = $varTags[0]->getType();
         if ($type instanceof Array_) {
             $itemType = $type->getValueType();
+
             return $itemType->__toString();
         }
 
