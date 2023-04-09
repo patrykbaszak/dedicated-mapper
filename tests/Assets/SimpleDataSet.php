@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace PBaszak\MessengerMapperBundle\Tests\Assets;
 
+use PBaszak\MessengerMapperBundle\Attribute\Accessor;
 use PBaszak\MessengerMapperBundle\Attribute\TargetProperty;
 
 class SimpleDataSet
 {
     public string $text;
+    #[Accessor('setSth')]
     private int $number;
     public bool $bool;
     private ?string $nullable;
@@ -50,6 +52,11 @@ class SimpleDataSet
         $this->targetProperty = $targetProperty;
     }
 
+    public function setSth(int $number): void
+    {
+        $this->number = $number;
+    }
+
     public function getNumber(): int
     {
         return $this->number;
@@ -58,6 +65,16 @@ class SimpleDataSet
     public function getNullable(): ?string
     {
         return $this->nullable;
+    }
+
+    public function setNullable(?string $nullable): void
+    {
+        $this->nullable = $nullable;
+    }
+
+    public function nullableBool(?bool $nullableBool): void
+    {
+        $this->nullableBool = $nullableBool;
     }
 
     public function getNullableInt(): ?int

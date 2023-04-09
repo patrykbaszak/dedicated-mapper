@@ -29,7 +29,7 @@ class Property
         self::ORIGIN_CLASS_OBJECT,
     ];
 
-    private readonly ?self $mirror;
+    private self $mirror;
     /** @var self[] */
     private array $children = [];
 
@@ -40,7 +40,8 @@ class Property
         public ?string $originClass = null,
         public bool $isCollection = false,
         public string $origin = self::ORIGIN_ARRAY,
-        public null|\ReflectionProperty|\ReflectionParameter $reflection = null,
+        public null|\ReflectionProperty $reflection = null,
+        public null|\ReflectionParameter $reflectionParameter = null,
         public null|Mapper $mapper = null,
         public null|Serializer $serializer = null,
         public null|Validator $validator = null,
@@ -59,9 +60,24 @@ class Property
         $this->children[$property->name] = $property;
     }
 
+    public function hasChild(string $name): bool
+    {
+        return isset($this->children[$name]);
+    }
+
+    public function hasChildren(): bool
+    {
+        return !empty($this->children);
+    }
+
     public function getMirrorProperty(): self
     {
         return $this->mirror;
+    }
+
+    public function hasMirrorProperty(): bool
+    {
+        return isset($this->mirror);
     }
 
     public function setMirrorProperty(self $property): void
@@ -80,6 +96,17 @@ class Property
 
         return $this->mirror?->serializer?->serializedName?->getSerializedName()
             ?? $this->mirror?->mapper?->targetProperty?->name
+            ?? $this->name;
+    }
+
+    public function getMirrorName(): string
+    {
+        if ($this->hasMirrorProperty()) {
+            return $this->mirror->getName();
+        }
+
+        return $this->serializer?->serializedName?->getSerializedName()
+            ?? $this->mapper?->targetProperty?->name
             ?? $this->name;
     }
 
@@ -214,6 +241,20 @@ class Property
         throw new \InvalidArgumentException(sprintf('Invalid origin: %s. Allowed: %s.', $this->origin, implode(', ', self::ORIGINS)));
     }
 
+    public function getPropertyExpression(string $variableName, ?array $validatorGroups = null, ?string $setterSeparator = null, ?string $getterSeparator = null): string
+    {
+        if ($this->isCollection() && $this->hasChildren()) {
+            return '';
+        }
+
+        if ($this->hasChildren()) {
+            return '';
+        }
+
+        $getterExpression = $this->getMirrorProperty()->getGetterExpression('data', $getterSeparator);
+        return $this->getSetterExpression($getterExpression, $variableName, $setterSeparator, $validatorGroups);
+    }
+
     public function getSetterExpression(string $getterExpression, string $variableName, ?string $mapSeparator = null, ?array $validatorGroups = null): string
     {
         if (!empty($this->validator->constraints)) {
@@ -288,7 +329,7 @@ class Property
                 fn ($method) => $method && method_exists($this->originClass, $method)
             );
 
-            if (($isEmpty = empty($setterMethods)) && !$this->isPublic()) {
+            if (null === $this->reflectionParameter && ($isEmpty = empty($setterMethods)) && !$this->isPublic()) {
                 throw new \InvalidArgumentException(sprintf('Setter method not found for property %s in class %s and property is not public.', $this->name, $this->originClass));
             }
 
