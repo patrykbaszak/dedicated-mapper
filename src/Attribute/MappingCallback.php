@@ -15,7 +15,8 @@ class MappingCallback
      * @example 'PBaszak\MessengerMapperBundle\Contract\GetMapper::map' - static method
      * @example '($var = %s) === null ? null : (string) $var' - expression (only one %s placeholder is allowed)
      *
-     * @param int $priority - higher priority callbacks will be executed first
+     * @param int     $priority - higher priority callbacks will be executed first
+     * @param mixed[] $options  - any options required but custom actions
      */
     public function __construct(
         public readonly string $callback,

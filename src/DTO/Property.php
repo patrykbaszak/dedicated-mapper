@@ -94,8 +94,8 @@ class Property
             return $this->name;
         }
 
-        return $this->mirror?->serializer?->serializedName?->getSerializedName()
-            ?? $this->mirror?->mapper?->targetProperty?->name
+        return $this->mirror->serializer?->serializedName?->getSerializedName()
+            ?? $this->mirror->mapper?->targetProperty?->name
             ?? $this->name;
     }
 
@@ -126,17 +126,17 @@ class Property
 
     public function isIgnored(): bool
     {
-        return (bool) $this->mirror?->serializer?->ignore;
+        return (bool) $this->mirror->serializer?->ignore;
     }
 
     public function isNullable(): bool
     {
-        if (str_starts_with($this->type, '?') || 'mixed' === $this->type || false !== strpos($this->type, 'null')) {
+        if (null !== $this->type && (str_starts_with($this->type, '?') || 'mixed' === $this->type || false !== strpos($this->type, 'null'))) {
             return true;
         }
 
-        if ($this->reflection instanceof \ReflectionParameter) {
-            return $this->reflection->allowsNull();
+        if (null !== $this->reflectionParameter) {
+            return $this->reflectionParameter->allowsNull();
         }
 
         return (bool) $this->reflection?->getType()?->allowsNull();
@@ -149,13 +149,14 @@ class Property
 
     public function isInGroup(string $group): bool
     {
-        if (null === $this->mirror?->serializer?->groups) {
+        if (null === $this->mirror->serializer?->groups) {
             return false;
         }
 
         return in_array($group, $this->mirror->serializer->groups->getGroups());
     }
 
+    /** @return MappingCallback[] */
     public function getSelfMappingCallbacks(int $activateOnMapping): array
     {
         $callbacks = [];
@@ -175,8 +176,7 @@ class Property
     {
         try {
             $defaultValue = $this->reflection?->getDefaultValue();
-        } catch (\ReflectionException $e) {
-            unset($defaultValue, $e);
+        } catch (\ReflectionException) {
         }
 
         if (isset($defaultValue)) {
@@ -241,6 +241,9 @@ class Property
         throw new \InvalidArgumentException(sprintf('Invalid origin: %s. Allowed: %s.', $this->origin, implode(', ', self::ORIGINS)));
     }
 
+    /**
+     * @param string[]|null $validatorGroups
+     */
     public function getPropertyExpression(string $variableName, ?array $validatorGroups = null, ?string $setterSeparator = null, ?string $getterSeparator = null): string
     {
         if ($this->isCollection() && $this->hasChildren()) {
@@ -252,10 +255,14 @@ class Property
         }
 
         $getterExpression = $this->getMirrorProperty()->getGetterExpression('data', $getterSeparator);
+
         return $this->getSetterExpression($getterExpression, $variableName, $setterSeparator, $validatorGroups);
     }
 
-    public function getSetterExpression(string $getterExpression, string $variableName, ?string $mapSeparator = null, ?array $validatorGroups = null): string
+    /**
+     * @param string[]|null $validatorGroups
+     */
+    public function getSetterExpression(string $getterExpression, string $variableName, ?string $mapSeparator = null, ?array $validatorGroups = null, ?string $forcedOrigin = null): string
     {
         if (!empty($this->validator->constraints)) {
             $getterExpression = sprintf(
@@ -271,51 +278,50 @@ class Property
                 $validatorGroups ? var_export($validatorGroups, true) : 'null',
                 $this->getPath('.'),
                 $this->isNullable()
-                    ? sprintf('%s ?? null', $this->doGetSetterExpression('$var', $variableName, $mapSeparator))
-                    : $this->doGetSetterExpression('$var', $variableName, $mapSeparator)
+                    ? sprintf('%s ?? null', $this->doGetSetterExpression('$var', $variableName, $mapSeparator, $forcedOrigin))
+                    : $this->doGetSetterExpression('$var', $variableName, $mapSeparator, $forcedOrigin)
             );
         }
         try {
             $defaultValue = $this->reflection?->getDefaultValue();
-        } catch (\ReflectionException $e) {
-            unset($defaultValue, $e);
+        } catch (\ReflectionException) {
         }
 
         if (isset($defaultValue)) {
             return $this->isNullable()
-                ? sprintf('%s ?? %s ?? null', $this->doGetSetterExpression($getterExpression, $variableName, $mapSeparator), var_export($defaultValue, true))
-                : sprintf('%s ?? %s', $this->doGetSetterExpression($getterExpression, $variableName, $mapSeparator), var_export($defaultValue, true));
+                ? sprintf('%s ?? %s ?? null', $this->doGetSetterExpression($getterExpression, $variableName, $mapSeparator, $forcedOrigin), var_export($defaultValue, true))
+                : sprintf('%s ?? %s', $this->doGetSetterExpression($getterExpression, $variableName, $mapSeparator, $forcedOrigin), var_export($defaultValue, true));
         }
 
         return ($this->isNullable()
-            ? sprintf('%s ?? null', $this->doGetSetterExpression($getterExpression, $variableName, $mapSeparator))
-            : $this->doGetSetterExpression($getterExpression, $variableName, $mapSeparator)).';';
+            ? sprintf('%s ?? null', $this->doGetSetterExpression($getterExpression, $variableName, $mapSeparator, $forcedOrigin))
+            : $this->doGetSetterExpression($getterExpression, $variableName, $mapSeparator, $forcedOrigin)).';';
     }
 
-    private function doGetSetterExpression(string $getterExpression, string $variableName, ?string $mapSeparator = null): string
+    private function doGetSetterExpression(string $getterExpression, string $variableName, ?string $mapSeparator = null, ?string $forcedOrigin = null): string
     {
         $getterExpression = $this->decorateGetterExpressionWithCallbacks(self::AS_DESTINATION, $getterExpression);
-        if (self::ORIGIN_ARRAY === $this->origin) {
+        if (self::ORIGIN_ARRAY === ($forcedOrigin ?? $this->origin)) {
             return sprintf('$%s[\'%s\'] = %s', $variableName, $this->getPath('\'][\''), $getterExpression);
         }
-        if (self::ORIGIN_OBJECT === $this->origin) {
+        if (self::ORIGIN_OBJECT === ($forcedOrigin ?? $this->origin)) {
             return sprintf('$%s->%s = %s', $variableName, $this->getPath('->'), $getterExpression);
         }
-        if (self::ORIGIN_MAP === $this->origin) {
+        if (self::ORIGIN_MAP === ($forcedOrigin ?? $this->origin)) {
             if (null === $mapSeparator) {
                 throw new \InvalidArgumentException('Map separator is required for map.');
             }
 
             return sprintf('$%s[\'%s\'] = %s', $variableName, $this->getPath($mapSeparator), $getterExpression);
         }
-        if (self::ORIGIN_MAP_OBJECT === $this->origin) {
+        if (self::ORIGIN_MAP_OBJECT === ($forcedOrigin ?? $this->origin)) {
             if (null === $mapSeparator) {
                 throw new \InvalidArgumentException('Map separator is required for map.');
             }
 
             return sprintf('$%s->%s = %s', $variableName, $this->getPath($mapSeparator), $getterExpression);
         }
-        if (self::ORIGIN_CLASS_OBJECT === $this->origin) {
+        if (self::ORIGIN_CLASS_OBJECT === ($forcedOrigin ?? $this->origin)) {
             if (null === $this->originClass) {
                 throw new \InvalidArgumentException('Origin class is required for class object.');
             }
@@ -329,7 +335,7 @@ class Property
                 fn ($method) => $method && method_exists($this->originClass, $method)
             );
 
-            if (null === $this->reflectionParameter && ($isEmpty = empty($setterMethods)) && !$this->isPublic()) {
+            if (($isEmpty = empty($setterMethods)) && null === $this->reflectionParameter && !$this->isPublic()) {
                 throw new \InvalidArgumentException(sprintf('Setter method not found for property %s in class %s and property is not public.', $this->name, $this->originClass));
             }
 
@@ -346,11 +352,11 @@ class Property
     private function decorateGetterExpressionWithCallbacks(int $as, string $getterExpression, ?string $variableName = null): string
     {
         $mirrorAs = $as ^ (self::AS_SOURCE | self::AS_DESTINATION);
-        if (empty($selfCallbacks = $this->getSelfMappingCallbacks($as)) && empty($mirrorCallbacks = $this->mirror?->getSelfMappingCallbacks($mirrorAs))) {
+        if (empty($mirrorCallbacks = $this->mirror->getSelfMappingCallbacks($mirrorAs)) && empty($selfCallbacks = $this->getSelfMappingCallbacks($as))) {
             return $getterExpression;
         }
 
-        $callbacks = array_merge($selfCallbacks, $mirrorCallbacks);
+        $callbacks = array_merge($selfCallbacks ?? [], $mirrorCallbacks);
 
         foreach ($this->sortCallbacks($callbacks) as $callback) {
             if (false !== strpos($callback->callback, '%s')) {
@@ -368,7 +374,7 @@ class Property
     }
 
     /**
-     * @param object[] $callbacks
+     * @param MappingCallback[] $callbacks
      *
      * @return MappingCallback[]
      */

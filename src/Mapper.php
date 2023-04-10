@@ -20,6 +20,27 @@ class Mapper
         $this->messageBus = $cachedMessageBus;
     }
 
+    /**
+     * @param class-string|'array'|'object'   $from     associative array or object or class name
+     * @param class-string|'array'|'object'   $to       associative array or object or class name
+     * @param 'array'|'object'|'map{%s}'|null $fromType type of data which will be delivered
+     *                                                  to mapper, %s - separator for nested array/object
+     * @param 'array'|'object'|'map{%s}'|null $toType   type of data which mapper must return,
+     *                                                  %s - separator for nested array/object
+     *
+     * @example map{.} - map from array/object or to array/object which nested keys are separated by dot
+     * <code>
+     * # map
+     * $from = [
+     *   'key' => 'value',
+     *   'key.nested' => ['value']
+     * ]
+     * $to
+     * </code>
+     *
+     * @param string[]|null $validatorGroups
+     * @param string[]|null $serializerGroups
+     */
     public function map(
         mixed $data,
         mixed $from,
@@ -40,7 +61,9 @@ class Mapper
     /**
      * @param mixed[]           $data
      * @param class-string      $toClass
-     * @param 'array'|'map{%s}' $fromType - %s - map separator for nested array/object
+     * @param 'array'|'map{%s}' $fromType         - %s - map separator for nested array/object
+     * @param string[]|null     $validatorGroups
+     * @param string[]|null     $serializerGroups
      */
     public function fromArrayToClassObject(
         array $data,
@@ -57,8 +80,10 @@ class Mapper
     /**
      * @param mixed[]            $data
      * @param class-string|null  $classTemplate
-     * @param 'array'|'map{%s}'  $fromType      - %s - map separator for nested array/object
-     * @param 'object'|'map{%s}' $toType        - %s - map separator for nested array/object
+     * @param 'array'|'map{%s}'  $fromType         - %s - map separator for nested array/object
+     * @param 'object'|'map{%s}' $toType           - %s - map separator for nested array/object
+     * @param string[]|null      $validatorGroups
+     * @param string[]|null      $serializerGroups
      */
     public function fromArrayToAnonymousObject(
         array $data,
@@ -80,8 +105,10 @@ class Mapper
     /**
      * @param mixed[]           $data
      * @param class-string|null $classTemplate
-     * @param 'array'|'map{%s}' $fromType      - %s - map separator for nested array/object
-     * @param 'array'|'map{%s}' $toType        - %s - map separator for nested array/object
+     * @param 'array'|'map{%s}' $fromType         - %s - map separator for nested array/object
+     * @param 'array'|'map{%s}' $toType           - %s - map separator for nested array/object
+     * @param string[]|null     $validatorGroups
+     * @param string[]|null     $serializerGroups
      *
      * @return mixed[]
      */
@@ -100,7 +127,9 @@ class Mapper
 
     /**
      * @param class-string       $class
-     * @param 'object'|'map{%s}' $fromType - %s - map separator for nested array/object
+     * @param 'object'|'map{%s}' $fromType         - %s - map separator for nested array/object
+     * @param string[]|null      $validatorGroups
+     * @param string[]|null      $serializerGroups
      */
     public function fromAnonymousObjectToClassObject(
         object $data,
@@ -116,8 +145,10 @@ class Mapper
 
     /**
      * @param class-string|null  $classTemplate
-     * @param 'object'|'map{%s}' $fromType      - %s - map separator for nested array/object
-     * @param 'object'|'map{%s}' $toType        - %s - map separator for nested array/object
+     * @param 'object'|'map{%s}' $fromType         - %s - map separator for nested array/object
+     * @param 'object'|'map{%s}' $toType           - %s - map separator for nested array/object
+     * @param string[]|null      $validatorGroups
+     * @param string[]|null      $serializerGroups
      */
     public function fromAnonymousObjectToAnonymousObject(
         object $data,
@@ -138,8 +169,10 @@ class Mapper
 
     /**
      * @param class-string|null  $classTemplate
-     * @param 'object'|'map{%s}' $fromType      - %s - map separator for nested array/object
-     * @param 'array'|'map{%s}'  $toType        - %s - map separator for nested array/object
+     * @param 'object'|'map{%s}' $fromType         - %s - map separator for nested array/object
+     * @param 'array'|'map{%s}'  $toType           - %s - map separator for nested array/object
+     * @param string[]|null      $validatorGroups
+     * @param string[]|null      $serializerGroups
      *
      * @return mixed[]
      */
@@ -157,7 +190,9 @@ class Mapper
     }
 
     /**
-     * @param class-string $class output
+     * @param class-string  $class            output
+     * @param string[]|null $validatorGroups
+     * @param string[]|null $serializerGroups
      */
     public function fromClassObjectToClassObject(
         object $data,
@@ -172,7 +207,9 @@ class Mapper
 
     /**
      * @param class-string|null  $classTemplate
-     * @param 'object'|'map{%s}' $toType        - %s - map separator for nested array/object
+     * @param 'object'|'map{%s}' $toType           - %s - map separator for nested array/object
+     * @param string[]|null      $validatorGroups
+     * @param string[]|null      $serializerGroups
      */
     public function fromClassObjectToAnonymousObject(
         object $data,
@@ -188,7 +225,9 @@ class Mapper
 
     /**
      * @param class-string|null $classTemplate
-     * @param 'array'|'map{%s}' $toType        - %s - map separator for nested array/object
+     * @param 'array'|'map{%s}' $toType           - %s - map separator for nested array/object
+     * @param string[]|null     $validatorGroups
+     * @param string[]|null     $serializerGroups
      *
      * @return mixed[]
      */

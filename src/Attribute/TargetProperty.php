@@ -8,7 +8,8 @@ namespace PBaszak\MessengerMapperBundle\Attribute;
 class TargetProperty
 {
     /**
-     * @param string $name property name in matching resource
+     * @param string  $name    property name in matching resource
+     * @param mixed[] $options - any options required but custom actions
      */
     public function __construct(
         public readonly string $name,

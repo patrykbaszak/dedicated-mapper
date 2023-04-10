@@ -14,7 +14,7 @@ use Symfony\Component\Serializer\Annotation\SerializedPath;
 class Serializer
 {
     /**
-     * @param Context[] $contexts
+     * param Context[] $contexts.
      */
     public function __construct(
         // public array $contexts = [], // not used

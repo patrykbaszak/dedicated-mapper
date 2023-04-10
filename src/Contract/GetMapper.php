@@ -31,6 +31,9 @@ class GetMapper implements Cacheable
      * ]
      * $to
      * </code>
+     *
+     * @param string[]|null $validatorGroups
+     * @param string[]|null $serializerGroups
      */
     public function __construct(
         public readonly string $from,

@@ -8,6 +8,7 @@ use PBaszak\MessengerMapperBundle\Attribute\Accessor;
 use PBaszak\MessengerMapperBundle\Attribute\MappingCallback;
 use PBaszak\MessengerMapperBundle\Attribute\TargetProperty;
 use PBaszak\MessengerMapperBundle\Contract\GetMapper;
+use PBaszak\MessengerMapperBundle\DTO\Properties\Constraint as PropertiesConstraint;
 use PBaszak\MessengerMapperBundle\DTO\Properties\Mapper;
 use PBaszak\MessengerMapperBundle\DTO\Properties\Serializer;
 use PBaszak\MessengerMapperBundle\DTO\Properties\Validator;
@@ -56,9 +57,14 @@ class GetMapperHandler
 
     /**
      * @param Property[] $properties
+     * @param mixed[]    $validatorGroups
      */
     private function buildExpression(array $properties, array $validatorGroups = []): string
     {
+        if (empty($properties)) {
+            throw new \LogicException('Any properties found to mapping in the root data template.');
+        }
+
         $expression = [];
         if ($this->useValidator) {
             $expression[] = '$errors = [];';
@@ -79,7 +85,13 @@ class GetMapperHandler
             foreach ($properties as $property) {
                 if (null !== $property->reflectionParameter) {
                     $constructorArguments[] = $property->getName();
-                    $expression[] = '$constructorArguments[] = ' . $property->getMirrorProperty()->getGetterExpression('data', $this->fromMapSeparator) . ';';
+                    $expression[] = $property->getSetterExpression(
+                        $property->getMirrorProperty()->getGetterExpression('data', $this->fromMapSeparator),
+                        'constructorArguments',
+                        null,
+                        $validatorGroups,
+                        'array'
+                    );
                 }
             }
             $expression[] = sprintf('$mapped = new %s(...$constructorArguments);', $property->originClass);
@@ -115,10 +127,12 @@ class GetMapperHandler
             }';
 
             $expression[] = 'return $mapped;';
+
             return sprintf(GetMapper::MAPPER_TEMPLATE_WITH_VALIDATOR, implode('', $expression));
         }
 
         $expression[] = 'return $mapped;';
+
         return sprintf(GetMapper::MAPPER_TEMPLATE, implode('', $expression));
     }
 
@@ -147,7 +161,7 @@ class GetMapperHandler
 
             /** @var string $argument */
             if (preg_match('/^map\{(?<separator>.+)\}$/', $argument, $matches)) {
-                $this->{$key . 'MapSeparator'} = $matches['separator'];
+                $this->{$key.'MapSeparator'} = $matches['separator'];
                 continue;
             }
 
@@ -155,6 +169,11 @@ class GetMapperHandler
         }
     }
 
+    /**
+     * @param Property[] $properties
+     *
+     * @return Property[]
+     */
     private function reduceProperties(array $properties): array
     {
         foreach ($properties as $index => $property) {
@@ -166,6 +185,11 @@ class GetMapperHandler
         return $properties;
     }
 
+    /**
+     * @param Property[] $properties
+     *
+     * @return int number of properties with mirror properties
+     */
     private function countMirrors(array $properties): int
     {
         $count = 0;
@@ -213,6 +237,10 @@ class GetMapperHandler
         }
     }
 
+    /**
+     * @param Property[] $source
+     * @param Property[] $destination
+     */
     private function matchProperties(array &$source, array &$destination): void
     {
         foreach ($source as $property) {
@@ -232,6 +260,9 @@ class GetMapperHandler
         }
     }
 
+    /**
+     * @param Property[] $mirrors
+     */
     private function doMatchProperties(Property $property, array &$mirrors): void
     {
         $name = $property->getName();
@@ -271,6 +302,12 @@ class GetMapperHandler
         );
     }
 
+    /**
+     * @param class-string  $class
+     * @param string[]|null $serializerGroups
+     *
+     * @return Property[]
+     */
     private function extractProperties(string $class, string $origin, ?array $serializerGroups = [], ?Property $parent = null): array
     {
         $reflectionClass = new \ReflectionClass($class);
@@ -297,34 +334,35 @@ class GetMapperHandler
                 $class,
                 $this->isCollection($type),
                 $origin,
-                $property ?? null,
+                $property,
                 $parameter ?? null,
                 new Mapper(
-                    @$property->getAttributes(Accessor::class)[0]?->newInstance() ?? null,
-                    @$property->getAttributes(TargetProperty::class)[0]?->newInstance() ?? null,
-                    @array_filter(array_map(fn (\ReflectionAttribute $attr) => is_subclass_of($attr->getName(), MappingCallback::class) ? $attr->newInstance() : null, $property->getAttributes()))
+                    empty($attrAccessor = $property->getAttributes(Accessor::class)) ? null : $attrAccessor[0]->newInstance(),
+                    empty($attrTargetProperty = $property->getAttributes(TargetProperty::class)) ? null : $attrTargetProperty[0]->newInstance(),
+                    array_filter(array_map(fn (\ReflectionAttribute $attrMappingCallback): ?MappingCallback => is_subclass_of($attrMappingCallback->getName(), MappingCallback::class) ? $attrMappingCallback->newInstance() : null, $property->getAttributes()))
                 ),
-                new Serializer(
-                    @$property->getAttributes(Groups::class)[0]?->newInstance() ?? null,
-                    @$property->getAttributes(Ignore::class)[0]?->newInstance() ?? null,
-                    @$property->getAttributes(MaxDepth::class)[0]?->newInstance() ?? null,
-                    @$property->getAttributes(SerializedName::class)[0]?->newInstance() ?? null,
-                    @$property->getAttributes(SerializedPath::class)[0]?->newInstance() ?? null,
-                ),
-                new Validator(
-                    array_filter(array_map(fn (\ReflectionAttribute $attr) => is_subclass_of($attr->getName(), Constraint::class) ? $attr->newInstance() : null, $property->getAttributes()))
-                )
+                $this->useSerializer ? new Serializer(
+                    empty($attrGroups = $property->getAttributes(Groups::class)) ? null : $attrGroups[0]->newInstance(),
+                    empty($attrIgnore = $property->getAttributes(Ignore::class)) ? null : $attrIgnore[0]->newInstance(),
+                    empty($attrMaxDepth = $property->getAttributes(MaxDepth::class)) ? null : $attrMaxDepth[0]->newInstance(),
+                    empty($attrSerializedName = $property->getAttributes(SerializedName::class)) ? null : $attrSerializedName[0]->newInstance(),
+                    empty($attrSerializedPath = $property->getAttributes(SerializedPath::class)) ? null : $attrSerializedPath[0]->newInstance(),
+                ) : null,
+                $this->useValidator ? new Validator(
+                    array_filter(array_map(fn (\ReflectionAttribute $attrConstraint): ?PropertiesConstraint => is_subclass_of($attrConstraint->getName(), Constraint::class) ? new PropertiesConstraint($attrConstraint->getName(), $attrConstraint->getArguments()) : null, $property->getAttributes()))
+                ) : null
             );
 
-            if (($useSerializerGroups = is_array($serializerGroups) && $currentProperty->serializer?->groups)) {
-                $groups = $currentProperty->serializer->groups->getGroups();
+            if ($useSerializerGroups = is_array($serializerGroups) && $currentProperty->serializer?->groups) {
+                $groups = $currentProperty->serializer?->groups?->getGroups();
             }
-            if ($currentProperty->serializer?->ignore || ($useSerializerGroups && empty(array_intersect($serializerGroups, $groups)))) {
+            if ($currentProperty->serializer?->ignore || ($useSerializerGroups && empty(array_intersect($serializerGroups, $groups ?? [])))) {
                 continue;
             }
 
             $output[] = $currentProperty;
             if ($currentProperty->isCollection) {
+                /** @var class-string|null $classType */
                 $classType = $this->getCollectionItemType($property);
                 if ($classType && class_exists($classType)) {
                     $output = array_merge($output, $this->extractProperties($classType, $origin, $serializerGroups, $currentProperty));
@@ -367,6 +405,7 @@ class GetMapperHandler
         return false;
     }
 
+    /** @return class-string|null */
     private function getClassIfClassType(?\ReflectionType $type): ?string
     {
         if (null === $type) {

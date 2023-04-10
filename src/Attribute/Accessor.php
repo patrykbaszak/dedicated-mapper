@@ -15,6 +15,8 @@ class Accessor
      * @param string|null $getter getter method name - must be public and require no arguments
      *
      * @example 'getKey' - method name (accepted only for objects with `getKey` method)
+     *
+     * @param mixed[] $options - any options required but custom actions
      */
     public function __construct(
         public readonly ?string $setter = null,
