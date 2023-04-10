@@ -13,6 +13,7 @@ use PBaszak\MessengerMapperBundle\DTO\Properties\Mapper;
 use PBaszak\MessengerMapperBundle\DTO\Properties\Serializer;
 use PBaszak\MessengerMapperBundle\DTO\Properties\Validator;
 use PBaszak\MessengerMapperBundle\DTO\Property;
+use PBaszak\MessengerMapperBundle\Utils\GetClassIfClassType;
 use phpDocumentor\Reflection\DocBlock\Tags\Var_;
 use phpDocumentor\Reflection\DocBlockFactory;
 use phpDocumentor\Reflection\Types\Array_;
@@ -27,6 +28,8 @@ use Symfony\Component\Validator\Constraint;
 #[AsMessageHandler()]
 class GetMapperHandler
 {
+    use GetClassIfClassType;
+
     private ?string $fromMapSeparator = null;
     private ?string $toMapSeparator = null;
     private bool $useSerializer;
@@ -85,11 +88,11 @@ class GetMapperHandler
             foreach ($properties as $property) {
                 if (null !== $property->reflectionParameter) {
                     $constructorArguments[] = $property->getName();
-                    $expression[] = $property->getSetterExpression(
-                        $property->getMirrorProperty()->getGetterExpression('data', $this->fromMapSeparator),
+                    $expression[] = $property->getPropertyExpression(
                         'constructorArguments',
-                        null,
                         $validatorGroups,
+                        null,
+                        $this->fromMapSeparator,
                         'array'
                     );
                 }
@@ -290,11 +293,11 @@ class GetMapperHandler
                 $property->getMirrorName(),
                 $property->type,
                 $property->parent ? $property->parent->getMirrorProperty() : null,
-                null,
+                $property->originClass,
                 $property->isCollection(),
                 $mirrorOrigin,
-                null,
-                null,
+                $property->reflection,
+                $property->reflectionParameter,
                 null,
                 null,
                 null
@@ -403,33 +406,6 @@ class GetMapperHandler
         }
 
         return false;
-    }
-
-    /** @return class-string|null */
-    private function getClassIfClassType(?\ReflectionType $type): ?string
-    {
-        if (null === $type) {
-            return null;
-        }
-
-        if ($type instanceof \ReflectionNamedType) {
-            $typeName = $type->getName();
-            if (class_exists($typeName)) {
-                return $typeName;
-            }
-        }
-
-        if ($type instanceof \ReflectionUnionType || $type instanceof \ReflectionIntersectionType) {
-            $typeList = $type->getTypes();
-            foreach ($typeList as $innerType) {
-                $class = $this->getClassIfClassType($innerType);
-                if (null !== $class) {
-                    return $class;
-                }
-            }
-        }
-
-        return null;
     }
 
     private function getCollectionItemType(?\ReflectionProperty $property): ?string

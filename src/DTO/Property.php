@@ -9,9 +9,12 @@ use PBaszak\MessengerMapperBundle\DTO\Properties\Constraint;
 use PBaszak\MessengerMapperBundle\DTO\Properties\Mapper;
 use PBaszak\MessengerMapperBundle\DTO\Properties\Serializer;
 use PBaszak\MessengerMapperBundle\DTO\Properties\Validator;
+use PBaszak\MessengerMapperBundle\Utils\GetClassIfClassType;
 
 class Property
 {
+    use GetClassIfClassType;
+
     public const AS_SOURCE = 1;
     public const AS_DESTINATION = 2;
 
@@ -110,9 +113,9 @@ class Property
             ?? $this->name;
     }
 
-    public function getPath(string $separator = '.'): string
+    public function getPath(string $separator = '.', bool $forceRootVariable = false): string
     {
-        if (null === $this->parent || true === $this->parent->isCollection) {
+        if (null === $this->parent || true === $this->parent->isCollection || $forceRootVariable) {
             return $this->getName();
         }
 
@@ -172,7 +175,7 @@ class Property
         return $callbacks;
     }
 
-    public function getGetterExpression(string $variableName, ?string $mapSeparator = null): string
+    public function getGetterExpression(string $variableName, ?string $mapSeparator = null, ?string $forcedOrigin = null, bool $forceRootVariable = false): string
     {
         try {
             $defaultValue = $this->reflection?->getDefaultValue();
@@ -181,38 +184,38 @@ class Property
 
         if (isset($defaultValue)) {
             return $this->isNullable()
-                ? sprintf('%s ?? %s ?? null', $this->doGetGetterExpression($variableName, $mapSeparator), var_export($defaultValue, true))
-                : sprintf('%s ?? %s', $this->doGetGetterExpression($variableName, $mapSeparator), var_export($defaultValue, true));
+                ? sprintf('%s ?? %s ?? null', $this->doGetGetterExpression($variableName, $mapSeparator, $forcedOrigin, $forceRootVariable), var_export($defaultValue, true))
+                : sprintf('%s ?? %s', $this->doGetGetterExpression($variableName, $mapSeparator, $forcedOrigin, $forceRootVariable), var_export($defaultValue, true));
         }
 
         return $this->isNullable()
-            ? sprintf('%s ?? null', $this->doGetGetterExpression($variableName, $mapSeparator))
-            : $this->doGetGetterExpression($variableName, $mapSeparator);
+            ? sprintf('%s ?? null', $this->doGetGetterExpression($variableName, $mapSeparator, $forcedOrigin, $forceRootVariable))
+            : $this->doGetGetterExpression($variableName, $mapSeparator, $forcedOrigin, $forceRootVariable);
     }
 
-    private function doGetGetterExpression(string $variableName, ?string $mapSeparator = null): string
+    private function doGetGetterExpression(string $variableName, ?string $mapSeparator = null, ?string $forcedOrigin = null, bool $forceRootVariable = false): string
     {
-        if (self::ORIGIN_ARRAY === $this->origin) {
-            return sprintf('$%s[\'%s\']', $variableName, $this->getPath('\'][\''));
+        if (self::ORIGIN_ARRAY === ($forcedOrigin ?? $this->origin)) {
+            return sprintf('$%s[\'%s\']', $variableName, $this->getPath('\'][\'', $forceRootVariable));
         }
-        if (self::ORIGIN_OBJECT === $this->origin) {
-            return sprintf('$%s->%s', $variableName, $this->getPath('->'));
+        if (self::ORIGIN_OBJECT === ($forcedOrigin ?? $this->origin)) {
+            return sprintf('$%s->%s', $variableName, $this->getPath('->', $forceRootVariable));
         }
-        if (self::ORIGIN_MAP === $this->origin) {
+        if (self::ORIGIN_MAP === ($forcedOrigin ?? $this->origin)) {
             if (null === $mapSeparator) {
                 throw new \InvalidArgumentException('Map separator is required for map.');
             }
 
-            return sprintf('$%s[\'%s\']', $variableName, $this->getPath($mapSeparator));
+            return sprintf('$%s[\'%s\']', $variableName, $this->getPath($mapSeparator, $forceRootVariable));
         }
-        if (self::ORIGIN_MAP_OBJECT === $this->origin) {
+        if (self::ORIGIN_MAP_OBJECT === ($forcedOrigin ?? $this->origin)) {
             if (null === $mapSeparator) {
                 throw new \InvalidArgumentException('Map separator is required for map.');
             }
 
-            return sprintf('$%s->%s', $variableName, $this->getPath($mapSeparator));
+            return sprintf('$%s->%s', $variableName, $this->getPath($mapSeparator, $forceRootVariable));
         }
-        if (self::ORIGIN_CLASS_OBJECT === $this->origin) {
+        if (self::ORIGIN_CLASS_OBJECT === ($forcedOrigin ?? $this->origin)) {
             if (null === $this->originClass) {
                 throw new \InvalidArgumentException('Origin class is required for class object.');
             }
@@ -232,37 +235,134 @@ class Property
             }
 
             if ($isEmpty) {
+                if ($forcedOrigin) {
+                    return sprintf('$%s->%s ?? $%s->%s', $variableName, $this->name, $variableName, $this->mirror->name);
+                }
+
                 return sprintf('$%s->%s', $variableName, $this->name);
             }
 
             return sprintf('$%s->%s()', $variableName, reset($getterMethods));
         }
 
-        throw new \InvalidArgumentException(sprintf('Invalid origin: %s. Allowed: %s.', $this->origin, implode(', ', self::ORIGINS)));
+        throw new \InvalidArgumentException(sprintf('Invalid origin: %s. Allowed: %s.', $forcedOrigin ?? $this->origin, implode(', ', self::ORIGINS)));
     }
 
     /**
      * @param string[]|null $validatorGroups
      */
-    public function getPropertyExpression(string $variableName, ?array $validatorGroups = null, ?string $setterSeparator = null, ?string $getterSeparator = null): string
+    public function getPropertyExpression(string $variableName, ?array $validatorGroups = null, ?string $setterSeparator = null, ?string $getterSeparator = null, ?string $forcedOrigin = null, bool $forceRootVariable = false): string
     {
         if ($this->isCollection() && $this->hasChildren()) {
             return '';
         }
 
+        /* If it is an class object */
         if ($this->hasChildren()) {
-            return '';
+            if (self::ORIGIN_CLASS_OBJECT === $this->origin) {
+                if (null === ($class = $this->getClassIfClassType($this->reflectionParameter?->getType() ?? $this->reflection?->getType()))) {
+                    throw new \LogicException('Unable to get class for property '.$this->name);
+                }
+                $constructorArguments = [];
+                $constructorVariableName = sprintf('%sConstructorParameters', $this->name);
+                $expression = [sprintf('if (!($%s = %s) instanceof %s) {', $this->getName(), $this->getMirrorProperty()->getGetterExpression('data', $getterSeparator), $class)];
+                $expression[] = sprintf('$%s = [];', $constructorVariableName);
+                foreach ($this->children as $child) {
+                    if (null !== $child->reflectionParameter) {
+                        $constructorArguments[] = $child->getName();
+                        $expression[] = $child->getPropertyExpression(
+                            $constructorVariableName,
+                            $validatorGroups,
+                            null,
+                            $getterSeparator,
+                            'array',
+                            true
+                        );
+                    }
+                }
+                $expression[] = sprintf('$%s = new %s(...$%s);', $this->getName(), $class, $constructorVariableName);
+                foreach ($this->children as $child) {
+                    if (!in_array($child->getName(), $constructorArguments, true)) {
+                        $expression[] = $child->getPropertyExpression(
+                            $this->getName(),
+                            $validatorGroups,
+                            $setterSeparator,
+                            $getterSeparator,
+                            null,
+                            true
+                        );
+                    }
+                }
+                $expression[] = '}';
+
+                return implode('', $expression).$this->getSetterExpression(
+                    '$'.$this->getName(),
+                    $variableName,
+                    $setterSeparator,
+                    $validatorGroups,
+                    $forcedOrigin,
+                    $forceRootVariable
+                );
+            } else {
+                $expression = [$this->getSetterExpression(
+                    in_array($this->origin, [self::ORIGIN_ARRAY, self::ORIGIN_MAP], true) ? '[]' : '(object)[]',
+                    $variableName,
+                    $setterSeparator,
+                    $validatorGroups,
+                    $forcedOrigin,
+                    $forceRootVariable
+                )];
+                if (null !== ($class = $this->getClassIfClassType(
+                    $this->getMirrorProperty()->reflectionParameter?->getType() ??
+                        $this->getMirrorProperty()->reflection?->getType() ??
+                        $this->reflectionParameter?->getType() ??
+                        $this->reflection?->getType()
+                ))) {
+                    $expression[] = sprintf('if (($%s = %s) instanceof %s) {', $this->getName(), $this->getMirrorProperty()->getGetterExpression('data', $getterSeparator), $class);
+                    foreach ($this->children as $child) {
+                        $expression[] = $child->getSetterExpression(
+                            $child->getMirrorProperty()->getGetterExpression($this->getName(), $getterSeparator, self::ORIGIN_CLASS_OBJECT, true),
+                            $variableName,
+                            $setterSeparator,
+                            $validatorGroups,
+                            $forcedOrigin,
+                            $forceRootVariable
+                        );
+                    }
+                    $expression[] = '} else {';
+                }
+                foreach ($this->children as $child) {
+                    $expression[] = $child->getPropertyExpression(
+                        $variableName,
+                        $validatorGroups,
+                        $setterSeparator,
+                        $getterSeparator,
+                        $forcedOrigin,
+                        $forceRootVariable
+                    );
+                }
+                if (null !== $class) {
+                    $expression[] = '}';
+                }
+
+                return implode('', $expression);
+            }
         }
 
-        $getterExpression = $this->getMirrorProperty()->getGetterExpression('data', $getterSeparator);
-
-        return $this->getSetterExpression($getterExpression, $variableName, $setterSeparator, $validatorGroups);
+        return $this->getSetterExpression(
+            $this->getMirrorProperty()->getGetterExpression('data', $getterSeparator),
+            $variableName,
+            $setterSeparator,
+            $validatorGroups,
+            $forcedOrigin,
+            $forceRootVariable
+        );
     }
 
     /**
      * @param string[]|null $validatorGroups
      */
-    public function getSetterExpression(string $getterExpression, string $variableName, ?string $mapSeparator = null, ?array $validatorGroups = null, ?string $forcedOrigin = null): string
+    public function getSetterExpression(string $getterExpression, string $variableName, ?string $mapSeparator = null, ?array $validatorGroups = null, ?string $forcedOrigin = null, bool $forceRootVariable = false): string
     {
         if (!empty($this->validator->constraints)) {
             $getterExpression = sprintf(
@@ -278,8 +378,8 @@ class Property
                 $validatorGroups ? var_export($validatorGroups, true) : 'null',
                 $this->getPath('.'),
                 $this->isNullable()
-                    ? sprintf('%s ?? null', $this->doGetSetterExpression('$var', $variableName, $mapSeparator, $forcedOrigin))
-                    : $this->doGetSetterExpression('$var', $variableName, $mapSeparator, $forcedOrigin)
+                    ? sprintf('%s ?? null', $this->doGetSetterExpression('$var', $variableName, $mapSeparator, $forcedOrigin, $forceRootVariable))
+                    : $this->doGetSetterExpression('$var', $variableName, $mapSeparator, $forcedOrigin, $forceRootVariable)
             );
         }
         try {
@@ -289,37 +389,37 @@ class Property
 
         if (isset($defaultValue)) {
             return $this->isNullable()
-                ? sprintf('%s ?? %s ?? null', $this->doGetSetterExpression($getterExpression, $variableName, $mapSeparator, $forcedOrigin), var_export($defaultValue, true))
-                : sprintf('%s ?? %s', $this->doGetSetterExpression($getterExpression, $variableName, $mapSeparator, $forcedOrigin), var_export($defaultValue, true));
+                ? sprintf('%s ?? %s ?? null', $this->doGetSetterExpression($getterExpression, $variableName, $mapSeparator, $forcedOrigin, $forceRootVariable), var_export($defaultValue, true))
+                : sprintf('%s ?? %s', $this->doGetSetterExpression($getterExpression, $variableName, $mapSeparator, $forcedOrigin, $forceRootVariable), var_export($defaultValue, true));
         }
 
         return ($this->isNullable()
-            ? sprintf('%s ?? null', $this->doGetSetterExpression($getterExpression, $variableName, $mapSeparator, $forcedOrigin))
-            : $this->doGetSetterExpression($getterExpression, $variableName, $mapSeparator, $forcedOrigin)).';';
+            ? sprintf('%s ?? null', $this->doGetSetterExpression($getterExpression, $variableName, $mapSeparator, $forcedOrigin, $forceRootVariable))
+            : $this->doGetSetterExpression($getterExpression, $variableName, $mapSeparator, $forcedOrigin, $forceRootVariable)).';';
     }
 
-    private function doGetSetterExpression(string $getterExpression, string $variableName, ?string $mapSeparator = null, ?string $forcedOrigin = null): string
+    private function doGetSetterExpression(string $getterExpression, string $variableName, ?string $mapSeparator = null, ?string $forcedOrigin = null, bool $forceRootVariable = false): string
     {
         $getterExpression = $this->decorateGetterExpressionWithCallbacks(self::AS_DESTINATION, $getterExpression);
         if (self::ORIGIN_ARRAY === ($forcedOrigin ?? $this->origin)) {
-            return sprintf('$%s[\'%s\'] = %s', $variableName, $this->getPath('\'][\''), $getterExpression);
+            return sprintf('$%s[\'%s\'] = %s', $variableName, $this->getPath('\'][\'', $forceRootVariable), $getterExpression);
         }
         if (self::ORIGIN_OBJECT === ($forcedOrigin ?? $this->origin)) {
-            return sprintf('$%s->%s = %s', $variableName, $this->getPath('->'), $getterExpression);
+            return sprintf('$%s->%s = %s', $variableName, $this->getPath('->', $forceRootVariable), $getterExpression);
         }
         if (self::ORIGIN_MAP === ($forcedOrigin ?? $this->origin)) {
             if (null === $mapSeparator) {
                 throw new \InvalidArgumentException('Map separator is required for map.');
             }
 
-            return sprintf('$%s[\'%s\'] = %s', $variableName, $this->getPath($mapSeparator), $getterExpression);
+            return sprintf('$%s[\'%s\'] = %s', $variableName, $this->getPath($mapSeparator, $forceRootVariable), $getterExpression);
         }
         if (self::ORIGIN_MAP_OBJECT === ($forcedOrigin ?? $this->origin)) {
             if (null === $mapSeparator) {
                 throw new \InvalidArgumentException('Map separator is required for map.');
             }
 
-            return sprintf('$%s->%s = %s', $variableName, $this->getPath($mapSeparator), $getterExpression);
+            return sprintf('$%s->%s = %s', $variableName, $this->getPath($mapSeparator, $forceRootVariable), $getterExpression);
         }
         if (self::ORIGIN_CLASS_OBJECT === ($forcedOrigin ?? $this->origin)) {
             if (null === $this->originClass) {
