@@ -15,7 +15,7 @@ trait GetClassIfClassType
 
         if ($type instanceof \ReflectionNamedType) {
             $typeName = $type->getName();
-            if (class_exists($typeName)) {
+            if (class_exists($typeName, false)) {
                 /* @phpstan-ignore-next-line */
                 return '\\'.ltrim($typeName, '\\');
             }

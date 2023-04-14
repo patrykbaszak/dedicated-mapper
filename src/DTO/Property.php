@@ -223,8 +223,9 @@ class Property
             $getterMethods = array_filter(
                 [
                     $this->mapper?->accessor?->getter,
-                    'get'.ucfirst($this->name),
-                    'is'.ucfirst($this->name),
+                    $this->getMirrorProperty()?->mapper?->accessor?->getter,
+                    'get' . ucfirst($this->name),
+                    'is' . ucfirst($this->name),
                     $this->name,
                 ],
                 fn ($method) => $method && method_exists($this->originClass, $method)
@@ -251,21 +252,57 @@ class Property
     /**
      * @param string[]|null $validatorGroups
      */
-    public function getPropertyExpression(string $variableName, ?array $validatorGroups = null, ?string $setterSeparator = null, ?string $getterSeparator = null, ?string $forcedOrigin = null, bool $forceRootVariable = false): string
+    public function getPropertyExpression(string $variableName, ?array $validatorGroups = null, ?string $setterSeparator = null, ?string $getterSeparator = null, ?string $forcedOrigin = null, bool $forceRootVariable = false, string $sourceVariableName = 'data'): string
     {
         if ($this->isCollection() && $this->hasChildren()) {
-            return '';
+            if (count($this->children) > 1) {
+                throw new \LogicException('Collection with more than one child is not supported.');
+            }
+            $child = reset($this->children);
+            $childPropertyInputVariableName = sprintf('%sInput', $this->getName());
+            $expression = [sprintf('$%s = %s;', $childPropertyInputVariableName, $this->getMirrorProperty()->getGetterExpression($sourceVariableName, $getterSeparator, $forcedOrigin, $forceRootVariable))];
+            $expression[] = sprintf('if (is_array($%s)) {', $childPropertyInputVariableName);
+            $expression[] = sprintf('$%s = [];', $this->getName());
+            $expression[] = sprintf('foreach ($%s as $%s) {', $childPropertyInputVariableName, $childVariableName = sprintf('%sItem', $this->getName()));
+            $childPropertyVariableName = sprintf('%sProperty', $childVariableName);
+            $expression[] = $child->getPropertyExpression(
+                $childPropertyVariableName,
+                $validatorGroups,
+                $setterSeparator,
+                $getterSeparator,
+                $forcedOrigin,
+                true,
+                $childVariableName
+            );
+            $expression[] = sprintf('$%s[] = $%s;', $this->getName(), $childPropertyVariableName);
+            $expression[] = '}';
+            $expression[] = '} else {';
+            if ($this->isNullable()) {
+                $expression[] = sprintf('$%s = null;', $this->getName());
+            } else {
+                $expression[] = sprintf('throw new \\InvalidArgumentException(\'%s is not an array.\');', $this->getName());
+            }
+            $expression[] = '}';
+
+            return implode('', $expression) .
+                $this->getSetterExpression(
+                    '$' . $this->getName(),
+                    $variableName,
+                    $setterSeparator,
+                    $validatorGroups,
+                ) .
+                sprintf('unset($%s, $%s);', $this->getName(), $childPropertyVariableName);
         }
 
         /* If it is an class object */
         if ($this->hasChildren()) {
             if (self::ORIGIN_CLASS_OBJECT === $this->origin) {
                 if (null === ($class = $this->getClassIfClassType($this->reflectionParameter?->getType() ?? $this->reflection?->getType()))) {
-                    throw new \LogicException('Unable to get class for property '.$this->name);
+                    throw new \LogicException('Unable to get class for property ' . $this->name);
                 }
                 $constructorArguments = [];
                 $constructorVariableName = sprintf('%sConstructorParameters', $this->name);
-                $expression = [sprintf('if (!($%s = %s) instanceof %s) {', $this->getName(), $this->getMirrorProperty()->getGetterExpression('data', $getterSeparator), $class)];
+                $expression = [sprintf('if (!($%s = %s) instanceof %s) {', $this->getName(), $this->getMirrorProperty()->getGetterExpression($sourceVariableName, $getterSeparator), $class)];
                 $expression[] = sprintf('$%s = [];', $constructorVariableName);
                 foreach ($this->children as $child) {
                     if (null !== $child->reflectionParameter) {
@@ -276,7 +313,8 @@ class Property
                             null,
                             $getterSeparator,
                             'array',
-                            true
+                            true,
+                            $sourceVariableName
                         );
                     }
                 }
@@ -289,14 +327,15 @@ class Property
                             $setterSeparator,
                             $getterSeparator,
                             null,
-                            true
+                            true,
+                            $sourceVariableName
                         );
                     }
                 }
                 $expression[] = '}';
 
-                return implode('', $expression).$this->getSetterExpression(
-                    '$'.$this->getName(),
+                return implode('', $expression) . $this->getSetterExpression(
+                    '$' . $this->getName(),
                     $variableName,
                     $setterSeparator,
                     $validatorGroups,
@@ -304,21 +343,34 @@ class Property
                     $forceRootVariable
                 );
             } else {
-                $expression = [$this->getSetterExpression(
-                    in_array($this->origin, [self::ORIGIN_ARRAY, self::ORIGIN_MAP], true) ? '[]' : '(object)[]',
-                    $variableName,
-                    $setterSeparator,
-                    $validatorGroups,
-                    $forcedOrigin,
-                    $forceRootVariable
-                )];
+                $expression = [
+                    $forceRootVariable ?
+                        sprintf(
+                            '$%s = %s;',
+                            $variableName,
+                            in_array(
+                                $this->origin,
+                                [self::ORIGIN_ARRAY, self::ORIGIN_MAP],
+                                true
+                            ) ?
+                                '[]' : '(object)[]'
+                        ) :
+                        $this->getSetterExpression(
+                            in_array($this->origin, [self::ORIGIN_ARRAY, self::ORIGIN_MAP], true) ? '[]' : '(object)[]',
+                            $variableName,
+                            $setterSeparator,
+                            $validatorGroups,
+                            $forcedOrigin,
+                            false
+                        )
+                ];
                 if (null !== ($class = $this->getClassIfClassType(
                     $this->getMirrorProperty()->reflectionParameter?->getType() ??
                         $this->getMirrorProperty()->reflection?->getType() ??
                         $this->reflectionParameter?->getType() ??
                         $this->reflection?->getType()
-                ))) {
-                    $expression[] = sprintf('if (($%s = %s) instanceof %s) {', $this->getName(), $this->getMirrorProperty()->getGetterExpression('data', $getterSeparator), $class);
+                )) && self::ORIGIN_CLASS_OBJECT !== $this->getMirrorProperty()?->origin) {
+                    $expression[] = sprintf('if (($%s = %s) instanceof %s) {', $this->getName(), $this->getMirrorProperty()->getGetterExpression($sourceVariableName, $getterSeparator), $class);
                     foreach ($this->children as $child) {
                         $expression[] = $child->getSetterExpression(
                             $child->getMirrorProperty()->getGetterExpression($this->getName(), $getterSeparator, self::ORIGIN_CLASS_OBJECT, true),
@@ -326,22 +378,46 @@ class Property
                             $setterSeparator,
                             $validatorGroups,
                             $forcedOrigin,
-                            $forceRootVariable
+                            false
                         );
                     }
                     $expression[] = '} else {';
                 }
                 foreach ($this->children as $child) {
+                    if ($child->hasChildren()) {
+                        $childVariableName = sprintf('%s%s', $variableName, ucfirst($child->getName()));
+                        $childSourceVariableName = sprintf('%s%s', $sourceVariableName, ucfirst($child->getName()));
+                        $expression[] = sprintf('$%s = %s;', $childSourceVariableName, $child->getMirrorProperty()->getGetterExpression($sourceVariableName, $getterSeparator));
+                        $expression[] = $child->getPropertyExpression(
+                            $childVariableName,
+                            $validatorGroups,
+                            $setterSeparator,
+                            $getterSeparator,
+                            $forcedOrigin,
+                            $forceRootVariable,
+                            $childSourceVariableName
+                        );
+                        $expression[] = $child->getSetterExpression(
+                            '$' . $childVariableName,
+                            $variableName,
+                            $setterSeparator,
+                            $validatorGroups,
+                            $forcedOrigin,
+                            true
+                        );
+                        continue;
+                    }
                     $expression[] = $child->getPropertyExpression(
                         $variableName,
                         $validatorGroups,
                         $setterSeparator,
                         $getterSeparator,
                         $forcedOrigin,
-                        $forceRootVariable
+                        $forceRootVariable,
+                        $sourceVariableName
                     );
                 }
-                if (null !== $class) {
+                if (null !== $class && self::ORIGIN_CLASS_OBJECT !== $this->getMirrorProperty()?->origin) {
                     $expression[] = '}';
                 }
 
@@ -350,7 +426,7 @@ class Property
         }
 
         return $this->getSetterExpression(
-            $this->getMirrorProperty()->getGetterExpression('data', $getterSeparator),
+            $this->getMirrorProperty()->getGetterExpression($sourceVariableName, $getterSeparator),
             $variableName,
             $setterSeparator,
             $validatorGroups,
@@ -395,7 +471,7 @@ class Property
 
         return ($this->isNullable()
             ? sprintf('%s ?? null', $this->doGetSetterExpression($getterExpression, $variableName, $mapSeparator, $forcedOrigin, $forceRootVariable))
-            : $this->doGetSetterExpression($getterExpression, $variableName, $mapSeparator, $forcedOrigin, $forceRootVariable)).';';
+            : $this->doGetSetterExpression($getterExpression, $variableName, $mapSeparator, $forcedOrigin, $forceRootVariable)) . ';';
     }
 
     private function doGetSetterExpression(string $getterExpression, string $variableName, ?string $mapSeparator = null, ?string $forcedOrigin = null, bool $forceRootVariable = false): string
@@ -429,7 +505,7 @@ class Property
             $setterMethods = array_filter(
                 [
                     $this->mapper?->accessor?->setter,
-                    'set'.ucfirst($this->name),
+                    'set' . ucfirst($this->name),
                     $this->name,
                 ],
                 fn ($method) => $method && method_exists($this->originClass, $method)

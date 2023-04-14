@@ -11,14 +11,14 @@ class CollectionDataSet
         public readonly array $simpleDataSets,
         /** @var SimpleDataSet[] $emptySimpleDataSets */
         public readonly array $emptySimpleDataSets = [],
-        /** @var SimpleDataSet[] $simpleDataSetsWithNulls */
+        /** @var array<null|SimpleDataSet> $simpleDataSetsWithNulls */
         public readonly array $simpleDataSetsWithNulls = [],
         /** @var NestedDataSet[] $nestedDataSets */
         public readonly array $nestedDataSets = [],
     ) {
     }
 
-    public function getDataSet(): array
+    public static function getDataSet(): array
     {
         return [
             'class' => __CLASS__,
@@ -66,7 +66,7 @@ class CollectionDataSet
                             null,
                             new \DateTime(),
                             'test2'
-                        )
+                        ),
                     ],
                     [],
                     [
@@ -127,9 +127,9 @@ class CollectionDataSet
                                 new \DateTime(),
                                 'test2'
                             )
-                        )
+                        ),
                     ]
-                )
+                ),
             ],
             'anonymousObjects' => [
                 (object) [
@@ -175,7 +175,7 @@ class CollectionDataSet
                             'nullableDateTime' => null,
                             'createdAt' => new \DateTime(),
                             'target' => 'test2',
-                        ]
+                        ],
                     ],
                     'emptySimpleDataSets' => [],
                     'simpleDataSetsWithNulls' => [
@@ -208,7 +208,7 @@ class CollectionDataSet
                                 'nullableDateTime' => new \DateTime(),
                                 'createdAt' => new \DateTime(),
                                 'target' => 'test',
-                            ]
+                            ],
                         ],
                         (object) [
                             'text' => 'text',
@@ -235,9 +235,9 @@ class CollectionDataSet
                                 'nullableDateTime' => null,
                                 'createdAt' => new \DateTime(),
                                 'target' => 'test2',
-                            ]
-                        ]
-                    ]
+                            ],
+                        ],
+                    ],
                 ],
             ],
             'arrays' => [
@@ -284,7 +284,7 @@ class CollectionDataSet
                             'nullableDateTime' => null,
                             'createdAt' => new \DateTime(),
                             'target' => 'test2',
-                        ]
+                        ],
                     ],
                     'emptySimpleDataSets' => [],
                     'simpleDataSetsWithNulls' => [
@@ -317,7 +317,7 @@ class CollectionDataSet
                                 'nullableDateTime' => new \DateTime(),
                                 'createdAt' => new \DateTime(),
                                 'target' => 'test',
-                            ]
+                            ],
                         ],
                         [
                             'text' => 'text',
@@ -344,9 +344,9 @@ class CollectionDataSet
                                 'nullableDateTime' => null,
                                 'createdAt' => new \DateTime(),
                                 'target' => 'test2',
-                            ]
-                        ]
-                    ]
+                            ],
+                        ],
+                    ],
                 ],
             ],
             'maps' => [
@@ -394,7 +394,7 @@ class CollectionDataSet
                                 'nullableDateTime' => null,
                                 'createdAt' => new \DateTime(),
                                 'target' => 'test2',
-                            ]
+                            ],
                         ],
                         'emptySimpleDataSets' => [],
                         'simpleDataSetsWithNulls' => [
@@ -451,11 +451,11 @@ class CollectionDataSet
                                 'simpleDataSet_nullableDateTime' => null,
                                 'simpleDataSet_createdAt' => new \DateTime(),
                                 'simpleDataSet_target' => 'test2',
-                            ]
-                        ]
+                            ],
+                        ],
                     ],
-                ]
-            ]
+                ],
+            ],
         ];
     }
 }

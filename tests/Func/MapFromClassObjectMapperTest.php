@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace PBaszak\MessengerMapperBundle\Tests\Func;
 
 use PBaszak\MessengerMapperBundle\Mapper;
+use PBaszak\MessengerMapperBundle\Tests\Assets\CollectionDataSet;
 use PBaszak\MessengerMapperBundle\Tests\Assets\NestedDataSet;
 use PBaszak\MessengerMapperBundle\Tests\Assets\SimpleDataSet;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -15,12 +16,186 @@ class MapfromClassObjectMapperTest extends KernelTestCase
     private Mapper $mapper;
     private array $dataSet;
     private array $nestedDataSet;
+    private array $collectionDataSet;
 
     protected function setUp(): void
     {
         $this->mapper = self::getContainer()->get(Mapper::class);
         $this->dataSet = SimpleDataSet::getDataSet();
         $this->nestedDataSet = NestedDataSet::getDataSet();
+        $this->collectionDataSet = CollectionDataSet::getDataSet();
+    }
+
+    private function assertEqualsSimpleDataSetClassObjectToClassObject(SimpleDataSet $expected, SimpleDataSet $actual): void
+    {
+        self::assertEquals($expected->text, $actual->text);
+        self::assertEquals($expected->getNumber(), $actual->getNumber());
+        self::assertEquals($expected->bool, $actual->bool);
+        self::assertEquals($expected->getNullable(), $actual->getNullable());
+        self::assertEquals($expected->nullableInt, $actual->nullableInt);
+        self::assertEquals($expected->getNullableBool(), $actual->getNullableBool());
+        self::assertEquals($expected->nullableFloat, $actual->nullableFloat);
+        self::assertEquals($expected->getNullableArray(), $actual->getNullableArray());
+        self::assertEquals($expected->nullableObject, $actual->nullableObject);
+        self::assertEquals($expected->getNullableDateTime(), $actual->getNullableDateTime());
+        self::assertEquals($expected->dateTime, $actual->dateTime);
+        self::assertEquals($expected->targetProperty, $actual->targetProperty);
+    }
+
+    private function assertEqualsSimpleDataSetClassObjectToAnonymousObject(SimpleDataSet $expected, object $actual): void
+    {
+        self::assertEquals($expected->text, $actual->text);
+        self::assertEquals($expected->getNumber(), $actual->number);
+        self::assertEquals($expected->bool, $actual->bool);
+        self::assertEquals($expected->getNullable(), $actual->nullable);
+        self::assertEquals($expected->nullableInt, $actual->nullableInt);
+        self::assertEquals($expected->getNullableBool(), $actual->nullableBool);
+        self::assertEquals($expected->nullableFloat, $actual->nullableFloat);
+        self::assertEquals($expected->getNullableArray(), $actual->nullableArray);
+        self::assertEquals($expected->nullableObject, $actual->nullableObject);
+        self::assertEquals($expected->getNullableDateTime(), $actual->nullableDateTime);
+        self::assertEquals($expected->dateTime, $actual->dateTime);
+        self::assertEquals($expected->targetProperty, $actual->someTargetedProperty);
+    }
+
+    private function assertEqualsSimpleDataSetClassObjectToArray(SimpleDataSet $expected, array $actual): void
+    {
+        self::assertEquals($expected->text, $actual['text']);
+        self::assertEquals($expected->getNumber(), $actual['number']);
+        self::assertEquals($expected->bool, $actual['bool']);
+        self::assertEquals($expected->getNullable(), $actual['nullable']);
+        self::assertEquals($expected->nullableInt, $actual['nullableInt']);
+        self::assertEquals($expected->getNullableBool(), $actual['nullableBool']);
+        self::assertEquals($expected->nullableFloat, $actual['nullableFloat']);
+        self::assertEquals($expected->getNullableArray(), $actual['nullableArray']);
+        self::assertEquals($expected->nullableObject, $actual['nullableObject']);
+        self::assertEquals($expected->getNullableDateTime(), $actual['nullableDateTime']);
+        self::assertEquals($expected->dateTime, $actual['dateTime']);
+        self::assertEquals($expected->targetProperty, $actual['someTargetedProperty']);
+    }
+
+    private function assertEqualsSimpleDataSetClassObjectToMap(SimpleDataSet $expected, array $actual, string $prefix = ''): void
+    {
+        self::assertEquals($expected->text, $actual[$prefix . 'text']);
+        self::assertEquals($expected->getNumber(), $actual[$prefix . 'number']);
+        self::assertEquals($expected->bool, $actual[$prefix . 'bool']);
+        self::assertEquals($expected->getNullable(), $actual[$prefix . 'nullable']);
+        self::assertEquals($expected->nullableInt, $actual[$prefix . 'nullableInt']);
+        self::assertEquals($expected->getNullableBool(), $actual[$prefix . 'nullableBool']);
+        self::assertEquals($expected->nullableFloat, $actual[$prefix . 'nullableFloat']);
+        self::assertEquals($expected->getNullableArray(), $actual[$prefix . 'nullableArray']);
+        self::assertEquals($expected->nullableObject, $actual[$prefix . 'nullableObject']);
+        self::assertEquals($expected->getNullableDateTime(), $actual[$prefix . 'nullableDateTime']);
+        self::assertEquals($expected->dateTime, $actual[$prefix . 'dateTime']);
+        self::assertEquals($expected->targetProperty, $actual[$prefix . 'someTargetedProperty']);
+    }
+
+    private function assertEqualsNestedDataSetClassObjectToClassObject(NestedDataSet $expected, NestedDataSet $actual): void
+    {
+        self::assertEquals($expected->text, $actual->text);
+        self::assertEquals($expected->getNumber(), $actual->getNumber());
+        self::assertEquals($expected->bool, $actual->bool);
+        self::assertEquals($expected->getNullable(), $actual->getNullable());
+        self::assertEquals($expected->nullableInt, $actual->nullableInt);
+        self::assertEquals($expected->isTrue(), $actual->isTrue());
+        self::assertEquals($expected->nullableFloat, $actual->nullableFloat);
+        self::assertEquals($expected->getNullableArray(), $actual->getNullableArray());
+        self::assertEquals($expected->nullableObject, $actual->nullableObject);
+        self::assertEquals($expected->getNullableDateTime(), $actual->getNullableDateTime());
+        self::assertEquals($expected->dateTime, $actual->dateTime);
+        $nestedObject = $actual->simpleDataSet;
+        if ($expected->simpleDataSet instanceof SimpleDataSet) {
+            $originNestedObject = $expected->simpleDataSet;
+        } else {
+            $originNestedArray = (array) $expected->simpleDataSet;
+            $originNestedArray['targetProperty'] = $originNestedArray['someTargetedProperty'] ?? $originNestedArray['targetProperty'];
+            unset($originNestedArray['someTargetedProperty']);
+            $originNestedObject = new SimpleDataSet(...$originNestedArray);
+        }
+        $this->assertEqualsSimpleDataSetClassObjectToClassObject($originNestedObject, $nestedObject);
+    }
+
+    private function assertEqualsNestedDataSetClassObjectToAnonymousObject(NestedDataSet $expected, object $actual): void
+    {
+        self::assertEquals($expected->text, $actual->text);
+        self::assertEquals($expected->getNumber(), $actual->number);
+        self::assertEquals($expected->bool, $actual->bool);
+        self::assertEquals($expected->getNullable(), $actual->nullable);
+        self::assertEquals($expected->nullableInt, $actual->nullableInt);
+        self::assertEquals($expected->isTrue(), $actual->nullableBool);
+        self::assertEquals($expected->nullableFloat, $actual->nullableFloat);
+        self::assertEquals($expected->getNullableArray(), $actual->nullableArray);
+        self::assertEquals($expected->nullableObject, $actual->nullableObject);
+        self::assertEquals($expected->getNullableDateTime(), $actual->nullableDateTime);
+        self::assertEquals($expected->dateTime, $actual->dateTime);
+        $nestedObject = $actual->someTargetedProperty;
+        self::assertNotInstanceOf(SimpleDataSet::class, $nestedObject);
+        if ($expected->simpleDataSet instanceof SimpleDataSet) {
+            $originNestedObject = $expected->simpleDataSet;
+        } else {
+            $originNestedArray = (array) $expected->simpleDataSet;
+            $originNestedArray['targetProperty'] = $originNestedArray['someTargetedProperty'] ?? $originNestedArray['targetProperty'];
+            unset($originNestedArray['someTargetedProperty']);
+            $originNestedObject = new SimpleDataSet(...$originNestedArray);
+        }
+        $this->assertEqualsSimpleDataSetClassObjectToAnonymousObject($originNestedObject, $nestedObject);
+    }
+
+    private function assertEqualsNestedDataSetClassObjectToArray(NestedDataSet $expected, array $actual): void
+    {
+        self::assertEquals($expected->text, $actual['text']);
+        self::assertEquals($expected->getNumber(), $actual['number']);
+        self::assertEquals($expected->bool, $actual['bool']);
+        self::assertEquals($expected->getNullable(), $actual['nullable']);
+        self::assertEquals($expected->nullableInt, $actual['nullableInt']);
+        self::assertEquals($expected->isTrue(), $actual['nullableBool']);
+        self::assertEquals($expected->nullableFloat, $actual['nullableFloat']);
+        self::assertEquals($expected->getNullableArray(), $actual['nullableArray']);
+        self::assertEquals($expected->nullableObject, $actual['nullableObject']);
+        self::assertEquals($expected->getNullableDateTime(), $actual['nullableDateTime']);
+        self::assertEquals($expected->dateTime, $actual['dateTime']);
+        $nestedObject = $actual['someTargetedProperty'];
+        self::assertIsArray($nestedObject);
+        if ($expected->simpleDataSet instanceof SimpleDataSet) {
+            $originNestedObject = $expected->simpleDataSet;
+        } else {
+            $originNestedArray = (array) $expected->simpleDataSet;
+            $originNestedArray['targetProperty'] = $originNestedArray['someTargetedProperty'] ?? $originNestedArray['targetProperty'];
+            unset($originNestedArray['someTargetedProperty']);
+            $originNestedObject = new SimpleDataSet(...$originNestedArray);
+        }
+        $this->assertEqualsSimpleDataSetClassObjectToArray($originNestedObject, $nestedObject);
+    }
+
+    private function assertEqualsNestedDataSetClassObjectToMap(NestedDataSet $expected, array $actual, string $separator = '.'): void
+    {
+        self::assertEquals($expected->text, $actual['text']);
+        self::assertEquals($expected->getNumber(), $actual['number']);
+        self::assertEquals($expected->bool, $actual['bool']);
+        self::assertEquals($expected->getNullable(), $actual['nullable']);
+        self::assertEquals($expected->nullableInt, $actual['nullableInt']);
+        self::assertEquals($expected->isTrue(), $actual['nullableBool']);
+        self::assertEquals($expected->nullableFloat, $actual['nullableFloat']);
+        self::assertEquals($expected->getNullableArray(), $actual['nullableArray']);
+        self::assertEquals($expected->nullableObject, $actual['nullableObject']);
+        self::assertEquals($expected->getNullableDateTime(), $actual['nullableDateTime']);
+        self::assertEquals($expected->dateTime, $actual['dateTime']);
+
+        if ($expected->simpleDataSet instanceof SimpleDataSet) {
+            $originNestedObject = $expected->simpleDataSet;
+        } else {
+            $originNestedArray = (array) $expected->simpleDataSet;
+            $originNestedArray['targetProperty'] = $originNestedArray['someTargetedProperty'] ?? $originNestedArray['targetProperty'];
+            unset($originNestedArray['someTargetedProperty']);
+            $originNestedObject = new SimpleDataSet(...$originNestedArray);
+        }
+
+        $prefix = 'someTargetedProperty' . $separator;
+        $this->assertEqualsSimpleDataSetClassObjectToMap(
+            $originNestedObject,
+            array_filter($actual, fn (string $k) => str_starts_with($k, $prefix), ARRAY_FILTER_USE_KEY),
+            $prefix
+        );
     }
 
     /** @test */
@@ -32,20 +207,8 @@ class MapfromClassObjectMapperTest extends KernelTestCase
         foreach ($objects as $object) {
             /** @var SimpleDataSet $mappedObject */
             $mappedObject = $this->mapper->fromClassObjectToClassObject($object, $class);
-
             self::assertInstanceOf($class, $mappedObject);
-            self::assertEquals($object->text, $mappedObject->text);
-            self::assertEquals($object->getNumber(), $mappedObject->getNumber());
-            self::assertEquals($object->bool, $mappedObject->bool);
-            self::assertEquals($object->getNullable(), $mappedObject->getNullable());
-            self::assertEquals($object->nullableInt, $mappedObject->nullableInt);
-            self::assertEquals($object->getNullableBool(), $mappedObject->getNullableBool());
-            self::assertEquals($object->nullableFloat, $mappedObject->nullableFloat);
-            self::assertEquals($object->getNullableArray(), $mappedObject->getNullableArray());
-            self::assertEquals($object->nullableObject, $mappedObject->nullableObject);
-            self::assertEquals($object->getNullableDateTime(), $mappedObject->getNullableDateTime());
-            self::assertEquals($object->dateTime, $mappedObject->dateTime);
-            self::assertEquals($object->targetProperty, $mappedObject->targetProperty);
+            $this->assertEqualsSimpleDataSetClassObjectToClassObject($object, $mappedObject);
         }
     }
 
@@ -57,20 +220,8 @@ class MapfromClassObjectMapperTest extends KernelTestCase
 
         foreach ($objects as $object) {
             $mappedObject = $this->mapper->fromClassObjectToAnonymousObject($object, $class);
-
             self::assertNotInstanceOf($class, $mappedObject);
-            self::assertEquals($object->text, $mappedObject->text);
-            self::assertEquals($object->getNumber(), $mappedObject->number);
-            self::assertEquals($object->bool, $mappedObject->bool);
-            self::assertEquals($object->getNullable(), $mappedObject->nullable);
-            self::assertEquals($object->nullableInt, $mappedObject->nullableInt);
-            self::assertEquals($object->getNullableBool(), $mappedObject->nullableBool);
-            self::assertEquals($object->nullableFloat, $mappedObject->nullableFloat);
-            self::assertEquals($object->getNullableArray(), $mappedObject->nullableArray);
-            self::assertEquals($object->nullableObject, $mappedObject->nullableObject);
-            self::assertEquals($object->getNullableDateTime(), $mappedObject->nullableDateTime);
-            self::assertEquals($object->dateTime, $mappedObject->dateTime);
-            self::assertEquals($object->targetProperty, $mappedObject->someTargetedProperty);
+            $this->assertEqualsSimpleDataSetClassObjectToAnonymousObject($object, $mappedObject);
         }
     }
 
@@ -82,20 +233,8 @@ class MapfromClassObjectMapperTest extends KernelTestCase
 
         foreach ($objects as $object) {
             $mappedObject = $this->mapper->fromClassObjectToArray($object, $class);
-
             self::assertIsArray($mappedObject);
-            self::assertEquals($object->text, $mappedObject['text']);
-            self::assertEquals($object->getNumber(), $mappedObject['number']);
-            self::assertEquals($object->bool, $mappedObject['bool']);
-            self::assertEquals($object->getNullable(), $mappedObject['nullable']);
-            self::assertEquals($object->nullableInt, $mappedObject['nullableInt']);
-            self::assertEquals($object->getNullableBool(), $mappedObject['nullableBool']);
-            self::assertEquals($object->nullableFloat, $mappedObject['nullableFloat']);
-            self::assertEquals($object->getNullableArray(), $mappedObject['nullableArray']);
-            self::assertEquals($object->nullableObject, $mappedObject['nullableObject']);
-            self::assertEquals($object->getNullableDateTime(), $mappedObject['nullableDateTime']);
-            self::assertEquals($object->dateTime, $mappedObject['dateTime']);
-            self::assertEquals($object->targetProperty, $mappedObject['someTargetedProperty']);
+            $this->assertEqualsSimpleDataSetClassObjectToArray($object, $mappedObject);
         }
     }
 
@@ -107,20 +246,8 @@ class MapfromClassObjectMapperTest extends KernelTestCase
 
         foreach ($objects as $object) {
             $mappedObject = $this->mapper->fromClassObjectToArray($object, $class, 'map{.}');
-
             self::assertIsArray($mappedObject);
-            self::assertEquals($object->text, $mappedObject['text']);
-            self::assertEquals($object->getNumber(), $mappedObject['number']);
-            self::assertEquals($object->bool, $mappedObject['bool']);
-            self::assertEquals($object->getNullable(), $mappedObject['nullable']);
-            self::assertEquals($object->nullableInt, $mappedObject['nullableInt']);
-            self::assertEquals($object->getNullableBool(), $mappedObject['nullableBool']);
-            self::assertEquals($object->nullableFloat, $mappedObject['nullableFloat']);
-            self::assertEquals($object->getNullableArray(), $mappedObject['nullableArray']);
-            self::assertEquals($object->nullableObject, $mappedObject['nullableObject']);
-            self::assertEquals($object->getNullableDateTime(), $mappedObject['nullableDateTime']);
-            self::assertEquals($object->dateTime, $mappedObject['dateTime']);
-            self::assertEquals($object->targetProperty, $mappedObject['someTargetedProperty']);
+            $this->assertEqualsSimpleDataSetClassObjectToMap($object, $mappedObject);
         }
     }
 
@@ -133,34 +260,8 @@ class MapfromClassObjectMapperTest extends KernelTestCase
         foreach ($objects as $object) {
             /** @var NestedDataSet $mappedObject */
             $mappedObject = $this->mapper->fromClassObjectToClassObject($object, $class);
-
             self::assertInstanceOf($class, $mappedObject);
-            self::assertEquals($object->text, $mappedObject->text);
-            self::assertEquals($object->getNumber(), $mappedObject->getNumber());
-            self::assertEquals($object->bool, $mappedObject->bool);
-            self::assertEquals($object->getNullable(), $mappedObject->getNullable());
-            self::assertEquals($object->nullableInt, $mappedObject->nullableInt);
-            self::assertEquals($object->isTrue(), $mappedObject->isTrue());
-            self::assertEquals($object->nullableFloat, $mappedObject->nullableFloat);
-            self::assertEquals($object->getNullableArray(), $mappedObject->getNullableArray());
-            self::assertEquals($object->nullableObject, $mappedObject->nullableObject);
-            self::assertEquals($object->getNullableDateTime(), $mappedObject->getNullableDateTime());
-            self::assertEquals($object->dateTime, $mappedObject->dateTime);
-
-            $nestedObject = $mappedObject->simpleDataSet;
-            $nestedOriginArray = $object->simpleDataSet instanceof SimpleDataSet ? $object->simpleDataSet->toArray() : (array) $object->simpleDataSet;
-            self::assertEquals($nestedOriginArray['text'], $nestedObject->text);
-            self::assertEquals($nestedOriginArray['number'], $nestedObject->getNumber());
-            self::assertEquals($nestedOriginArray['bool'], $nestedObject->bool);
-            self::assertEquals($nestedOriginArray['nullable'], $nestedObject->getNullable());
-            self::assertEquals($nestedOriginArray['nullableInt'], $nestedObject->nullableInt);
-            self::assertEquals($nestedOriginArray['nullableBool'], $nestedObject->getNullableBool());
-            self::assertEquals($nestedOriginArray['nullableFloat'], $nestedObject->nullableFloat);
-            self::assertEquals($nestedOriginArray['nullableArray'], $nestedObject->getNullableArray());
-            self::assertEquals($nestedOriginArray['nullableObject'], $nestedObject->nullableObject);
-            self::assertEquals($nestedOriginArray['nullableDateTime'], $nestedObject->getNullableDateTime());
-            self::assertEquals($nestedOriginArray['dateTime'], $nestedObject->dateTime);
-            self::assertEquals($nestedOriginArray['someTargetedProperty'] ?? $nestedOriginArray['targetProperty'], $nestedObject->targetProperty);
+            $this->assertEqualsNestedDataSetClassObjectToClassObject($object, $mappedObject);
         }
     }
 
@@ -172,34 +273,8 @@ class MapfromClassObjectMapperTest extends KernelTestCase
 
         foreach ($objects as $object) {
             $mappedObject = $this->mapper->fromClassObjectToAnonymousObject($object, $class);
-
             self::assertNotInstanceOf($class, $mappedObject);
-            self::assertEquals($object->text, $mappedObject->text);
-            self::assertEquals($object->getNumber(), $mappedObject->number);
-            self::assertEquals($object->bool, $mappedObject->bool);
-            self::assertEquals($object->getNullable(), $mappedObject->nullable);
-            self::assertEquals($object->nullableInt, $mappedObject->nullableInt);
-            self::assertEquals($object->isTrue(), $mappedObject->nullableBool);
-            self::assertEquals($object->nullableFloat, $mappedObject->nullableFloat);
-            self::assertEquals($object->getNullableArray(), $mappedObject->nullableArray);
-            self::assertEquals($object->nullableObject, $mappedObject->nullableObject);
-            self::assertEquals($object->getNullableDateTime(), $mappedObject->nullableDateTime);
-            self::assertEquals($object->dateTime, $mappedObject->dateTime);
-
-            $nestedObject = $mappedObject->someTargetedProperty;
-            $nestedOriginArray = $object->simpleDataSet instanceof SimpleDataSet ? $object->simpleDataSet->toArray() : (array) $object->simpleDataSet;
-            self::assertEquals($nestedOriginArray['text'], $nestedObject->text);
-            self::assertEquals($nestedOriginArray['number'], $nestedObject->number);
-            self::assertEquals($nestedOriginArray['bool'], $nestedObject->bool);
-            self::assertEquals($nestedOriginArray['nullable'], $nestedObject->nullable);
-            self::assertEquals($nestedOriginArray['nullableInt'], $nestedObject->nullableInt);
-            self::assertEquals($nestedOriginArray['nullableBool'], $nestedObject->nullableBool);
-            self::assertEquals($nestedOriginArray['nullableFloat'], $nestedObject->nullableFloat);
-            self::assertEquals($nestedOriginArray['nullableArray'], $nestedObject->nullableArray);
-            self::assertEquals($nestedOriginArray['nullableObject'], $nestedObject->nullableObject);
-            self::assertEquals($nestedOriginArray['nullableDateTime'], $nestedObject->nullableDateTime);
-            self::assertEquals($nestedOriginArray['dateTime'], $nestedObject->dateTime);
-            self::assertEquals($nestedOriginArray['someTargetedProperty'] ?? $nestedOriginArray['targetProperty'], $nestedObject->someTargetedProperty);
+            $this->assertEqualsNestedDataSetClassObjectToAnonymousObject($object, $mappedObject);
         }
     }
 
@@ -211,34 +286,8 @@ class MapfromClassObjectMapperTest extends KernelTestCase
 
         foreach ($objects as $object) {
             $mappedObject = $this->mapper->fromClassObjectToArray($object, $class);
-
             self::assertIsArray($mappedObject);
-            self::assertEquals($object->text, $mappedObject['text']);
-            self::assertEquals($object->getNumber(), $mappedObject['number']);
-            self::assertEquals($object->bool, $mappedObject['bool']);
-            self::assertEquals($object->getNullable(), $mappedObject['nullable']);
-            self::assertEquals($object->nullableInt, $mappedObject['nullableInt']);
-            self::assertEquals($object->isTrue(), $mappedObject['nullableBool']);
-            self::assertEquals($object->nullableFloat, $mappedObject['nullableFloat']);
-            self::assertEquals($object->getNullableArray(), $mappedObject['nullableArray']);
-            self::assertEquals($object->nullableObject, $mappedObject['nullableObject']);
-            self::assertEquals($object->getNullableDateTime(), $mappedObject['nullableDateTime']);
-            self::assertEquals($object->dateTime, $mappedObject['dateTime']);
-
-            $nestedObject = $mappedObject['someTargetedProperty'];
-            $nestedOriginArray = $object->simpleDataSet instanceof SimpleDataSet ? $object->simpleDataSet->toArray() : (array) $object->simpleDataSet;
-            self::assertEquals($nestedOriginArray['text'], $nestedObject['text']);
-            self::assertEquals($nestedOriginArray['number'], $nestedObject['number']);
-            self::assertEquals($nestedOriginArray['bool'], $nestedObject['bool']);
-            self::assertEquals($nestedOriginArray['nullable'], $nestedObject['nullable']);
-            self::assertEquals($nestedOriginArray['nullableInt'], $nestedObject['nullableInt']);
-            self::assertEquals($nestedOriginArray['nullableBool'], $nestedObject['nullableBool']);
-            self::assertEquals($nestedOriginArray['nullableFloat'], $nestedObject['nullableFloat']);
-            self::assertEquals($nestedOriginArray['nullableArray'], $nestedObject['nullableArray']);
-            self::assertEquals($nestedOriginArray['nullableObject'], $nestedObject['nullableObject']);
-            self::assertEquals($nestedOriginArray['nullableDateTime'], $nestedObject['nullableDateTime']);
-            self::assertEquals($nestedOriginArray['dateTime'], $nestedObject['dateTime']);
-            self::assertEquals($nestedOriginArray['someTargetedProperty'] ?? $nestedOriginArray['targetProperty'], $nestedObject['someTargetedProperty']);
+            $this->assertEqualsNestedDataSetClassObjectToArray($object, $mappedObject);
         }
     }
 
@@ -250,33 +299,76 @@ class MapfromClassObjectMapperTest extends KernelTestCase
 
         foreach ($objects as $object) {
             $mappedObject = $this->mapper->fromClassObjectToArray($object, $class, 'map{.}');
-
             self::assertIsArray($mappedObject);
-            self::assertEquals($object->text, $mappedObject['text']);
-            self::assertEquals($object->getNumber(), $mappedObject['number']);
-            self::assertEquals($object->bool, $mappedObject['bool']);
-            self::assertEquals($object->getNullable(), $mappedObject['nullable']);
-            self::assertEquals($object->nullableInt, $mappedObject['nullableInt']);
-            self::assertEquals($object->isTrue(), $mappedObject['nullableBool']);
-            self::assertEquals($object->nullableFloat, $mappedObject['nullableFloat']);
-            self::assertEquals($object->getNullableArray(), $mappedObject['nullableArray']);
-            self::assertEquals($object->nullableObject, $mappedObject['nullableObject']);
-            self::assertEquals($object->getNullableDateTime(), $mappedObject['nullableDateTime']);
-            self::assertEquals($object->dateTime, $mappedObject['dateTime']);
+            $this->assertEqualsNestedDataSetClassObjectToMap($object, $mappedObject, '.');
+        }
+    }
 
-            $nestedOriginArray = $object->simpleDataSet instanceof SimpleDataSet ? $object->simpleDataSet->toArray() : (array) $object->simpleDataSet;
-            self::assertEquals($nestedOriginArray['text'], $mappedObject['someTargetedProperty.text']);
-            self::assertEquals($nestedOriginArray['number'], $mappedObject['someTargetedProperty.number']);
-            self::assertEquals($nestedOriginArray['bool'], $mappedObject['someTargetedProperty.bool']);
-            self::assertEquals($nestedOriginArray['nullable'], $mappedObject['someTargetedProperty.nullable']);
-            self::assertEquals($nestedOriginArray['nullableInt'], $mappedObject['someTargetedProperty.nullableInt']);
-            self::assertEquals($nestedOriginArray['nullableBool'], $mappedObject['someTargetedProperty.nullableBool']);
-            self::assertEquals($nestedOriginArray['nullableFloat'], $mappedObject['someTargetedProperty.nullableFloat']);
-            self::assertEquals($nestedOriginArray['nullableArray'], $mappedObject['someTargetedProperty.nullableArray']);
-            self::assertEquals($nestedOriginArray['nullableObject'], $mappedObject['someTargetedProperty.nullableObject']);
-            self::assertEquals($nestedOriginArray['nullableDateTime'], $mappedObject['someTargetedProperty.nullableDateTime']);
-            self::assertEquals($nestedOriginArray['dateTime'], $mappedObject['someTargetedProperty.dateTime']);
-            self::assertEquals($nestedOriginArray['someTargetedProperty'] ?? $nestedOriginArray['targetProperty'], $mappedObject['someTargetedProperty.someTargetedProperty']);
+    /** @test */
+    public function shouldMapCollectionDataSetfromClassObjectToClassObject(): void
+    {
+        $class = $this->collectionDataSet['class'];
+        $objects = $this->collectionDataSet['objects'];
+
+        foreach ($objects as $object) {
+            /** @var CollectionDataSet $mappedObject */
+            $mappedObject = $this->mapper->fromClassObjectToClassObject($object, $class);
+
+            self::assertInstanceOf($class, $mappedObject);
+            self::assertNotEmpty($mappedObject->simpleDataSets);
+            foreach ($mappedObject->simpleDataSets as $index => $simpleDataSet) {
+                $origin = $object->simpleDataSets[$index];
+                self::assertInstanceOf(SimpleDataSet::class, $simpleDataSet);
+                $this->assertEqualsSimpleDataSetClassObjectToClassObject($origin, $simpleDataSet);
+            }
+
+            self::assertEmpty($mappedObject->emptySimpleDataSets);
+
+            self::assertNotEmpty($mappedObject->simpleDataSetsWithNulls);
+            foreach ($mappedObject->simpleDataSetsWithNulls as $index => $null) {
+                self::assertNull($null);
+            }
+
+            self::assertNotEmpty($mappedObject->nestedDataSets);
+            foreach ($mappedObject->nestedDataSets as $index => $nestedDataSet) {
+                $origin = $object->nestedDataSets[$index];
+                self::assertInstanceOf(NestedDataSet::class, $nestedDataSet);
+                $this->assertEqualsNestedDataSetClassObjectToClassObject($origin, $nestedDataSet);
+            }
+        }
+    }
+
+    /** @test */
+    public function shouldMapCollectionDataSetfromClassObjectToAnonymousObject(): void
+    {
+        $class = $this->collectionDataSet['class'];
+        $objects = $this->collectionDataSet['objects'];
+
+        foreach ($objects as $object) {
+            $mappedObject = $this->mapper->fromClassObjectToAnonymousObject($object, $class);
+
+            self::assertNotInstanceOf($class, $mappedObject);
+
+            self::assertNotEmpty($mappedObject->simpleDataSets);
+            foreach ($mappedObject->simpleDataSets as $index => $simpleDataSet) {
+                $origin = $object->simpleDataSets[$index];
+                self::assertNotInstanceOf(SimpleDataSet::class, $simpleDataSet);
+                $this->assertEqualsSimpleDataSetClassObjectToAnonymousObject($origin, $simpleDataSet);
+            }
+
+            self::assertEmpty($mappedObject->emptySimpleDataSets);
+
+            self::assertNotEmpty($mappedObject->simpleDataSetsWithNulls);
+            foreach ($mappedObject->simpleDataSetsWithNulls as $index => $null) {
+                self::assertNull($null);
+            }
+
+            self::assertNotEmpty($mappedObject->nestedDataSets);
+            foreach ($mappedObject->nestedDataSets as $index => $nestedDataSet) {
+                $origin = $object->nestedDataSets[$index];
+                self::assertNotInstanceOf(NestedDataSet::class, $nestedDataSet);
+                $this->assertEqualsNestedDataSetClassObjectToAnonymousObject($origin, $nestedDataSet);
+            }
         }
     }
 }

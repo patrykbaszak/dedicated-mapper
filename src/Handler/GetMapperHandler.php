@@ -17,6 +17,7 @@ use PBaszak\MessengerMapperBundle\Utils\GetClassIfClassType;
 use phpDocumentor\Reflection\DocBlock\Tags\Var_;
 use phpDocumentor\Reflection\DocBlockFactory;
 use phpDocumentor\Reflection\Types\Array_;
+use ReflectionClass;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\Ignore;
@@ -44,8 +45,8 @@ class GetMapperHandler
         $this->validateInput($query);
         $this->setOrigin($query->from, $query->fromType, $query->to, $query->toType);
 
-        $sourceProperties = class_exists($query->from) ? $this->extractProperties($query->from, $this->fromOrigin, $query->serializerGroups, null) : [];
-        $targetProperties = class_exists($query->to) ? $this->extractProperties($query->to, $this->toOrigin, $query->serializerGroups, null) : [];
+        $sourceProperties = class_exists($query->from, false) ? $this->extractProperties($query->from, $this->fromOrigin, $query->serializerGroups, null) : [];
+        $targetProperties = class_exists($query->to, false) ? $this->extractProperties($query->to, $this->toOrigin, $query->serializerGroups, null) : [];
 
         do {
             [$beforeSourceCount, $beforeTargetCount] = [$this->countMirrors($sourceProperties), $this->countMirrors($targetProperties)];
@@ -147,7 +148,7 @@ class GetMapperHandler
                 case 'object':
                     break;
                 default:
-                    if (!class_exists($argument)) {
+                    if (!class_exists($argument, false)) {
                         throw new \InvalidArgumentException(sprintf('Class %s does not exist.', $argument));
                     }
             }
@@ -164,7 +165,7 @@ class GetMapperHandler
 
             /** @var string $argument */
             if (preg_match('/^map\{(?<separator>.+)\}$/', $argument, $matches)) {
-                $this->{$key.'MapSeparator'} = $matches['separator'];
+                $this->{$key . 'MapSeparator'} = $matches['separator'];
                 continue;
             }
 
@@ -365,10 +366,25 @@ class GetMapperHandler
 
             $output[] = $currentProperty;
             if ($currentProperty->isCollection) {
-                /** @var class-string|null $classType */
-                $classType = $this->getCollectionItemType($property);
-                if ($classType && class_exists($classType)) {
-                    $output = array_merge($output, $this->extractProperties($classType, $origin, $serializerGroups, $currentProperty));
+                $collectionItemType = $this->getCollectionItemType($property);
+                if ($collectionItemType && class_exists($collectionItemType->valueType, false)) {
+                    $currentProperty->addChild(
+                        $collectionItemProperty = new Property(
+                            $collectionItemType->keyType,
+                            $collectionItemType->valueType,
+                            $currentProperty,
+                            null,
+                            false,
+                            $origin,
+                            null,
+                            null,
+                            null,
+                            null,
+                            null
+                        )
+                    );
+                    $output[] = $collectionItemProperty;
+                    $output = array_merge($output, $this->extractProperties($collectionItemType->valueType, $origin, $serializerGroups, $collectionItemProperty));
                 }
             } elseif ($classType = $this->getClassIfClassType($type)) {
                 $output = array_merge($output, $this->extractProperties($classType, $origin, $serializerGroups, $currentProperty));
@@ -408,7 +424,7 @@ class GetMapperHandler
         return false;
     }
 
-    private function getCollectionItemType(?\ReflectionProperty $property): ?string
+    private function getCollectionItemType(?\ReflectionProperty $property): ?CollectionItemType
     {
         if (null === $property) {
             return null;
@@ -432,9 +448,43 @@ class GetMapperHandler
         if ($type instanceof Array_) {
             $itemType = $type->getValueType();
 
-            return $itemType->__toString();
+            $itemClass = $itemType->__toString();
+            if (class_exists($itemClass, false)) {
+                return new CollectionItemType($type->getKeyType()->__toString(), $itemClass);
+            }
+
+            if (class_exists($class = $property->getDeclaringClass()->getNamespaceName() . '\\' . ltrim($itemClass, '\\'), false)) {
+                return new CollectionItemType($type->getKeyType()->__toString(), $class);
+            }
+
+            /** @var class-string[] $imports */
+            $imports = array_filter(array_map(
+                fn (string $line) =>
+                str_starts_with($line, 'use') ?
+                    (false !== strpos($line, ltrim($itemClass, '\\')) ?
+                        sscanf($line, 'use %s;') :
+                        null
+                    ) :
+                    null,
+                file($property->getDeclaringClass()->getFileName() ?: '')
+            ));
+
+            foreach ($imports as $import) {
+                if (class_exists($import, false)) {
+                    return new CollectionItemType($type->getKeyType()->__toString(), $import);
+                }
+            }
         }
 
         return null;
+    }
+}
+
+class CollectionItemType
+{
+    public function __construct(
+        public readonly string $keyType,
+        public readonly string $valueType,
+    ) {
     }
 }
