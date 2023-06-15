@@ -7,7 +7,7 @@ namespace PBaszak\MessengerMapperBundle\Service;
 interface TypeServiceInterface
 {
     /**
-     * @example 
+     * @example
      * <code>
      * $key = 'value'
      * </code>
@@ -15,10 +15,10 @@ interface TypeServiceInterface
     public const PROPERTY = 1;
 
     /**
-     * @example 
+     * @example
      * <code>
      * [
-     *      'key' => 'value', 
+     *      'key' => 'value',
      *      'key2' => [
      *          'key3' => 'value3'
      *      ]
@@ -31,7 +31,7 @@ interface TypeServiceInterface
      * @example
      * <code>
      * (object) [
-     *      'key' => 'value', 
+     *      'key' => 'value',
      *      'key2' => [
      *          'key3' => 'value3'
      *      ]
@@ -44,7 +44,7 @@ interface TypeServiceInterface
      * @example
      * <code>
      * new ClassObject(
-     *      key: 'value', 
+     *      key: 'value',
      *      key2: new NestedClassObject(
      *          key3: 'value3'
      *      )
@@ -54,11 +54,11 @@ interface TypeServiceInterface
     public const CLASS_OBJECT = 4;
 
     /**
-     * @example 
+     * @example
      * <code>
      * # map{.}
      * [
-     *      'key' => 'value', 
+     *      'key' => 'value',
      *      'key2.key3' => 'value3'
      * ]
      * </code>
@@ -66,11 +66,11 @@ interface TypeServiceInterface
     public const MAP = 5;
 
     /**
-     * @example 
+     * @example
      * <code>
      * # map{.}
      * (object) [
-     *      'key' => 'value', 
+     *      'key' => 'value',
      *      'key2.key3' => 'value3'
      * ]
      * </code>
@@ -78,18 +78,19 @@ interface TypeServiceInterface
     public const MAP_OBJECT = 6;
 
     /**
-     * @example 
+     * @example
      * <code>
+     *
      * /** @var ClassObject[] *\/
      * [
      *  new ClassObject(
-     *      key: 'value', 
+     *      key: 'value',
      *      key2: new NestedClassObject(
      *          key3: 'value3'
      *      )
      *  ),
      *  new ClassObject(
-     *      key: 'value', 
+     *      key: 'value',
      *      key2: new NestedClassObject(
      *          key3: 'value3'
      *      )
@@ -100,7 +101,7 @@ interface TypeServiceInterface
     public const COLLECTION = 7;
 
     /**
-     * @param class-string|'array'|'object' $value
+     * @param class-string|'array'|'object'   $value
      * @param 'array'|'object'|'map{%s}'|null $type
      */
     public function calculateType(string $value, ?string $type): int;

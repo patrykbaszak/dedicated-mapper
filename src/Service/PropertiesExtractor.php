@@ -57,7 +57,7 @@ class PropertiesExtractor implements PropertiesExtractorInterface
 
         /** @var \ReflectionProperty[] $properties */
         $properties = $reflectionClass->getProperties();
-        
+
         foreach ($properties as $property) {
             $name = $property->getName();
             $parameter = $this->getMatchingConstructorParameter($property);
@@ -228,7 +228,7 @@ class PropertiesExtractor implements PropertiesExtractorInterface
     {
         $constraintAttrs = array_filter($property->getAttributes(), fn (\ReflectionAttribute $attr) => is_subclass_of($attr, Constraint::class));
 
-        if (count($constraintAttrs) === 0) {
+        if (0 === count($constraintAttrs)) {
             return null;
         }
 
@@ -237,18 +237,18 @@ class PropertiesExtractor implements PropertiesExtractorInterface
             $constraintAttrs
         );
 
-        if (count($constraints) === 0) {
+        if (0 === count($constraints)) {
             return null;
         }
 
         if (is_array($validatorGroups)) {
             foreach ($constraints as $index => $constraint) {
                 $groups = array_merge($constraint->arguments['groups'] ?? [], $constraint->arguments['options']['groups'] ?? []);
-                if (count($groups) === 0) {
+                if (0 === count($groups)) {
                     continue;
                 }
 
-                if (count($groups = array_intersect($groups, $validatorGroups)) === 0) {
+                if (0 === count($groups = array_intersect($groups, $validatorGroups))) {
                     unset($constraints[$index]);
                 }
             }

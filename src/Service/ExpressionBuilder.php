@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace PBaszak\MessengerMapperBundle\Service;
 
-use LogicException;
 use PBaszak\MessengerMapperBundle\Attribute\MappingCallback;
 use PBaszak\MessengerMapperBundle\DTO\Properties\Constraint;
 use PBaszak\MessengerMapperBundle\DTO\Property;
@@ -283,7 +282,7 @@ class ExpressionBuilder implements ExpressionBuilderInterface
 
     private function getSimplePropertySetterExpression(Property $property, string $targetVariableName, int $targetType, ?string $targetMapSeparator, string $getterExpression): string
     {
-        $targetProperty = $property->origin === Property::TARGET ? $property : $property->getMirrorProperty();
+        $targetProperty = Property::TARGET === $property->origin ? $property : $property->getMirrorProperty();
         switch ($targetType) {
             case 1:
                 return sprintf('$%s = %s;', $targetVariableName, $getterExpression);
@@ -295,21 +294,22 @@ class ExpressionBuilder implements ExpressionBuilderInterface
                 return sprintf(sprintf('$%s->%s;', $targetVariableName, $targetProperty->getSetter()), $getterExpression);
             case 5:
                 if (!$targetMapSeparator) {
-                    throw new LogicException('Cannot get simple setter expression for map without separator.');
+                    throw new \LogicException('Cannot get simple setter expression for map without separator.');
                 }
+
                 return sprintf('$%s[%s] = %s;', $targetVariableName, var_export($targetProperty->getPath($targetMapSeparator), true), $getterExpression);
             case 6:
                 return sprintf('$%s->%s = %s;', $targetVariableName, $targetProperty->getPath($targetMapSeparator), $getterExpression);
             case 7:
-                throw new LogicException('Cannot get simple setter expression for collection.');
+                throw new \LogicException('Cannot get simple setter expression for collection.');
             default:
-                throw new LogicException('Unknown target type.');
+                throw new \LogicException('Unknown target type.');
         }
     }
 
     private function getSimplePropertyGetterExpression(Property $property, string $sourceVariableName, int $sourceType, ?string $sourceMapSeparator): string
     {
-        $sourceProperty = $property->origin === Property::SOURCE ? $property : $property->getMirrorProperty();
+        $sourceProperty = Property::SOURCE === $property->origin ? $property : $property->getMirrorProperty();
         switch ($sourceType) {
             case 1:
                 return sprintf('$%s', $sourceVariableName);
@@ -321,15 +321,16 @@ class ExpressionBuilder implements ExpressionBuilderInterface
                 return sprintf('$%s->%s', $sourceVariableName, $sourceProperty->getGetter());
             case 5:
                 if (!$sourceMapSeparator) {
-                    throw new LogicException('Cannot get simple getter expression for map without separator.');
+                    throw new \LogicException('Cannot get simple getter expression for map without separator.');
                 }
+
                 return sprintf('$%s[%s]', $sourceVariableName, var_export($sourceProperty->getPath($sourceMapSeparator), true));
             case 6:
                 return sprintf('$%s->%s', $sourceVariableName, $sourceProperty->getPath($sourceMapSeparator));
             case 7:
-                throw new LogicException('Cannot get simple getter expression for collection.');
+                throw new \LogicException('Cannot get simple getter expression for collection.');
             default:
-                throw new LogicException('Unknown source type.');
+                throw new \LogicException('Unknown source type.');
         }
     }
 
@@ -344,7 +345,7 @@ class ExpressionBuilder implements ExpressionBuilderInterface
 
     private function decorateExpressionWithDefaultValue(Property $property, string $expression): string
     {
-        $defaultPropertyValue = $property->reflection?->hasDefaultValue() ?  $property->reflection->getDefaultValue() : null;
+        $defaultPropertyValue = $property->reflection?->hasDefaultValue() ? $property->reflection->getDefaultValue() : null;
         $defaultParameterValue = $property->reflectionParameter?->isOptional() ? $property->reflectionParameter->getDefaultValue() : null;
 
         if (!$property->isNullable && !$defaultParameterValue && !$defaultPropertyValue) {
@@ -364,6 +365,7 @@ class ExpressionBuilder implements ExpressionBuilderInterface
 
         $this->validatorUsed = true;
         $property->isAssignedTo = $targetVariableName;
+
         return sprintf(
             'if (count($validationErrors = $validator->validate(($%s = %s), [%s], null) !== 0) {$errors[%s] = $validationErrors];}',
             $targetVariableName,
@@ -419,7 +421,7 @@ class ExpressionBuilder implements ExpressionBuilderInterface
 
     /**
      * @param MappingCallback[] $callbacks
-     * 
+     *
      * @return MappingCallback[]
      */
     private function sortCallbacks(array $callbacks): array

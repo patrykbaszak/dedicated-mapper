@@ -7,5 +7,6 @@ return function (mixed $data): mixed {
     $mapped->content = $data['content'];
     $mapped->author = $data['author'];
     $mapped->createdAt = new \DateTime($data['createdAt']);
+
     return $mapped;
 };

@@ -9,7 +9,7 @@ trait GetAttributesTrait
     public function getAttributeInstance(\ReflectionProperty|\ReflectionParameter $reflection, string $attributeClass): ?object
     {
         $attributes = $reflection->getAttributes($attributeClass);
-        if (count($attributes) === 0) {
+        if (0 === count($attributes)) {
             return null;
         }
 
@@ -29,7 +29,7 @@ trait GetAttributesTrait
                 is_subclass_of($attribute->getName(), $attributeClass)
         );
 
-        if (count($attributes) === 0) {
+        if (0 === count($attributes)) {
             return [];
         }
 

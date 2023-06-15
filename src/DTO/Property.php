@@ -15,7 +15,7 @@ class Property
 
     public ?string $isAssignedTo = null;
 
-    /** @var Property[] $children */
+    /** @var Property[] */
     private array $children = [];
     private self $mirror;
 
@@ -149,7 +149,7 @@ class Property
         }
 
         if ($isEmpty) {
-            return $this->name . ' = %s';
+            return $this->name.' = %s';
         }
 
         return array_shift($setterMethods).'(%s)';

@@ -10,6 +10,5 @@ class ObjectType
 {
     public function getPropertyExpression(Property $property): string
     {
-        
     }
 }

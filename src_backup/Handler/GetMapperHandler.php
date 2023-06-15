@@ -342,7 +342,7 @@ class GetMapperHandler
                 new Mapper(
                     empty($attrAccessor = $property->getAttributes(Accessor::class)) ? null : $attrAccessor[0]->newInstance(),
                     empty($attrTargetProperty = $property->getAttributes(TargetProperty::class)) ? null : $attrTargetProperty[0]->newInstance(),
-                    array_filter(array_map(fn (\ReflectionAttribute $attrMappingCallback): ?MappingCallback => is_subclass_of($attrMappingCallback->getName(), MappingCallback::class) || $attrMappingCallback->getName() === MappingCallback::class ? $attrMappingCallback->newInstance() : null, $property->getAttributes()))
+                    array_filter(array_map(fn (\ReflectionAttribute $attrMappingCallback): ?MappingCallback => is_subclass_of($attrMappingCallback->getName(), MappingCallback::class) || MappingCallback::class === $attrMappingCallback->getName() ? $attrMappingCallback->newInstance() : null, $property->getAttributes()))
                 ),
                 $this->useSerializer ? new Serializer(
                     empty($attrGroups = $property->getAttributes(Groups::class)) ? null : $attrGroups[0]->newInstance(),

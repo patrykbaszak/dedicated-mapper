@@ -10,6 +10,5 @@ class CollectionType
 {
     public function getPropertyExpression(Property $property): string
     {
-        
     }
 }

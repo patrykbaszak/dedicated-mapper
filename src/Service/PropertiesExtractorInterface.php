@@ -9,12 +9,11 @@ use PBaszak\MessengerMapperBundle\DTO\Property;
 interface PropertiesExtractorInterface
 {
     /**
-     * @param int $origin Property::SOURCE or Property::TARGET
-     * @param class-string $class
+     * @param int                $origin           Property::SOURCE or Property::TARGET
+     * @param class-string       $class
      * @param array<string>|null $serializerGroups
      * @param array<string>|null $validatorGroups
-     * @param Property|null $parent
-     * 
+     *
      * @return Property[]
      */
     public function extractProperties(

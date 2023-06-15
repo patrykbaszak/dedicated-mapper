@@ -7,9 +7,9 @@ namespace PBaszak\MessengerMapperBundle\Handler;
 use PBaszak\MessengerMapperBundle\Contract\GetMapper;
 use PBaszak\MessengerMapperBundle\DTO\Property;
 use PBaszak\MessengerMapperBundle\Service\ExpressionBuilderInterface;
-use PBaszak\MessengerMapperBundle\Service\TypeServiceInterface;
 use PBaszak\MessengerMapperBundle\Service\PropertiesExtractorInterface;
 use PBaszak\MessengerMapperBundle\Service\PropertiesMatcherInterface;
+use PBaszak\MessengerMapperBundle\Service\TypeServiceInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler()]
@@ -56,7 +56,7 @@ class GetMapperHandler
             $this->getMapSeparator($query->fromType),
             $this->getMapSeparator($query->toType),
         );
-        
+
         return $query->useValidator ?
             sprintf($query::MAPPER_TEMPLATE_WITH_VALIDATOR, $expression) :
             sprintf($query::MAPPER_TEMPLATE, $expression);
@@ -83,7 +83,7 @@ class GetMapperHandler
         if ($type) {
             preg_match('/^map\{(?<separator>.+)\}$/', $type, $matches);
         }
-        
+
         return $matches['separator'] ?? null;
     }
 }

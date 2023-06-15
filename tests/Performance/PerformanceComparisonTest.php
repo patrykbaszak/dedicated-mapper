@@ -81,7 +81,7 @@ class PerformanceComparisonTest extends KernelTestCase
         $this->assertEquals($expected, $mapperActual);
 
         $times = [];
-        for ($i = 0; $i < 1000; $i++) {
+        for ($i = 0; $i < 1000; ++$i) {
             $start = microtime(true);
             $serializerActual = $this->serializer->denormalize($this->postAsRawArray(), Post::class, 'array');
             $stop = microtime(true);
@@ -100,11 +100,11 @@ class PerformanceComparisonTest extends KernelTestCase
 
         $this->assertLessThan($avgSerializer / 2, $avgMapper); // Mapper is at least 2 times faster than Symfony Serializer
 
-        /**
+        /*
          * Results:
          * - Symfony Serializer: 0.000447s
          * - Messenger Mapper: 0.000151s
-         * 
+         *
          * Messenger Mapper is ~3 times faster than Symfony Serializer
          */
     }
@@ -120,7 +120,7 @@ class PerformanceComparisonTest extends KernelTestCase
         $this->assertEquals($expected, $mapperActual);
 
         $times = [];
-        for ($i = 0; $i < 1000; $i++) {
+        for ($i = 0; $i < 1000; ++$i) {
             $start = microtime(true);
             $serializerActual = $this->serializer->denormalize($this->commentAsRawArray(), Comment::class, 'array');
             $stop = microtime(true);
@@ -139,11 +139,11 @@ class PerformanceComparisonTest extends KernelTestCase
 
         $this->assertLessThan($avgSerializer / 4, $avgMapper); // Mapper is at least 4 times faster than Symfony Serializer
 
-        /**
+        /*
          * Results:
          * - Symfony Serializer: 0.000810s
          * - Messenger Mapper: 0.000157s
-         * 
+         *
          * Messenger Mapper is ~5 times faster than Symfony Serializer
          */
     }
