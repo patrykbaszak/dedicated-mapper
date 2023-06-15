@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PBaszak\MessengerMapperBundle\Tests\Func;
 
+use PBaszak\MessengerCacheBundle\Contract\Replaceable\MessengerCacheManagerInterface;
 use PBaszak\MessengerMapperBundle\Mapper;
 use PBaszak\MessengerMapperBundle\Tests\Assets\SimpleDataSet;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -16,6 +17,9 @@ class MapFromArrayMapperTest extends KernelTestCase
 
     protected function setUp(): void
     {
+        /** @var MessengerCacheManagerInterface $cacheManager */
+        $cacheManager = self::getContainer()->get(MessengerCacheManagerInterface::class);
+        $cacheManager->clear(pool: 'messenger_mapper');
         $this->mapper = self::getContainer()->get(Mapper::class);
         $this->dataSet = SimpleDataSet::getDataSet();
     }

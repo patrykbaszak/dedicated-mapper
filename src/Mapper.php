@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace PBaszak\MessengerMapperBundle;
 
-use PBaszak\MessengerCacheBundle\Stamps\ForceCacheRefreshStamp;
 use PBaszak\MessengerMapperBundle\Contract\GetMapper;
 use Symfony\Component\Messenger\HandleTrait;
 use Symfony\Component\Messenger\MessageBusInterface;

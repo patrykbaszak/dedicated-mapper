@@ -11,7 +11,7 @@ class CollectionDataSet
         public readonly array $simpleDataSets,
         /** @var SimpleDataSet[] $emptySimpleDataSets */
         public readonly array $emptySimpleDataSets = [],
-        /** @var array<null|SimpleDataSet> $simpleDataSetsWithNulls */
+        /** @var array<SimpleDataSet|null> $simpleDataSetsWithNulls */
         public readonly array $simpleDataSetsWithNulls = [],
         /** @var NestedDataSet[] $nestedDataSets */
         public readonly array $nestedDataSets = [],

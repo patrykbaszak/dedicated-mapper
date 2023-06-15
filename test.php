@@ -1,1 +1,11 @@
-return function (mixed $data): mixed {$mapped = [];$mapped['text'] = $data['text'];$mapped['number'] = $data['number'];$mapped['bool'] = $data['bool'];$mapped['nullable'] = $data['nullable'] ?? null ?? null;$mapped['nullableInt'] = $data['nullableInt'] ?? null ?? null;$mapped['nullableBool'] = $data['nullableBool'] ?? null ?? null;$mapped['nullableFloat'] = $data['nullableFloat'] ?? null ?? null;$mapped['nullableArray'] = $data['nullableArray'] ?? null ?? null;$mapped['nullableObject'] = $data['nullableObject'] ?? null ?? null;$mapped['nullableDateTime'] = $data['nullableDateTime'] ?? null ?? null;$mapped['dateTime'] = $data['dateTime'];$mapped['targetProperty'] = $data['someTargetedProperty'];return $mapped;};
+<?php
+
+return function (mixed $data): mixed {
+    $constructorArguments = [];
+    $mapped = new PBaszak\MessengerMapperBundle\Tests\Performance\Post(...$constructorArguments);
+    $mapped->title = $data['title'];
+    $mapped->content = $data['content'];
+    $mapped->author = $data['author'];
+    $mapped->createdAt = new \DateTime($data['createdAt']);
+    return $mapped;
+};

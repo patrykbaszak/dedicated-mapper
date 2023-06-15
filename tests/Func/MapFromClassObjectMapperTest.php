@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PBaszak\MessengerMapperBundle\Tests\Func;
 
+use PBaszak\MessengerCacheBundle\Contract\Replaceable\MessengerCacheManagerInterface;
 use PBaszak\MessengerMapperBundle\Mapper;
 use PBaszak\MessengerMapperBundle\Tests\Assets\CollectionDataSet;
 use PBaszak\MessengerMapperBundle\Tests\Assets\NestedDataSet;
@@ -20,6 +21,9 @@ class MapfromClassObjectMapperTest extends KernelTestCase
 
     protected function setUp(): void
     {
+        /** @var MessengerCacheManagerInterface $cacheManager */
+        $cacheManager = self::getContainer()->get(MessengerCacheManagerInterface::class);
+        $cacheManager->clear(pool: 'messenger_mapper');
         $this->mapper = self::getContainer()->get(Mapper::class);
         $this->dataSet = SimpleDataSet::getDataSet();
         $this->nestedDataSet = NestedDataSet::getDataSet();
@@ -76,18 +80,18 @@ class MapfromClassObjectMapperTest extends KernelTestCase
 
     private function assertEqualsSimpleDataSetClassObjectToMap(SimpleDataSet $expected, array $actual, string $prefix = ''): void
     {
-        self::assertEquals($expected->text, $actual[$prefix . 'text']);
-        self::assertEquals($expected->getNumber(), $actual[$prefix . 'number']);
-        self::assertEquals($expected->bool, $actual[$prefix . 'bool']);
-        self::assertEquals($expected->getNullable(), $actual[$prefix . 'nullable']);
-        self::assertEquals($expected->nullableInt, $actual[$prefix . 'nullableInt']);
-        self::assertEquals($expected->getNullableBool(), $actual[$prefix . 'nullableBool']);
-        self::assertEquals($expected->nullableFloat, $actual[$prefix . 'nullableFloat']);
-        self::assertEquals($expected->getNullableArray(), $actual[$prefix . 'nullableArray']);
-        self::assertEquals($expected->nullableObject, $actual[$prefix . 'nullableObject']);
-        self::assertEquals($expected->getNullableDateTime(), $actual[$prefix . 'nullableDateTime']);
-        self::assertEquals($expected->dateTime, $actual[$prefix . 'dateTime']);
-        self::assertEquals($expected->targetProperty, $actual[$prefix . 'someTargetedProperty']);
+        self::assertEquals($expected->text, $actual[$prefix.'text']);
+        self::assertEquals($expected->getNumber(), $actual[$prefix.'number']);
+        self::assertEquals($expected->bool, $actual[$prefix.'bool']);
+        self::assertEquals($expected->getNullable(), $actual[$prefix.'nullable']);
+        self::assertEquals($expected->nullableInt, $actual[$prefix.'nullableInt']);
+        self::assertEquals($expected->getNullableBool(), $actual[$prefix.'nullableBool']);
+        self::assertEquals($expected->nullableFloat, $actual[$prefix.'nullableFloat']);
+        self::assertEquals($expected->getNullableArray(), $actual[$prefix.'nullableArray']);
+        self::assertEquals($expected->nullableObject, $actual[$prefix.'nullableObject']);
+        self::assertEquals($expected->getNullableDateTime(), $actual[$prefix.'nullableDateTime']);
+        self::assertEquals($expected->dateTime, $actual[$prefix.'dateTime']);
+        self::assertEquals($expected->targetProperty, $actual[$prefix.'someTargetedProperty']);
     }
 
     private function assertEqualsNestedDataSetClassObjectToClassObject(NestedDataSet $expected, NestedDataSet $actual): void
@@ -190,7 +194,7 @@ class MapfromClassObjectMapperTest extends KernelTestCase
             $originNestedObject = new SimpleDataSet(...$originNestedArray);
         }
 
-        $prefix = 'someTargetedProperty' . $separator;
+        $prefix = 'someTargetedProperty'.$separator;
         $this->assertEqualsSimpleDataSetClassObjectToMap(
             $originNestedObject,
             array_filter($actual, fn (string $k) => str_starts_with($k, $prefix), ARRAY_FILTER_USE_KEY),

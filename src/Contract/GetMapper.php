@@ -49,10 +49,11 @@ class GetMapper implements Cacheable
 
     public function map(string $mapper, mixed $data, ?ValidatorInterface $validator = null): mixed
     {
-        file_put_contents('test.php', $mapper);
         $mapper = eval($mapper);
-        // $mapper = include 'test.php';
 
         return $mapper($data);
     }
 }
+
+        // file_put_contents('test.php', $mapper);
+        // $mapper = include 'test.php';
