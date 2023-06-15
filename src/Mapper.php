@@ -10,7 +10,7 @@ class Mapper
 {
     private string $mappper;
 
-    public function run(mixed $data, ?ValidatorInterface $validator = null): mixed
+    public function map(mixed $data, ?ValidatorInterface $validator = null): mixed
     {
         $mapper = eval($this->toString());
 

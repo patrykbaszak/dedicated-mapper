@@ -14,7 +14,7 @@ class GetMapper implements Cacheable
 {
     public function __construct(
         public readonly string $blueprint,
-        public readonly GetterInterface $getter,
-        public readonly SetterInterface $setter,
+        public readonly GetterInterface $getterBuilder,
+        public readonly SetterInterface $setterBuilder,
     ) {}
 }
