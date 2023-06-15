@@ -10,7 +10,8 @@
         "symfony/messenger": ">=6.2",
         "symfony/serializer": "^6.2",
         "symfony/serializer-pack": "^1.2",
-        "phpdocumentor/reflection-docblock": "^5.3"
+        "phpdocumentor/reflection-docblock": "^5.3",
+        "pbaszak/symfony-messenger-cache-bundle": "^1.9"
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^3.13",
