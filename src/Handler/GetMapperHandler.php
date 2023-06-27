@@ -8,7 +8,6 @@ use PBaszak\MessengerMapperBundle\GetMapper;
 use PBaszak\MessengerMapperBundle\Mapper;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
-#[AsMessageHandler()]
 class GetMapperHandler
 {
     public function __construct()

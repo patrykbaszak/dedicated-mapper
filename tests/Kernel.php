@@ -1,6 +1,6 @@
 <?php
 
-namespace PBaszak\MessengerMapperBundle\Tests\Helper;
+namespace PBaszak\MessengerMapperBundle\Tests;
 
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
 use Symfony\Component\HttpKernel\Kernel as BaseKernel;

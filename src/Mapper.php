@@ -4,13 +4,11 @@ declare(strict_types=1);
 
 namespace PBaszak\MessengerMapperBundle;
 
-use Symfony\Component\Validator\Validator\ValidatorInterface;
-
 class Mapper
 {
     private string $mappper;
 
-    public function map(mixed $data, ?ValidatorInterface $validator = null): mixed
+    public function map(mixed $data): mixed
     {
         $mapper = eval($this->toString());
 

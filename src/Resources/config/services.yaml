@@ -10,3 +10,7 @@ services:
 
     PBaszak\MessengerMapperBundle\Mapper:
         public: true
+
+    PBaszak\MessengerMapperBundle\Handler\GetMapperHandler:
+        tags: 
+            - { name: 'messenger.message_handler', handles: PBaszak\MessengerMapperBundle\GetMapper }
