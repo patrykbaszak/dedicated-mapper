@@ -19,12 +19,10 @@ class Property
         public readonly string $originName,
         ReflectionProperty $reflection,
         ?ReflectionParameter $constructorParameter = null,
-        bool $isCollection = false,
         ?self $parent = null,
     ) {
         $this->reflection = $reflection;
         $this->constructorParameter = $constructorParameter;
-        $this->isCollection = $isCollection;
         $this->setParent($parent);
     }
 }

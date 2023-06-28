@@ -9,7 +9,6 @@ use phpDocumentor\Reflection\DocBlock\Tags\Var_;
 use ReflectionIntersectionType;
 use ReflectionUnionType;
 use ReflectionNamedType;
-use ReflectionParameter;
 use ReflectionProperty;
 use phpDocumentor\Reflection\DocBlockFactory;
 use phpDocumentor\Reflection\Type as PhpDocumentorReflectionType;
@@ -20,13 +19,6 @@ use ReflectionType;
 trait Type
 {
     use Reflection;
-
-    protected bool $isCollection = false;
-
-    public function isCollection(): bool
-    {
-        return $this->isCollection;
-    }
 
     public function getTypes(): Types
     {
