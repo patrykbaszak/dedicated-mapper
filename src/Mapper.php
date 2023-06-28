@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace PBaszak\MessengerMapperBundle;
 
-class Mapper
+use Stringable;
+
+class Mapper implements Stringable
 {
     private string $mappper;
 

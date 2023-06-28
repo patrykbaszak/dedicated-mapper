@@ -17,6 +17,6 @@ class GetMapperHandler
 
     public function __invoke(GetMapper $query): Mapper
     {
-        
+        // create tree of properties
     }
 }
