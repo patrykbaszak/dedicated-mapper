@@ -10,7 +10,7 @@ class Blueprint
 {
     public function __construct(
         public ReflectionClass $reflection,
-        public string $originVariableName,
-        public string $targetVariableName,
+        public ?string $originVariableName = null,
+        public ?string $targetVariableName = null,
     ) {}
 }

@@ -14,6 +14,7 @@ class Property
     use Type;
 
     public array $options = [];
+    public Blueprint $blueprint;
 
     public function __construct(
         public readonly string $originName,
