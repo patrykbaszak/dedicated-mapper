@@ -32,7 +32,7 @@ class ArrayExpressionBuilder implements GetterInterface, SetterInterface
 
     public function createGetter(Property $property): Getter
     {
-
+        
     }
 
     public function createSetter(Property $property): Setter
