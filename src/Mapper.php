@@ -8,13 +8,20 @@ use Stringable;
 
 class Mapper implements Stringable
 {
-    private string $mappper;
+    public function __construct(
+        private string $mappper
+    ) {}
 
     public function map(mixed $data): mixed
     {
         $mapper = eval($this->toString());
 
         return $mapper($data);
+    }
+
+    public function __invoke(mixed $data): mixed
+    {
+        return $this->map($data);
     }
 
     public function toString(): string

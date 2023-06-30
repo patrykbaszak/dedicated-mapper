@@ -20,8 +20,14 @@ trait Type
 {
     use Reflection;
 
+    protected Types $types;
+
     public function getTypes(): Types
     {
+        if (isset($this->types)) {
+            return $this->types;
+        }
+
         $types = new Types();
 
         $types->property = $this->reflection->getType();
@@ -30,7 +36,7 @@ trait Type
         $types->constructorParameterDocBlock = $this->getParameterTypeFromParamDocBlock();
         $types->process($this->reflection);
         
-        return $types;
+        return $this->types = $types;
     }
 
     private function getPropertyTypeFromVarDocBlock(): ?PhpDocumentorReflectionType

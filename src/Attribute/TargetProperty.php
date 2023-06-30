@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace PBaszak\MessengerMapperBundle\Attribute;
 
-#[\Attribute(\Attribute::TARGET_PROPERTY | \Attribute::TARGET_CLASS)]
+#[\Attribute(\Attribute::TARGET_PROPERTY)]
 class TargetProperty
 {
     /**

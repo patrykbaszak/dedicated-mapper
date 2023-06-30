@@ -16,5 +16,6 @@ class GetMapper implements Cacheable
         public readonly string $blueprint,
         public readonly GetterInterface $getterBuilder,
         public readonly SetterInterface $setterBuilder,
+        public readonly bool $isCollection = false,
     ) {}
 }

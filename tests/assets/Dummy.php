@@ -1,6 +1,6 @@
 <?php
 
-namespace PBaszak\MessengerMapperBundle\Tests\Helper;
+namespace PBaszak\MessengerMapperBundle\Tests\assets;
 
 class Dummy
 {
@@ -15,7 +15,8 @@ class EmbeddedDTO
     public int $page;
     public int $pageSize;
     public int $total;
-    public array $items; // zawiera obiekty typu ItemDTO
+    /** @var ItemDTO[] */
+    public array $items;
 }
 
 class ItemDTO
@@ -32,6 +33,7 @@ class ItemDTO
     public MetadataDTO $metadata;
     public string $created_at;
     public string $updated_at;
+    /** @var array<string> */
     public array $availableActions;
 }
 

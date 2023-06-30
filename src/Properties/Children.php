@@ -53,7 +53,7 @@ trait Children
         return !empty($this->children);
     }
 
-    public function getChildren(): iterable
+    public function getChildren(): array
     {
         return $this->children;
     }
