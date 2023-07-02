@@ -8,5 +8,5 @@ use PBaszak\MessengerMapperBundle\Expression\Loop;
 
 interface LoopInterface
 {
-    public function createLoop(): Loop;
+    public function getLoop(): Loop;
 }

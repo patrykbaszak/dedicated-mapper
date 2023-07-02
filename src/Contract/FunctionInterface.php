@@ -9,5 +9,5 @@ use PBaszak\MessengerMapperBundle\Properties\Blueprint;
 
 interface FunctionInterface
 {
-    public function createFunction(Blueprint $blueprint): Function_;
+    public function getFunction(): Function_;
 }

@@ -10,6 +10,7 @@ class Blueprint
 {
     public function __construct(
         public ReflectionClass $reflection,
+        /** @var Property[] $properties */
         public array $properties = [],
         public bool $isCollection = false,
         public ?string $originVariableName = null,
