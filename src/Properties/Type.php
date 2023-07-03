@@ -22,6 +22,17 @@ trait Type
 
     protected Types $types;
 
+    public function getClassType(): string
+    {
+        foreach ($this->getTypes()->types as $type) {
+            if (class_exists($type, false)) {
+                return $type;
+            }
+        }
+
+        throw new \RuntimeException(sprintf('Class not found. Property: %s.', $this->reflection->getName()));
+    }
+
     public function getTypes(): Types
     {
         if (isset($this->types)) {

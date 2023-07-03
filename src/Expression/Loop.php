@@ -7,7 +7,8 @@ namespace PBaszak\MessengerMapperBundle\Expression;
 class Loop
 {
     public const TARGET_VARIABLE_NAME = '{{outputVariableName}}';
-    public const ITERABLE_VARIABLE_NAME = '{{iterableVariableName}}';
+    public const ITERABLE_GETTER = '{{iterableGetter}}';
+    public const ITERABLE_SETTER = '{{iterableSetter}}';
     public const SOURCE_VARIABLE_NAME = '{{sourceVariableName}}';
     public const CODE = '{{code}}';
 
@@ -17,22 +18,25 @@ class Loop
 
     public function toString(
         string $outputVariableName,
-        string $iterableVariableName,
+        string $iterableGetter,
         string $sourceVariableName,
         string $code,
+        string $iterableSetter,
     ): string {
         return str_replace(
             [
                 self::TARGET_VARIABLE_NAME,
-                self::ITERABLE_VARIABLE_NAME,
+                self::ITERABLE_GETTER,
                 self::SOURCE_VARIABLE_NAME,
                 self::CODE,
+                self::ITERABLE_SETTER
             ], 
             [
                 $outputVariableName,
-                $iterableVariableName,
+                $iterableGetter,
                 $sourceVariableName,
                 $code,
+                $iterableSetter
             ], 
             $this->expression
         );

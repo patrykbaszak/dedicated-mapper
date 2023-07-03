@@ -19,8 +19,12 @@ class GetMapperHandler
             $tree,
             $query->getterBuilder,
             $query->setterBuilder,
+            $query->functionBuilder,
+            $query->loopBuilder
         );
 
-        return $expressionBuilder->createExpression()->getMapper();
+        $expressionBuilder->createExpression();
+
+        return $expressionBuilder->getMapper();
     }
 }

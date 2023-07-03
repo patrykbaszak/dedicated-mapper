@@ -13,11 +13,6 @@ use PBaszak\MessengerMapperBundle\Properties\Property;
 
 class ArrayExpressionBuilder implements GetterInterface, SetterInterface
 {
-    private const PARENT_EXPRESSION = '[\'%s\']';
-    private const PARENT_PLACEHOLDER = '{{parents}}';
-    private const GETTER_EXPRESSION = '$' . Getter::SOURCE_VARIABLE_NAME . self::PARENT_PLACEHOLDER . '[\'%s\']';
-    private const SETTER_EXPRESSION = '$' . Setter::TARGET_VARIABLE_NAME . self::PARENT_PLACEHOLDER . '[\'%s\'] = ' . Setter::GETTER_EXPRESSION;
-
     /**
      * @param ModificatorInterface[] $modificators
      */
@@ -32,11 +27,42 @@ class ArrayExpressionBuilder implements GetterInterface, SetterInterface
 
     public function createGetter(Property $property): Getter
     {
-        
+        return new Getter(
+            sprintf(
+                '$%s[\'%s\']',
+                Getter::SOURCE_VARIABLE_NAME,
+                $property->originName
+            )
+        );
+    }
+    
+    public function createSimpleObjectGetter(Property $property): Getter
+    {
+        return $this->createGetter($property);
     }
 
     public function createSetter(Property $property): Setter
     {
-        
+        return new Setter(
+            sprintf(
+                '$%s[\'%s\'] = %s;',
+                Setter::TARGET_VARIABLE_NAME,
+                $property->originName,
+                Setter::GETTER_EXPRESSION
+            )
+        );
+    }
+
+    public function createSimpleObjectSetter(Property $property): Setter
+    {
+        return new Setter(
+            sprintf(
+                '$%s[\'%s\'] = new %s(%s);',
+                Setter::TARGET_VARIABLE_NAME,
+                $property->originName,
+                $property->getClassType(),
+                Setter::GETTER_EXPRESSION
+            )
+        );
     }
 }
