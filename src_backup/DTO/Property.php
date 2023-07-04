@@ -175,7 +175,7 @@ class Property
         return $callbacks;
     }
 
-    public function getGetterExpression(string $variableName, ?string $mapSeparator = null, ?string $forcedOrigin = null, bool $forceRootVariable = false): string
+    public function getGetterExpression(string $variableName, string $mapSeparator = null, string $forcedOrigin = null, bool $forceRootVariable = false): string
     {
         try {
             $defaultValue = $this->reflection?->getDefaultValue();
@@ -193,7 +193,7 @@ class Property
             : $this->doGetGetterExpression($variableName, $mapSeparator, $forcedOrigin, $forceRootVariable);
     }
 
-    private function doGetGetterExpression(string $variableName, ?string $mapSeparator = null, ?string $forcedOrigin = null, bool $forceRootVariable = false): string
+    private function doGetGetterExpression(string $variableName, string $mapSeparator = null, string $forcedOrigin = null, bool $forceRootVariable = false): string
     {
         if (self::ORIGIN_ARRAY === ($forcedOrigin ?? $this->origin)) {
             return sprintf('$%s[\'%s\']', $variableName, $this->getPath('\'][\'', $forceRootVariable));
@@ -252,7 +252,7 @@ class Property
     /**
      * @param string[]|null $validatorGroups
      */
-    public function getPropertyExpression(string $variableName, ?array $validatorGroups = null, ?string $setterSeparator = null, ?string $getterSeparator = null, ?string $forcedOrigin = null, bool $forceRootVariable = false, string $sourceVariableName = 'data'): string
+    public function getPropertyExpression(string $variableName, array $validatorGroups = null, string $setterSeparator = null, string $getterSeparator = null, string $forcedOrigin = null, bool $forceRootVariable = false, string $sourceVariableName = 'data'): string
     {
         if ($this->isCollection() && $this->hasChildren()) {
             if (count($this->children) > 1) {
@@ -438,7 +438,7 @@ class Property
     /**
      * @param string[]|null $validatorGroups
      */
-    public function getSetterExpression(string $getterExpression, string $variableName, ?string $mapSeparator = null, ?array $validatorGroups = null, ?string $forcedOrigin = null, bool $forceRootVariable = false): string
+    public function getSetterExpression(string $getterExpression, string $variableName, string $mapSeparator = null, array $validatorGroups = null, string $forcedOrigin = null, bool $forceRootVariable = false): string
     {
         if (!empty($this->validator->constraints)) {
             $getterExpression = sprintf(
@@ -474,7 +474,7 @@ class Property
             : $this->doGetSetterExpression($getterExpression, $variableName, $mapSeparator, $forcedOrigin, $forceRootVariable)).';';
     }
 
-    private function doGetSetterExpression(string $getterExpression, string $variableName, ?string $mapSeparator = null, ?string $forcedOrigin = null, bool $forceRootVariable = false): string
+    private function doGetSetterExpression(string $getterExpression, string $variableName, string $mapSeparator = null, string $forcedOrigin = null, bool $forceRootVariable = false): string
     {
         $getterExpression = $this->decorateGetterExpressionWithCallbacks(self::AS_DESTINATION, $getterExpression);
         if (self::ORIGIN_ARRAY === ($forcedOrigin ?? $this->origin)) {
@@ -525,7 +525,7 @@ class Property
         throw new \InvalidArgumentException(sprintf('Invalid origin: %s. Allowed: %s.', $this->origin, implode(', ', self::ORIGINS)));
     }
 
-    private function decorateGetterExpressionWithCallbacks(int $as, string $getterExpression, ?string $variableName = null): string
+    private function decorateGetterExpressionWithCallbacks(int $as, string $getterExpression, string $variableName = null): string
     {
         $mirrorAs = $as ^ (self::AS_SOURCE | self::AS_DESTINATION);
         if (empty($mirrorCallbacks = $this->mirror->getSelfMappingCallbacks($mirrorAs)) && empty($selfCallbacks = $this->getSelfMappingCallbacks($as))) {

@@ -13,7 +13,8 @@ class Function_
 
     public function __construct(
         public string $expression
-    ) {}
+    ) {
+    }
 
     public function toString(
         string $originVariableName,
@@ -27,13 +28,13 @@ class Function_
                 self::TARGET_VARIABLE_NAME,
                 self::FUNCTION_BODY,
                 self::USE_STATEMENTS,
-            ], 
+            ],
             [
                 $originVariableName,
                 $outputVariableName,
                 $functionBody,
                 $useStatements,
-            ], 
+            ],
             $this->expression
         );
     }

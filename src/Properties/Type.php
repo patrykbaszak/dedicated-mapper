@@ -6,15 +6,9 @@ namespace PBaszak\MessengerMapperBundle\Properties;
 
 use phpDocumentor\Reflection\DocBlock\Tags\Param;
 use phpDocumentor\Reflection\DocBlock\Tags\Var_;
-use ReflectionIntersectionType;
-use ReflectionUnionType;
-use ReflectionNamedType;
-use ReflectionProperty;
 use phpDocumentor\Reflection\DocBlockFactory;
 use phpDocumentor\Reflection\Type as PhpDocumentorReflectionType;
 use phpDocumentor\Reflection\Types\Array_;
-use ReflectionClass;
-use ReflectionType;
 
 trait Type
 {
@@ -46,7 +40,7 @@ trait Type
         $types->constructorParameter = $this->constructorParameter?->getType();
         $types->constructorParameterDocBlock = $this->getParameterTypeFromParamDocBlock();
         $types->process($this->reflection);
-        
+
         return $this->types = $types;
     }
 
@@ -105,9 +99,9 @@ trait Type
 
 class Types
 {
-    public ?ReflectionType $property;
+    public ?\ReflectionType $property;
     public ?PhpDocumentorReflectionType $propertyDocBlock;
-    public ?ReflectionType $constructorParameter;
+    public ?\ReflectionType $constructorParameter;
     public ?PhpDocumentorReflectionType $constructorParameterDocBlock;
 
     /** @var string[] */
@@ -115,7 +109,7 @@ class Types
     /** @var string[] only if isCollection is `true` */
     public array $innerTypes = [];
 
-    public function process(ReflectionProperty $property): void
+    public function process(\ReflectionProperty $property): void
     {
         $this->processReflectionType($this->property);
         $this->processPhpDocumentorReflectionType($this->propertyDocBlock, $property->getDeclaringClass());
@@ -123,17 +117,17 @@ class Types
         $this->processPhpDocumentorReflectionType($this->constructorParameterDocBlock, $property->getDeclaringClass());
     }
 
-    private function processReflectionType(?ReflectionType $reflection): void
+    private function processReflectionType(?\ReflectionType $reflection): void
     {
         if (null === $reflection) {
             return;
         }
 
-        if ($reflection instanceof ReflectionNamedType) {
+        if ($reflection instanceof \ReflectionNamedType) {
             $this->addType($reflection->getName());
         }
 
-        if ($reflection instanceof ReflectionUnionType || $reflection instanceof ReflectionIntersectionType) {
+        if ($reflection instanceof \ReflectionUnionType || $reflection instanceof \ReflectionIntersectionType) {
             $types = $reflection->getTypes();
             foreach ($types as $type) {
                 $this->processReflectionType($type);
@@ -141,7 +135,7 @@ class Types
         }
     }
 
-    private function processPhpDocumentorReflectionType(?PhpDocumentorReflectionType $reflection, ReflectionClass $classReflection): void
+    private function processPhpDocumentorReflectionType(?PhpDocumentorReflectionType $reflection, \ReflectionClass $classReflection): void
     {
         if (null === $reflection) {
             return;

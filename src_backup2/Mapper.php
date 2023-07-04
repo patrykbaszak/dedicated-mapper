@@ -45,12 +45,12 @@ class Mapper
         mixed $data,
         mixed $from,
         mixed $to,
-        ?string $fromType = null,
-        ?string $toType = null,
+        string $fromType = null,
+        string $toType = null,
         bool $useValidator = false,
-        ?array $validatorGroups = null,
+        array $validatorGroups = null,
         bool $useSerializer = false,
-        ?array $serializerGroups = null,
+        array $serializerGroups = null,
     ): mixed {
         $getMapper = new GetMapper($from, $to, $fromType, $toType, $useValidator, $validatorGroups, $useSerializer, $serializerGroups);
         $mapper = $this->handle($getMapper);
@@ -70,9 +70,9 @@ class Mapper
         string $toClass,
         string $fromType = 'array',
         bool $useValidator = false,
-        ?array $validatorGroups = null,
+        array $validatorGroups = null,
         bool $useSerializer = false,
-        ?array $serializerGroups = null,
+        array $serializerGroups = null,
     ): object {
         return $this->map($data, 'array', $toClass, $fromType, null, $useValidator, $validatorGroups, $useSerializer, $serializerGroups);
     }
@@ -87,13 +87,13 @@ class Mapper
      */
     public function fromArrayToAnonymousObject(
         array $data,
-        ?string $classTemplate = null,
+        string $classTemplate = null,
         string $fromType = 'array',
         string $toType = 'object',
         bool $useValidator = false,
-        ?array $validatorGroups = null,
+        array $validatorGroups = null,
         bool $useSerializer = false,
-        ?array $serializerGroups = null,
+        array $serializerGroups = null,
     ): object {
         if (!$classTemplate && 'array' === $fromType) {
             return (object) $data;
@@ -114,13 +114,13 @@ class Mapper
      */
     public function fromArrayToArray(
         array $data,
-        ?string $classTemplate = null,
+        string $classTemplate = null,
         string $fromType = 'array',
         string $toType = 'array',
         bool $useValidator = false,
-        ?array $validatorGroups = null,
+        array $validatorGroups = null,
         bool $useSerializer = false,
-        ?array $serializerGroups = null,
+        array $serializerGroups = null,
     ): array {
         return $this->map($data, 'array', $classTemplate ?? 'array', $fromType, $toType, $useValidator, $validatorGroups, $useSerializer, $serializerGroups);
     }
@@ -136,9 +136,9 @@ class Mapper
         string $class,
         string $fromType = 'object',
         bool $useValidator = false,
-        ?array $validatorGroups = null,
+        array $validatorGroups = null,
         bool $useSerializer = false,
-        ?array $serializerGroups = null,
+        array $serializerGroups = null,
     ): object {
         return $this->map($data, 'object', $class, $fromType, null, $useValidator, $validatorGroups, $useSerializer, $serializerGroups);
     }
@@ -152,13 +152,13 @@ class Mapper
      */
     public function fromAnonymousObjectToAnonymousObject(
         object $data,
-        ?string $classTemplate = null,
+        string $classTemplate = null,
         string $fromType = 'object',
         string $toType = 'object',
         bool $useValidator = false,
-        ?array $validatorGroups = null,
+        array $validatorGroups = null,
         bool $useSerializer = false,
-        ?array $serializerGroups = null,
+        array $serializerGroups = null,
     ): object {
         if (!$classTemplate && 'object' === $fromType) {
             return $data;
@@ -178,13 +178,13 @@ class Mapper
      */
     public function fromAnonymousObjectToArray(
         object $data,
-        ?string $classTemplate = null,
+        string $classTemplate = null,
         string $fromType = 'object',
         string $toType = 'array',
         bool $useValidator = false,
-        ?array $validatorGroups = null,
+        array $validatorGroups = null,
         bool $useSerializer = false,
-        ?array $serializerGroups = null,
+        array $serializerGroups = null,
     ): array {
         return $this->map($data, 'object', $classTemplate ?? 'array', $fromType, $toType, $useValidator, $validatorGroups, $useSerializer, $serializerGroups);
     }
@@ -198,9 +198,9 @@ class Mapper
         object $data,
         string $class,
         bool $useValidator = false,
-        ?array $validatorGroups = null,
+        array $validatorGroups = null,
         bool $useSerializer = false,
-        ?array $serializerGroups = null,
+        array $serializerGroups = null,
     ): object {
         return $this->map($data, get_class($data), $class, null, null, $useValidator, $validatorGroups, $useSerializer, $serializerGroups);
     }
@@ -213,12 +213,12 @@ class Mapper
      */
     public function fromClassObjectToAnonymousObject(
         object $data,
-        ?string $classTemplate = null,
+        string $classTemplate = null,
         string $toType = 'object',
         bool $useValidator = false,
-        ?array $validatorGroups = null,
+        array $validatorGroups = null,
         bool $useSerializer = false,
-        ?array $serializerGroups = null,
+        array $serializerGroups = null,
     ): object {
         return (object) $this->map($data, get_class($data), $classTemplate ?? 'object', null, $toType, $useValidator, $validatorGroups, $useSerializer, $serializerGroups);
     }
@@ -233,12 +233,12 @@ class Mapper
      */
     public function fromClassObjectToArray(
         object $data,
-        ?string $classTemplate = null,
+        string $classTemplate = null,
         string $toType = 'array',
         bool $useValidator = false,
-        ?array $validatorGroups = null,
+        array $validatorGroups = null,
         bool $useSerializer = false,
-        ?array $serializerGroups = null,
+        array $serializerGroups = null,
     ): array {
         return $this->map($data, get_class($data), $classTemplate ?? 'array', null, $toType, $useValidator, $validatorGroups, $useSerializer, $serializerGroups);
     }

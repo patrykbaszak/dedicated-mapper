@@ -70,64 +70,65 @@ class ExpressionBuilder
         );
     }
 
-    protected function createBlueprintExpression(
-        Blueprint $blueprint,
+    /**
+     * @param Property[] $properties
+     */
+    protected function createFunctionBodyExpression(
+        array $properties,
         string $sourceVariableName,
         string $targetVariableName,
-        string $useStatements,
+        string $useStatements
     ): string {
-        $functionName = $this->createUniqueVariableName($blueprint);
-        $function = $this->functionBuilder->getFunction();
-        $from = 'data';
-        $to = 'output';
-
         $functionBody = '';
-        foreach ($blueprint->properties as $propertyName => $property) {
-            /** @var Property $property */
+
+        foreach ($properties as $property) {
             switch ($property->getPropertyType()) {
                 case Property::PROPERTY:
-                    $functionBody .= $this->createSinglePropertyExpression($property, $from, $to);
+                    $functionBody .= $this->createSinglePropertyExpression($property, $sourceVariableName, $targetVariableName);
                     break;
                 case Property::SIMPLE_OBJECT:
-                    $functionBody .= $this->createSimpleObjectExpression($property, $from, $to);
+                    $functionBody .= $this->createSimpleObjectExpression($property, $sourceVariableName, $targetVariableName);
                     break;
                 case Property::CLASS_OBJECT:
+                    $function = $this->functionBuilder->getFunction();
+                    $functionName = $this->createUniqueVariableName($property->blueprint);
                     $functionBody .= sprintf(
-                        '$%s=%s;%s;',
+                        "$%s = %s;\n%s",
                         $functionName,
                         $function->toString(
-                            $from,
-                            $to,
-                            $this->createBlueprintExpression($property->blueprint, $from, $to, $useStatements),
+                            $sourceVariableName,
+                            $targetVariableName,
+                            $this->createFunctionBodyExpression($property->blueprint->properties, $sourceVariableName, $targetVariableName, $useStatements),
                             $useStatements
                         ),
                         $this->setterBuilder->createSetter($property)
                             ->toString(
-                                $to,
+                                $targetVariableName,
                                 sprintf(
                                     '$%s(%s)',
                                     $functionName,
-                                    $this->getterBuilder->createGetter($property)->toString($from)
+                                    $this->getterBuilder->createGetter($property)->toString($sourceVariableName)
                                 )
                             )
                     );
                     break;
                 case Property::COLLECTION:
-                    $collectionVariableName = $this->createUniqueVariableName($blueprint);
-                    $collectionItemVariableName = $this->createUniqueVariableName($blueprint);
-                    $collectionOutputVariableName = $this->createUniqueVariableName($blueprint);
+                    $function = $this->functionBuilder->getFunction();
+                    $functionName = $this->createUniqueVariableName($property->blueprint);
+                    $collectionItemVariableName = $this->createUniqueVariableName($property->blueprint);
+                    $collectionOutputVariableName = $this->createUniqueVariableName($property->blueprint);
                     $functionBody .= sprintf(
-                        '$%s=%s;%s',
+                        "$%s = %s;\n%s",
                         $functionName,
                         $function->toString(
-                            $from,
-                            $to,
-                            implode('', array_map(fn (Property $property) => $this->createSinglePropertyExpression($property, $from, $to), $property->blueprint->properties)),
+                            $sourceVariableName,
+                            $targetVariableName,
+                            $this->createFunctionBodyExpression($property->blueprint->properties, $sourceVariableName, $targetVariableName, $useStatements),
                             $useStatements
                         ),
                         $this->loopBuilder->getLoop()->toString(
                             $collectionOutputVariableName,
-                            $this->setterBuilder->createGetter($property)->toString($from),
+                            $this->setterBuilder->createGetter($property)->toString($sourceVariableName),
                             $collectionItemVariableName,
                             sprintf(
                                 '$%s[] = %s;',
@@ -140,7 +141,7 @@ class ExpressionBuilder
                             ),
                             $this->setterBuilder->createSetter($property)
                                 ->toString(
-                                    $to,
+                                    $targetVariableName,
                                     sprintf(
                                         '$%s',
                                         $collectionOutputVariableName,
@@ -150,21 +151,22 @@ class ExpressionBuilder
                     );
                     break;
                 case Property::SIMPLE_OBJECT_COLLECTION:
-                    $collectionVariableName = $this->createUniqueVariableName($blueprint);
-                    $collectionItemVariableName = $this->createUniqueVariableName($blueprint);
-                    $collectionOutputVariableName = $this->createUniqueVariableName($blueprint);
+                    $function = $this->functionBuilder->getFunction();
+                    $functionName = $this->createUniqueVariableName($property->blueprint);
+                    $collectionItemVariableName = $this->createUniqueVariableName($property->blueprint);
+                    $collectionOutputVariableName = $this->createUniqueVariableName($property->blueprint);
                     $functionBody .= sprintf(
-                        '$%s=%s;%s',
+                        "$%s = %s;\n%s",
                         $functionName,
                         $function->toString(
-                            $from,
-                            $to,
-                            implode('', array_map(fn (Property $property) => $this->createSinglePropertyExpression($property, $from, $to), $property->blueprint->properties)),
+                            $sourceVariableName,
+                            $targetVariableName,
+                            $this->createFunctionBodyExpression($property->blueprint->properties, $sourceVariableName, $targetVariableName, $useStatements),
                             $useStatements
                         ),
                         $this->loopBuilder->getLoop()->toString(
                             $collectionOutputVariableName,
-                            $this->setterBuilder->createGetter($property)->toString($from),
+                            $this->setterBuilder->createGetter($property)->toString($sourceVariableName),
                             $collectionItemVariableName,
                             sprintf(
                                 '$%s[] = %s;',
@@ -177,7 +179,7 @@ class ExpressionBuilder
                             ),
                             $this->setterBuilder->createSetter($property)
                                 ->toString(
-                                    $to,
+                                    $targetVariableName,
                                     sprintf(
                                         'new %s($%s)',
                                         $property->getClassType(),
@@ -187,8 +189,25 @@ class ExpressionBuilder
                         ),
                     );
                     break;
+                default:
+                    throw new \Exception('Unknown property type.');
             }
         }
+
+        return $functionBody;
+    }
+
+    protected function createBlueprintExpression(
+        Blueprint $blueprint,
+        string $sourceVariableName,
+        string $targetVariableName,
+        string $useStatements,
+    ): string {
+        $function = $this->functionBuilder->getFunction();
+        $from = 'data';
+        $to = 'output';
+
+        $functionBody = $this->createFunctionBodyExpression($blueprint->properties, $from, $to, $useStatements);
 
         return $function->toString(
             $sourceVariableName,
@@ -199,13 +218,14 @@ class ExpressionBuilder
     }
 
     private static array $usedVariableNames = [];
+
     private function createUniqueVariableName(Blueprint $blueprint): string
     {
         do {
-            $variableName = hash('crc32', $blueprint->reflection->getName() . self::$seed++, false);
+            $variableName = hash('crc32', $blueprint->reflection->getName().self::$seed++, false);
         } while (in_array($variableName, self::$usedVariableNames));
 
-        self::$usedVariableNames[] = $variableName = 'var_' . $variableName;
+        self::$usedVariableNames[] = $variableName = 'var_'.$variableName;
 
         return $variableName;
     }

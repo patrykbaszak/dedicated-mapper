@@ -11,6 +11,7 @@ use PBaszak\MessengerMapperBundle\Properties\Property;
 interface SetterInterface
 {
     public function createSetter(Property $property): Setter;
+
     public function createSimpleObjectSetter(Property $property): Setter;
 
     /** Used for foreach loop: foreach ({{getter}} as $item) */

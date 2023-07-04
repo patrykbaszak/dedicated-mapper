@@ -10,7 +10,8 @@ class Getter
 
     public function __construct(
         public string $expression
-    ) {}
+    ) {
+    }
 
     public function toString(string $sourceVariableName): string
     {

@@ -25,8 +25,8 @@ trait GetAttributesTrait
 
         $attributes = array_filter(
             $attributes,
-            fn ($attribute) => $attribute->getName() === $attributeClass ||
-                is_subclass_of($attribute->getName(), $attributeClass)
+            fn ($attribute) => $attribute->getName() === $attributeClass
+                || is_subclass_of($attribute->getName(), $attributeClass)
         );
 
         if (0 === count($attributes)) {

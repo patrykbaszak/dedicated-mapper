@@ -31,8 +31,8 @@ class ItemDTO
     public string $category;
     public int $vat;
     public MetadataDTO $metadata;
-    public string $created_at;
-    public string $updated_at;
+    public \DateTime $created_at;
+    public \DateTime $updated_at;
     /** @var array<string> */
     public array $availableActions;
 }

@@ -47,7 +47,7 @@ class GetMapper implements Cacheable
     ) {
     }
 
-    public function map(string $mapper, mixed $data, ?ValidatorInterface $validator = null): mixed
+    public function map(string $mapper, mixed $data, ValidatorInterface $validator = null): mixed
     {
         $mapper = eval($mapper);
 

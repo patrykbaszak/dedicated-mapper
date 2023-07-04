@@ -1,0 +1,8 @@
+framework:
+    cache:
+        pools:
+            runtime: 
+                adapter: cache.adapter.array
+                tags: true
+            filesystem: 
+                adapter: cache.adapter.filesystem

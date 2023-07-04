@@ -14,7 +14,8 @@ class Loop
 
     public function __construct(
         public string $expression
-    ) {}
+    ) {
+    }
 
     public function toString(
         string $outputVariableName,
@@ -29,15 +30,15 @@ class Loop
                 self::ITERABLE_GETTER,
                 self::SOURCE_VARIABLE_NAME,
                 self::CODE,
-                self::ITERABLE_SETTER
-            ], 
+                self::ITERABLE_SETTER,
+            ],
             [
                 $outputVariableName,
                 $iterableGetter,
                 $sourceVariableName,
                 $code,
-                $iterableSetter
-            ], 
+                $iterableSetter,
+            ],
             $this->expression
         );
     }

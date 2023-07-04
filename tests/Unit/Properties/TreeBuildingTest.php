@@ -7,9 +7,6 @@ namespace PBaszak\MessengerMapperBundle\Tests\Unit\Properties;
 use PBaszak\MessengerMapperBundle\Properties\Blueprint;
 use PBaszak\MessengerMapperBundle\Properties\Property;
 use PBaszak\MessengerMapperBundle\Tests\assets\Dummy;
-use PBaszak\MessengerMapperBundle\Tests\assets\EmbeddedDTO;
-use PBaszak\MessengerMapperBundle\Tests\assets\ItemDTO;
-use PBaszak\MessengerMapperBundle\Tests\assets\MetadataDTO;
 use PHPUnit\Framework\TestCase;
 
 /** @group unit */

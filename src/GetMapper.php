@@ -22,5 +22,6 @@ class GetMapper implements Cacheable
         public readonly FunctionInterface $functionBuilder = new DefaultExpressionBuilder(),
         public readonly LoopInterface $loopBuilder = new DefaultExpressionBuilder(),
         public readonly bool $isCollection = false,
-    ) {}
+    ) {
+    }
 }

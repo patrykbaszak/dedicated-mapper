@@ -21,6 +21,6 @@ interface PropertiesExtractorInterface
         string $class,
         ?array $serializerGroups,
         ?array $validatorGroups,
-        ?Property $parent = null
+        Property $parent = null
     ): array;
 }

@@ -28,10 +28,7 @@ class PropertiesExtractor implements PropertiesExtractorInterface
     use GetAttributesTrait;
     use GetClassIfClassType;
 
-    /**
-     * {@inheritdoc}
-     */
-    public function extractProperties(int $origin, string $class, ?array $serializerGroups, ?array $validatorGroups, ?Property $parent = null): array
+    public function extractProperties(int $origin, string $class, ?array $serializerGroups, ?array $validatorGroups, Property $parent = null): array
     {
         $reflectionClass = new \ReflectionClass($class);
         $output = [];

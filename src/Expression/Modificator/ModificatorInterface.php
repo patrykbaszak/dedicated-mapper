@@ -6,5 +6,4 @@ namespace PBaszak\MessengerMapperBundle\Expression\Modificator;
 
 interface ModificatorInterface
 {
-    
 }

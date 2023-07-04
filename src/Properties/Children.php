@@ -9,7 +9,7 @@ trait Children
     /** @var Property[] */
     protected array $children = [];
     protected ?Property $parent = null;
-    
+
     public function setParent(?Property $parent): void
     {
         if ($parent) {
@@ -23,7 +23,7 @@ trait Children
         return $this->parent;
     }
 
-    public function getAllParents(?int $depth = null): array
+    public function getAllParents(int $depth = null): array
     {
         $parents = [];
         $property = $this;

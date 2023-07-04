@@ -11,7 +11,8 @@ class Setter
 
     public function __construct(
         public string $expression
-    ) {}
+    ) {
+    }
 
     public function toString(string $targetVariableName, string $getterExpression): string
     {

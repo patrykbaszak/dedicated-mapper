@@ -4,13 +4,12 @@ declare(strict_types=1);
 
 namespace PBaszak\MessengerMapperBundle;
 
-use Stringable;
-
-class Mapper implements Stringable
+class Mapper implements \Stringable
 {
     public function __construct(
         private string $mappper
-    ) {}
+    ) {
+    }
 
     public function map(mixed $data): mixed
     {

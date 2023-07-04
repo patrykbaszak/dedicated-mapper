@@ -6,9 +6,6 @@ namespace PBaszak\MessengerMapperBundle\Service;
 
 class TypeService implements TypeServiceInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public function calculateType(string $value, ?string $type): int
     {
         /* @var ?string $type */

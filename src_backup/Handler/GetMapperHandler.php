@@ -311,7 +311,7 @@ class GetMapperHandler
      *
      * @return Property[]
      */
-    private function extractProperties(string $class, string $origin, ?array $serializerGroups = [], ?Property $parent = null): array
+    private function extractProperties(string $class, string $origin, ?array $serializerGroups = [], Property $parent = null): array
     {
         $reflectionClass = new \ReflectionClass($class);
         /** @var \ReflectionParameter[] $constructorParameters */

@@ -4,16 +4,9 @@ declare(strict_types=1);
 
 namespace PBaszak\MessengerMapperBundle\Properties;
 
-use ArrayIterator;
 use ArrayObject;
-use DateInterval;
 use DateTime;
-use DateTimeImmutable;
-use DateTimeZone;
 use PBaszak\MessengerMapperBundle\Attribute\SimpleObject;
-use ReflectionClass;
-use ReflectionParameter;
-use ReflectionProperty;
 
 class Property
 {
@@ -22,12 +15,12 @@ class Property
     use Type;
 
     public const NATIVE_SIMPLE_OBJECTS = [
-        ArrayIterator::class => [],
-        ArrayObject::class => [],
-        DateTime::class => [],
-        DateTimeImmutable::class => [],
-        DateTimeZone::class => [],
-        DateInterval::class => [],
+        \ArrayIterator::class => [],
+        \ArrayObject::class => [],
+        \DateTime::class => [],
+        \DateTimeImmutable::class => [],
+        \DateTimeZone::class => [],
+        \DateInterval::class => [],
     ];
 
     public const PROPERTY = 0; // 0000 example: int
@@ -41,16 +34,16 @@ class Property
 
     public function __construct(
         public readonly string $originName,
-        ReflectionProperty $reflection,
-        ?ReflectionParameter $constructorParameter = null,
-        ?self $parent = null,
+        \ReflectionProperty $reflection,
+        \ReflectionParameter $constructorParameter = null,
+        self $parent = null,
     ) {
         $this->reflection = $reflection;
         $this->constructorParameter = $constructorParameter;
         $this->setParent($parent);
     }
 
-    public static function create(ReflectionClass $class, string $name, ?self $parent = null): self
+    public static function create(\ReflectionClass $class, string $name, self $parent = null): self
     {
         $reflection = $class->getProperty($name);
         $constructorParameter = ($parameters = $class->getConstructor()?->getParameters()) ? $parameters[$name] ?? null : null;
@@ -59,7 +52,7 @@ class Property
         $types = $property->getTypes()->types;
         $innerTypes = $property->getTypes()->innerTypes;
 
-        /** If collection */
+        /* If collection */
         if (!empty($innerTypes)) {
             if (count($innerTypes) > 1) {
                 throw new \Exception('Multiple inner types are not supported yet.');
@@ -68,7 +61,7 @@ class Property
             $property->blueprint = Blueprint::create($innerTypes[0], true, $property);
         }
 
-        /** If class */
+        /* If class */
         if (!empty($types)) {
             foreach ($types as $type) {
                 if (

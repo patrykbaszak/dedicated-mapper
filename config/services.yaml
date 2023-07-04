@@ -1,18 +1,16 @@
 framework:
-    handle_all_throwables: true
-    http_method_override: false
+    secret: '$ecretf0rt3st'
     php_errors:
         log: true
-    secret: '%env(APP_SECRET)%'
     test: true
+    http_method_override: false
 
 services:
     _defaults:
         autowire: true      
         autoconfigure: true 
 
-    PBaszak\MessengerDoctrineDTOBundle\Tests\Helper\:
-        resource: '../tests/Helper/'
+    PBaszak\MessengerMapperBundle\Tests\:
+        resource: '../tests/*'
         exclude:
-            - '../tests/Helper/Application/Entity/'
-            - '../tests/Helper/Kernel.php'
+            - 'Kernel.php'

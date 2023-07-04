@@ -14,9 +14,6 @@ class ExpressionBuilder implements ExpressionBuilderInterface
     private readonly int $mainSourceType;
     private readonly int $mainTargetType;
 
-    /**
-     * {@inheritdoc}
-     */
     public function buildExpression(
         Property $targetProperty,
         string $sourceVariableName,

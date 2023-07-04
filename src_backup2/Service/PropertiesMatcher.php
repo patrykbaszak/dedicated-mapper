@@ -19,9 +19,9 @@ class PropertiesMatcher implements PropertiesMatcherInterface
             $this->doMatchProperties($sourceProperties, $targetProperties);
             [$afterSourceCount, $afterTargetCount] = [$this->countMirrors($sourceProperties), $this->countMirrors($targetProperties)];
         } while (
-            $beforeSourceCount !== $afterSourceCount ||
-            $beforeTargetCount !== $afterTargetCount ||
-            $afterSourceCount !== $afterTargetCount
+            $beforeSourceCount !== $afterSourceCount
+            || $beforeTargetCount !== $afterTargetCount
+            || $afterSourceCount !== $afterTargetCount
         );
     }
 

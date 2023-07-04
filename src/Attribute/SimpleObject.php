@@ -8,9 +8,10 @@ namespace PBaszak\MessengerMapperBundle\Attribute;
 class SimpleObject
 {
     /**
-     * @param string  $staticConstructor    name of static method to create object, 
-     *                                      if `null` then constructor will be used
-     * @param mixed[] $options              any options required but custom actions
+     * @param string  $staticConstructor name of static method to create object,
+     *                                   if `null` then constructor will be used
+     * @param array<string,mixed> $namedArguments   arguments passed to constructor or static method
+     * @param mixed[] $options           any options required but custom actions
      */
     public function __construct(
         public readonly ?string $staticConstructor = null,

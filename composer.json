@@ -63,8 +63,6 @@
         "test:integration": "@phpunit --group integration tests",
         "test:performance": "@phpunit --group performance tests",
         "test:ci": [
-            "bin/console cache:clear -e local && rm -rf /tmp/symfony-cache",
-            "bin/console cache:clear -e test",
             "@code:fix",
             "@code:analyse",
             "@test:unit",
