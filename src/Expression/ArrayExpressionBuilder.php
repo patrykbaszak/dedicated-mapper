@@ -7,6 +7,7 @@ namespace PBaszak\MessengerMapperBundle\Expression;
 use PBaszak\MessengerMapperBundle\Contract\GetterInterface;
 use PBaszak\MessengerMapperBundle\Contract\SetterInterface;
 use PBaszak\MessengerMapperBundle\Expression\Modificator\PBaszakMessengerMapper;
+use PBaszak\MessengerMapperBundle\Properties\Blueprint;
 use PBaszak\MessengerMapperBundle\Properties\Property;
 
 class ArrayExpressionBuilder implements GetterInterface, SetterInterface
@@ -19,6 +20,27 @@ class ArrayExpressionBuilder implements GetterInterface, SetterInterface
             new PBaszakMessengerMapper(),
         ]
     ) {
+    }
+
+    public function getGetterInitialExpression(Blueprint $blueprint, string $initialExpressionId): InitialExpression
+    {
+        return new InitialExpression(
+            sprintf(
+                'is_array($%s) || throw new \InvalidArgumentException(\'Incoming data for property of type %s must be an array.\');',
+                InitialExpression::VARIABLE_NAME,
+                $blueprint->reflection->getName()
+            )
+        );
+    }
+
+    public function getSetterInitialExpression(Blueprint $blueprint, string $initialExpressionId): InitialExpression
+    {
+        return new InitialExpression(
+            sprintf(
+                '$%s = [];',
+                InitialExpression::VARIABLE_NAME,
+            )
+        );
     }
 
     public function createGetter(Property $property): Getter
@@ -53,11 +75,12 @@ class ArrayExpressionBuilder implements GetterInterface, SetterInterface
     {
         return new Setter(
             sprintf(
-                "$%s['%s'] = new %s(%s);\n",
+                "$%s['%s'] = (\$a = %s) instanceof %s ? \$a : new %s(\$a);\n",
                 Setter::TARGET_VARIABLE_NAME,
                 $property->originName,
+                Setter::GETTER_EXPRESSION,
                 $property->getClassType(),
-                Setter::GETTER_EXPRESSION
+                $property->getClassType(),
             )
         );
     }

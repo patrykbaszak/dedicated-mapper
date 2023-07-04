@@ -50,7 +50,9 @@ class ExpressionBuilderTest extends TestCase
 
         $this->assertEquals(
             'return function (mixed $data)  {
-                $output[\'property\'] = $data[\'property\'];
+                is_array($data) || throw new \InvalidArgumentException(\'Incoming data for property of type PBaszak\MessengerMapperBundle\Tests\Unit\Expression\SimpleClass must be an array.\');
+$output = [];
+$output[\'property\'] = $data[\'property\'];
 
                 return $output;
             };',
@@ -97,8 +99,12 @@ class ExpressionBuilderTest extends TestCase
 
         $this->assertEqualsIgnoringCase(
             'return function (mixed $data)  {
-                $var_78c4d00f = function (mixed $data)  {
-                $output[\'property\'] = $data[\'property\'];
+                is_array($data) || throw new \InvalidArgumentException(\'Incoming data for property of type PBaszak\MessengerMapperBundle\Tests\Unit\Expression\SimpleCollectionClass must be an array.\');
+$output = [];
+$var_78c4d00f = function (mixed $data)  {
+                is_array($data) || throw new \InvalidArgumentException(\'Incoming data for property of type PBaszak\MessengerMapperBundle\Tests\Unit\Expression\SimpleClass must be an array.\');
+$output = [];
+$output[\'property\'] = $data[\'property\'];
 
                 return $output;
             };
@@ -158,9 +164,13 @@ $var_16ff5206 = [];
 
         $this->assertEqualsIgnoringCase(
             'return function (mixed $data)  {
-                $output[\'time\'] = new DateTime($data[\'time\']);
+                is_array($data) || throw new \InvalidArgumentException(\'Incoming data for property of type PBaszak\MessengerMapperBundle\Tests\Unit\Expression\SimpleClassWithSimpleObject must be an array.\');
+$output = [];
+$output[\'time\'] = ($a = $data[\'time\']) instanceof DateTime ? $a : new DateTime($a);
 $var_78c4d00f = function (mixed $data)  {
-                $output[\'property\'] = $data[\'property\'];
+                is_array($data) || throw new \InvalidArgumentException(\'Incoming data for property of type PBaszak\MessengerMapperBundle\Tests\Unit\Expression\SimpleClass must be an array.\');
+$output = [];
+$output[\'property\'] = $data[\'property\'];
 
                 return $output;
             };
@@ -225,15 +235,21 @@ $var_16ff5206 = [];
 
         $this->assertEqualsIgnoringCase(
             'return function (mixed $data)  {
-                $output[\'id\'] = $data[\'id\'];
+                is_array($data) || throw new \InvalidArgumentException(\'Incoming data for property of type PBaszak\MessengerMapperBundle\Tests\assets\Dummy must be an array.\');
+$output = [];
+$output[\'id\'] = $data[\'id\'];
 $output[\'name\'] = $data[\'name\'];
 $output[\'description\'] = $data[\'description\'];
 $var_6e52c0f5 = function (mixed $data)  {
-                $output[\'page\'] = $data[\'page\'];
+                is_array($data) || throw new \InvalidArgumentException(\'Incoming data for property of type PBaszak\MessengerMapperBundle\Tests\assets\EmbeddedDTO must be an array.\');
+$output = [];
+$output[\'page\'] = $data[\'page\'];
 $output[\'pageSize\'] = $data[\'pageSize\'];
 $output[\'total\'] = $data[\'total\'];
 $var_ccdcc381 = function (mixed $data)  {
-                $output[\'id\'] = $data[\'id\'];
+                is_array($data) || throw new \InvalidArgumentException(\'Incoming data for property of type PBaszak\MessengerMapperBundle\Tests\assets\ItemDTO must be an array.\');
+$output = [];
+$output[\'id\'] = $data[\'id\'];
 $output[\'name\'] = $data[\'name\'];
 $output[\'description\'] = $data[\'description\'];
 $output[\'price\'] = $data[\'price\'];
@@ -243,14 +259,16 @@ $output[\'type\'] = $data[\'type\'];
 $output[\'category\'] = $data[\'category\'];
 $output[\'vat\'] = $data[\'vat\'];
 $var_5626685c = function (mixed $data)  {
-                $output[\'test\'] = $data[\'test\'];
+                is_array($data) || throw new \InvalidArgumentException(\'Incoming data for property of type PBaszak\MessengerMapperBundle\Tests\assets\MetadataDTO must be an array.\');
+$output = [];
+$output[\'test\'] = $data[\'test\'];
 $output[\'test2\'] = $data[\'test2\'];
 
                 return $output;
             };
 $output[\'metadata\'] = $var_5626685c($data[\'metadata\']);
-$output[\'created_at\'] = new DateTime($data[\'created_at\']);
-$output[\'updated_at\'] = new DateTime($data[\'updated_at\']);
+$output[\'created_at\'] = ($a = $data[\'created_at\']) instanceof DateTime ? $a : new DateTime($a);
+$output[\'updated_at\'] = ($a = $data[\'updated_at\']) instanceof DateTime ? $a : new DateTime($a);
 $output[\'availableActions\'] = $data[\'availableActions\'];
 
                 return $output;

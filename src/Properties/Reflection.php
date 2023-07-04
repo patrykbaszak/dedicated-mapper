@@ -6,6 +6,6 @@ namespace PBaszak\MessengerMapperBundle\Properties;
 
 trait Reflection
 {
-    protected \ReflectionProperty $reflection;
-    protected ?\ReflectionParameter $constructorParameter = null;
+    public \ReflectionProperty $reflection;
+    public ?\ReflectionParameter $constructorParameter = null;
 }
