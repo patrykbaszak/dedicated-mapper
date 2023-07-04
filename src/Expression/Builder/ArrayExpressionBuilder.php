@@ -2,21 +2,21 @@
 
 declare(strict_types=1);
 
-namespace PBaszak\MessengerMapperBundle\Expression;
+namespace PBaszak\MessengerMapperBundle\Expression\Builder;
 
 use PBaszak\MessengerMapperBundle\Contract\GetterInterface;
 use PBaszak\MessengerMapperBundle\Contract\SetterInterface;
+use PBaszak\MessengerMapperBundle\Expression\Getter;
+use PBaszak\MessengerMapperBundle\Expression\InitialExpression;
 use PBaszak\MessengerMapperBundle\Expression\Modificator\PBaszakMessengerMapper;
+use PBaszak\MessengerMapperBundle\Expression\Setter;
 use PBaszak\MessengerMapperBundle\Properties\Blueprint;
 use PBaszak\MessengerMapperBundle\Properties\Property;
 
 class ArrayExpressionBuilder implements GetterInterface, SetterInterface
 {
     public function __construct(
-        public array $getterModificators = [
-            new PBaszakMessengerMapper(),
-        ],
-        public array $setterModificators = [
+        public array $modificators = [
             new PBaszakMessengerMapper(),
         ]
     ) {

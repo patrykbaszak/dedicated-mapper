@@ -10,7 +10,7 @@ use PBaszak\MessengerMapperBundle\Contract\FunctionInterface;
 use PBaszak\MessengerMapperBundle\Contract\GetterInterface;
 use PBaszak\MessengerMapperBundle\Contract\LoopInterface;
 use PBaszak\MessengerMapperBundle\Contract\SetterInterface;
-use PBaszak\MessengerMapperBundle\Expression\DefaultExpressionBuilder;
+use PBaszak\MessengerMapperBundle\Expression\Builder\DefaultExpressionBuilder;
 
 #[Cache(pool: MessengerMapperBundle::ALIAS)]
 class GetMapper implements Cacheable

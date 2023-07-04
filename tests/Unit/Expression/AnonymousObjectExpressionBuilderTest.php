@@ -5,22 +5,22 @@ declare(strict_types=1);
 namespace PBaszak\MessengerMapperBundle\Expression;
 
 use DateTime;
+use PBaszak\MessengerMapperBundle\Expression\Builder\AnonymousObjectExpressionBuilder;
 use PBaszak\MessengerMapperBundle\Expression\Builder\ArrayExpressionBuilder;
-use PBaszak\MessengerMapperBundle\Expression\Builder\ReflectionClassExpressionBuilder;
 use PBaszak\MessengerMapperBundle\Properties\Blueprint;
 use PBaszak\MessengerMapperBundle\Tests\assets\Dummy;
 use PHPUnit\Framework\TestCase;
 
 /** @group unit */
-class ReflectionClassExpressionBuilderTest extends TestCase
+class AnonymousObjectExpressionBuilderTest extends TestCase
 {
     /** @test */
-    public function shouldMapArrayIntoClassObject(): void
+    public function shouldMapArrayIntoAnonymousObject(): void
     {
         $expressionBuilder = new ExpressionBuilder(
             Blueprint::create(Dummy::class, false),
             new ArrayExpressionBuilder(),
-            new ReflectionClassExpressionBuilder(),
+            new AnonymousObjectExpressionBuilder(),
         );
 
         $expressionBuilder->createExpression();
@@ -29,7 +29,7 @@ class ReflectionClassExpressionBuilderTest extends TestCase
         $dummy = json_decode(file_get_contents(__DIR__ . '/../../assets/dummy.json'), true);
         $mappedDummy = $mapper($dummy);
 
-        $this->assertInstanceOf(Dummy::class, $mappedDummy);
+        $this->assertIsObject($mappedDummy);
         $this->assertEquals($dummy['id'], $mappedDummy->id);
         $this->assertEquals($dummy['name'], $mappedDummy->name);
         $this->assertEquals($dummy['description'], $mappedDummy->description);
@@ -71,12 +71,12 @@ class ReflectionClassExpressionBuilderTest extends TestCase
     }
 
     /** @test */
-    public function shouldClassObjectIntoArray(): void
+    public function shouldAnonymousObjectIntoArray(): void
     {
         $expressionBuilder = new ExpressionBuilder(
             Blueprint::create(Dummy::class, false),
             new ArrayExpressionBuilder(),
-            new ReflectionClassExpressionBuilder(),
+            new AnonymousObjectExpressionBuilder(),
         );
 
         $expressionBuilder->createExpression();
@@ -87,7 +87,7 @@ class ReflectionClassExpressionBuilderTest extends TestCase
 
         $expressionBuilder = new ExpressionBuilder(
             Blueprint::create(Dummy::class, false),
-            new ReflectionClassExpressionBuilder(),
+            new AnonymousObjectExpressionBuilder(),
             new ArrayExpressionBuilder(),
         );
 

@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace PBaszak\MessengerMapperBundle\Properties;
 
-use ArrayObject;
-use DateTime;
 use PBaszak\MessengerMapperBundle\Attribute\SimpleObject;
 
 class Property

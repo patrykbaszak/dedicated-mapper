@@ -8,6 +8,7 @@ use PBaszak\MessengerMapperBundle\Contract\FunctionInterface;
 use PBaszak\MessengerMapperBundle\Contract\GetterInterface;
 use PBaszak\MessengerMapperBundle\Contract\LoopInterface;
 use PBaszak\MessengerMapperBundle\Contract\SetterInterface;
+use PBaszak\MessengerMapperBundle\Expression\Builder\DefaultExpressionBuilder;
 use PBaszak\MessengerMapperBundle\Mapper;
 use PBaszak\MessengerMapperBundle\Properties\Blueprint;
 use PBaszak\MessengerMapperBundle\Properties\Property;

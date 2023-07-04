@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace PBaszak\MessengerMapperBundle\Tests\Unit\Expression;
 
-use PBaszak\MessengerMapperBundle\Expression\ArrayExpressionBuilder;
+use PBaszak\MessengerMapperBundle\Expression\Builder\ArrayExpressionBuilder;
 use PBaszak\MessengerMapperBundle\Expression\ExpressionBuilder;
 use PBaszak\MessengerMapperBundle\Properties\Blueprint;
 use PBaszak\MessengerMapperBundle\Tests\assets\Dummy;
