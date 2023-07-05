@@ -15,14 +15,14 @@ use PBaszak\MessengerMapperBundle\Properties\Property;
 
 /**
  * What the hell is the ArrayMap?
- * 
+ *
  * Look on this example:
  * [
  *   'baz' => 'qux',
  *   'foo__bar' => 'bar',
  *   'foo__baz' => 'qux',
  * ]
- * 
+ *
  * this is valid map for this array:
  * [
  *   'foo' => [
@@ -31,7 +31,7 @@ use PBaszak\MessengerMapperBundle\Properties\Property;
  *   ],
  *   'baz' => 'qux',
  * ]
- * 
+ *
  * but with separator `__` you can create nested array.
  */
 class ArrayMapExpressionBuilder implements GetterInterface, SetterInterface
@@ -74,7 +74,7 @@ class ArrayMapExpressionBuilder implements GetterInterface, SetterInterface
                 implode(
                     $this->separator,
                     array_merge(
-                        array_map(fn(Property $parent) => $parent->originName, $property->getAllParents()),
+                        array_map(fn (Property $parent) => $parent->originName, $property->getAllParents()),
                         $property->originName
                     ),
                 )
@@ -96,7 +96,7 @@ class ArrayMapExpressionBuilder implements GetterInterface, SetterInterface
                 implode(
                     $this->separator,
                     array_merge(
-                        array_map(fn(Property $parent) => $parent->originName, $property->getAllParents()),
+                        array_map(fn (Property $parent) => $parent->originName, $property->getAllParents()),
                         $property->originName
                     ),
                 ),
@@ -114,7 +114,7 @@ class ArrayMapExpressionBuilder implements GetterInterface, SetterInterface
                 implode(
                     $this->separator,
                     array_merge(
-                        array_map(fn(Property $parent) => $parent->originName, $property->getAllParents()),
+                        array_map(fn (Property $parent) => $parent->originName, $property->getAllParents()),
                         $property->originName
                     ),
                 ),

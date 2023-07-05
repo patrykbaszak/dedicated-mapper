@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace PBaszak\MessengerMapperBundle\Expression;
 
-use DateTime;
 use PBaszak\MessengerMapperBundle\Expression\Builder\ArrayExpressionBuilder;
 use PBaszak\MessengerMapperBundle\Expression\Builder\ReflectionClassExpressionBuilder;
 use PBaszak\MessengerMapperBundle\Properties\Blueprint;
@@ -26,7 +25,7 @@ class ReflectionClassExpressionBuilderTest extends TestCase
         $expressionBuilder->createExpression();
         $mapper = $expressionBuilder->getMapper();
 
-        $dummy = json_decode(file_get_contents(__DIR__ . '/../../assets/dummy.json'), true);
+        $dummy = json_decode(file_get_contents(__DIR__.'/../../assets/dummy.json'), true);
         $mappedDummy = $mapper($dummy);
 
         $this->assertInstanceOf(Dummy::class, $mappedDummy);
@@ -48,8 +47,8 @@ class ReflectionClassExpressionBuilderTest extends TestCase
         $this->assertEquals($dummy['_embedded']['items'][0]['vat'], $mappedDummy->_embedded->items[0]->vat);
         $this->assertEquals($dummy['_embedded']['items'][0]['metadata']['test'], $mappedDummy->_embedded->items[0]->metadata->test);
         $this->assertEquals($dummy['_embedded']['items'][0]['metadata']['test2'], $mappedDummy->_embedded->items[0]->metadata->test2);
-        $this->assertEquals((new DateTime($dummy['_embedded']['items'][0]['created_at']))->format('Y-m-d H:i:s'), $mappedDummy->_embedded->items[0]->created_at->format('Y-m-d H:i:s'));
-        $this->assertEquals((new DateTime($dummy['_embedded']['items'][0]['updated_at']))->format('Y-m-d H:i:s'), $mappedDummy->_embedded->items[0]->updated_at->format('Y-m-d H:i:s'));
+        $this->assertEquals((new \DateTime($dummy['_embedded']['items'][0]['created_at']))->format('Y-m-d H:i:s'), $mappedDummy->_embedded->items[0]->created_at->format('Y-m-d H:i:s'));
+        $this->assertEquals((new \DateTime($dummy['_embedded']['items'][0]['updated_at']))->format('Y-m-d H:i:s'), $mappedDummy->_embedded->items[0]->updated_at->format('Y-m-d H:i:s'));
         $this->assertEquals($dummy['_embedded']['items'][0]['availableActions'], $mappedDummy->_embedded->items[0]->availableActions);
 
         $this->assertEquals($dummy['_embedded']['items'][1]['id'], $mappedDummy->_embedded->items[1]->id);
@@ -63,8 +62,8 @@ class ReflectionClassExpressionBuilderTest extends TestCase
         $this->assertEquals($dummy['_embedded']['items'][1]['vat'], $mappedDummy->_embedded->items[1]->vat);
         $this->assertEquals($dummy['_embedded']['items'][1]['metadata']['test'], $mappedDummy->_embedded->items[1]->metadata->test);
         $this->assertEquals($dummy['_embedded']['items'][1]['metadata']['test2'], $mappedDummy->_embedded->items[1]->metadata->test2);
-        $this->assertEquals((new DateTime($dummy['_embedded']['items'][1]['created_at']))->format('Y-m-d H:i:s'), $mappedDummy->_embedded->items[1]->created_at->format('Y-m-d H:i:s'));
-        $this->assertEquals((new DateTime($dummy['_embedded']['items'][1]['updated_at']))->format('Y-m-d H:i:s'), $mappedDummy->_embedded->items[1]->updated_at->format('Y-m-d H:i:s'));
+        $this->assertEquals((new \DateTime($dummy['_embedded']['items'][1]['created_at']))->format('Y-m-d H:i:s'), $mappedDummy->_embedded->items[1]->created_at->format('Y-m-d H:i:s'));
+        $this->assertEquals((new \DateTime($dummy['_embedded']['items'][1]['updated_at']))->format('Y-m-d H:i:s'), $mappedDummy->_embedded->items[1]->updated_at->format('Y-m-d H:i:s'));
         $this->assertEquals($dummy['_embedded']['items'][1]['availableActions'], $mappedDummy->_embedded->items[1]->availableActions);
 
         $this->assertArrayNotHasKey(2, $mappedDummy->_embedded->items);
@@ -82,7 +81,7 @@ class ReflectionClassExpressionBuilderTest extends TestCase
         $expressionBuilder->createExpression();
         $mapper = $expressionBuilder->getMapper();
 
-        $dummy = json_decode(file_get_contents(__DIR__ . '/../../assets/dummy.json'), true);
+        $dummy = json_decode(file_get_contents(__DIR__.'/../../assets/dummy.json'), true);
         $mappedDummy = $mapper($dummy);
 
         $expressionBuilder = new ExpressionBuilder(
@@ -93,14 +92,14 @@ class ReflectionClassExpressionBuilderTest extends TestCase
 
         $expressionBuilder->createExpression();
         $mapper = $expressionBuilder->getMapper();
-        
+
         $arrayDummy = $mapper($mappedDummy);
 
         $this->assertIsArray($arrayDummy);
 
         foreach ($arrayDummy['_embedded']['items'] as &$item) {
-            $item['created_at'] = $item['created_at']->format(DateTime::ATOM);
-            $item['updated_at'] = $item['updated_at']->format(DateTime::ATOM);
+            $item['created_at'] = $item['created_at']->format(\DateTime::ATOM);
+            $item['updated_at'] = $item['updated_at']->format(\DateTime::ATOM);
         }
 
         $this->assertEquals($dummy, $arrayDummy);

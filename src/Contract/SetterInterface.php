@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace PBaszak\MessengerMapperBundle\Contract;
 
-use PBaszak\MessengerMapperBundle\Expression\Getter;
 use PBaszak\MessengerMapperBundle\Expression\InitialExpression;
 use PBaszak\MessengerMapperBundle\Expression\Setter;
 use PBaszak\MessengerMapperBundle\Properties\Blueprint;

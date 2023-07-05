@@ -23,6 +23,7 @@ class ReflectionClassExpressionBuilder implements GetterInterface, SetterInterfa
     }
 
     private static $initialExpressionIds = [];
+
     public function getGetterInitialExpression(Blueprint $blueprint, string $initialExpressionId): InitialExpression
     {
         if (in_array($initialExpressionId, self::$initialExpressionIds)) {
@@ -38,7 +39,7 @@ class ReflectionClassExpressionBuilder implements GetterInterface, SetterInterfa
 
         return new InitialExpression(
             sprintf(
-                "if (!$%s instanceof %s) throw new \InvalidArgumentException('Incoming data must be an %s.');\n" .
+                "if (!$%s instanceof %s) throw new \InvalidArgumentException('Incoming data must be an %s.');\n".
                 "$%s = new \ReflectionClass(%s::class);\n",
                 InitialExpression::VARIABLE_NAME,
                 $blueprint->reflection->getName(),
@@ -60,10 +61,10 @@ class ReflectionClassExpressionBuilder implements GetterInterface, SetterInterfa
                 )
             );
         }
-        
+
         return new InitialExpression(
             sprintf(
-                "$%s = new \ReflectionClass(%s::class);\n" .
+                "$%s = new \ReflectionClass(%s::class);\n".
                 "$%s = $%s->newInstanceWithoutConstructor();\n",
                 $this->getReflectionClassVariableName($blueprint),
                 $blueprint->reflection->getName(),

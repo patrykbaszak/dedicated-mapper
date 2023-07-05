@@ -6,7 +6,7 @@ namespace PBaszak\MessengerMapperBundle\Expression\Modificator;
 
 class Callback
 {
-    /** @var callable $callback */
+    /** @var callable */
     public $callback;
 
     public function __construct(

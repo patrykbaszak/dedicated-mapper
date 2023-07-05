@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace PBaszak\MessengerMapperBundle;
 
-use PBaszak\MessengerMapperBundle\Contract\GetterInterface;
 use PBaszak\MessengerMapperBundle\Contract\FunctionInterface;
+use PBaszak\MessengerMapperBundle\Contract\GetterInterface;
 use PBaszak\MessengerMapperBundle\Contract\LoopInterface;
 use PBaszak\MessengerMapperBundle\Contract\MapperServiceInterface;
 use PBaszak\MessengerMapperBundle\Contract\SetterInterface;
@@ -50,7 +50,7 @@ class MapperService implements MapperServiceInterface
         LoopInterface $loopBuilder = new DefaultExpressionBuilder(),
         bool $isCollection = false
     ): callable {
-        $function = @include_once $this->directory . $mapperId . '.php';
+        $function = @include_once $this->directory.$mapperId.'.php';
 
         if ($function) {
             return $function;
@@ -58,16 +58,16 @@ class MapperService implements MapperServiceInterface
         $mapper = sprintf(
             "<?php\n\ndeclare(strict_types=1);\n\n%s",
             $this->handle(
-            new GetMapper($blueprint, $getterBuilder, $setterBuilder, $functionBuilder, $loopBuilder, $isCollection)
-        )->toString());
+                new GetMapper($blueprint, $getterBuilder, $setterBuilder, $functionBuilder, $loopBuilder, $isCollection)
+            )->toString());
 
-        if (!@file_put_contents($this->directory . $mapperId . '.php', $mapper)) {
+        if (!@file_put_contents($this->directory.$mapperId.'.php', $mapper)) {
             mkdir($this->directory, 0777, true);
-            if (!@file_put_contents($this->directory . $mapperId . '.php', $mapper)) {
+            if (!@file_put_contents($this->directory.$mapperId.'.php', $mapper)) {
                 throw new \RuntimeException('Unable to create mapper file.');
             }
         }
 
-        return include_once $this->directory . $mapperId . '.php';
+        return include_once $this->directory.$mapperId.'.php';
     }
 }
