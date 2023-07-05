@@ -17,12 +17,16 @@ use PBaszak\MessengerMapperBundle\Properties\Property;
 class ReflectionClassExpressionBuilder implements GetterInterface, SetterInterface
 {
     /**
-     * @param ModificatorInterface[] $modificators
+     * @param ModificatorInterface[]      $modificators
+     * @param Blueprint|class-string|null $blueprint    If not `null` then it will be used as a source of reflection class
+     *                                                  instead of the property's reflection class. You can use it to create mapper from
+     *                                                  one class to another.
      */
     public function __construct(
         public array $modificators = [
             new PBaszakMessengerMapper(),
-        ]
+        ],
+        private ?string $blueprint = null,
     ) {
     }
 
@@ -45,7 +49,7 @@ class ReflectionClassExpressionBuilder implements GetterInterface, SetterInterfa
         return new InitialExpression(
             sprintf(
                 "if (!$%s instanceof %s) throw new \InvalidArgumentException('Incoming data must be an %s.');\n".
-                "$%s = new \ReflectionClass(%s::class);\n",
+                    "$%s = new \ReflectionClass(%s::class);\n",
                 InitialExpression::VARIABLE_NAME,
                 $blueprint->reflection->getName(),
                 $blueprint->reflection->getName(),
@@ -70,7 +74,7 @@ class ReflectionClassExpressionBuilder implements GetterInterface, SetterInterfa
         return new InitialExpression(
             sprintf(
                 "$%s = new \ReflectionClass(%s::class);\n".
-                "$%s = $%s->newInstanceWithoutConstructor();\n",
+                    "$%s = $%s->newInstanceWithoutConstructor();\n",
                 $this->getReflectionClassVariableName($blueprint),
                 $blueprint->reflection->getName(),
                 InitialExpression::VARIABLE_NAME,
@@ -134,5 +138,16 @@ class ReflectionClassExpressionBuilder implements GetterInterface, SetterInterfa
             'ref_%s',
             hash('crc32', $className)
         );
+    }
+
+    private function overwriteBlueprint(Blueprint $blueprint): Blueprint
+    {
+        if (null === $this->blueprint) {
+            return $blueprint;
+        }
+
+        if (is_string($this->blueprint)) {
+            $this->blueprint = Blueprint::create($this->blueprint, $blueprint->isCollection);
+        }
     }
 }
