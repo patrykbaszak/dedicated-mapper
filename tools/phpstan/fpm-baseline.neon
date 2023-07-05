@@ -1,6 +1,2 @@
 parameters:
-	ignoreErrors:
-		-
-			message: "#^Anonymous function should return PBaszak\\\\MessengerMapperBundle\\\\Attribute\\\\MappingCallback\\|null but returns object\\|null\\.$#"
-			count: 1
-			path: ../../src/Handler/GetMapperHandler.php
+	ignoreErrors: []

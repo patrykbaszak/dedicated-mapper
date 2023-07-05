@@ -8,6 +8,7 @@ use PBaszak\MessengerMapperBundle\Contract\GetterInterface;
 use PBaszak\MessengerMapperBundle\Contract\SetterInterface;
 use PBaszak\MessengerMapperBundle\Expression\Getter;
 use PBaszak\MessengerMapperBundle\Expression\InitialExpression;
+use PBaszak\MessengerMapperBundle\Expression\Modificator\ModificatorInterface;
 use PBaszak\MessengerMapperBundle\Expression\Modificator\PBaszakMessengerMapper;
 use PBaszak\MessengerMapperBundle\Expression\Setter;
 use PBaszak\MessengerMapperBundle\Properties\Blueprint;
@@ -15,6 +16,9 @@ use PBaszak\MessengerMapperBundle\Properties\Property;
 
 class AnonymousObjectExpressionBuilder implements GetterInterface, SetterInterface
 {
+    /**
+     * @param ModificatorInterface[] $modificators
+     */
     public function __construct(
         public array $modificators = [
             new PBaszakMessengerMapper(),

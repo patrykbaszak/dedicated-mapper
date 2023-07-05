@@ -15,6 +15,9 @@ use PBaszak\MessengerMapperBundle\Expression\Builder\DefaultExpressionBuilder;
 #[Cache(pool: MessengerMapperBundle::ALIAS)]
 class GetMapper implements Cacheable
 {
+    /**
+     * @param class-string $blueprint
+     */
     public function __construct(
         public readonly string $blueprint,
         public readonly GetterInterface $getterBuilder,

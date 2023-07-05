@@ -167,7 +167,7 @@ class Types
                         null
                     ) :
                     null,
-                file($classReflection->getFileName() ?: '')
+                file($classReflection->getFileName() ?: '') ?: []
             ));
 
             foreach ($imports as $import) {

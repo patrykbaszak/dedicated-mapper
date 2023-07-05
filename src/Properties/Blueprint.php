@@ -24,7 +24,9 @@ class Blueprint
         $reflection = new \ReflectionClass($class);
         $properties = [];
         foreach ($reflection->getProperties() as $property) {
-            $properties[$property->getName()] = Property::create($reflection, $property->getName(), $parent);
+            /** @var class-string $class */
+            $class = $property->getName();
+            $properties[$property->getName()] = Property::create($reflection, $class, $parent);
         }
 
         return new self($reflection, $properties, $isCollection);

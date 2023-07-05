@@ -8,6 +8,7 @@ use PBaszak\MessengerMapperBundle\Contract\GetterInterface;
 use PBaszak\MessengerMapperBundle\Contract\SetterInterface;
 use PBaszak\MessengerMapperBundle\Expression\Getter;
 use PBaszak\MessengerMapperBundle\Expression\InitialExpression;
+use PBaszak\MessengerMapperBundle\Expression\Modificator\ModificatorInterface;
 use PBaszak\MessengerMapperBundle\Expression\Modificator\PBaszakMessengerMapper;
 use PBaszak\MessengerMapperBundle\Expression\Setter;
 use PBaszak\MessengerMapperBundle\Properties\Blueprint;
@@ -36,6 +37,9 @@ use PBaszak\MessengerMapperBundle\Properties\Property;
  */
 class ArrayMapExpressionBuilder implements GetterInterface, SetterInterface
 {
+    /**
+     * @param ModificatorInterface[] $modificators
+     */
     public function __construct(
         public readonly string $separator = '__',
         public array $modificators = [
@@ -75,7 +79,7 @@ class ArrayMapExpressionBuilder implements GetterInterface, SetterInterface
                     $this->separator,
                     array_merge(
                         array_map(fn (Property $parent) => $parent->originName, $property->getAllParents()),
-                        $property->originName
+                        [$property->originName]
                     ),
                 )
             )
@@ -97,7 +101,7 @@ class ArrayMapExpressionBuilder implements GetterInterface, SetterInterface
                     $this->separator,
                     array_merge(
                         array_map(fn (Property $parent) => $parent->originName, $property->getAllParents()),
-                        $property->originName
+                        [$property->originName]
                     ),
                 ),
                 Setter::GETTER_EXPRESSION
@@ -115,7 +119,7 @@ class ArrayMapExpressionBuilder implements GetterInterface, SetterInterface
                     $this->separator,
                     array_merge(
                         array_map(fn (Property $parent) => $parent->originName, $property->getAllParents()),
-                        $property->originName
+                        [$property->originName]
                     ),
                 ),
                 Setter::GETTER_EXPRESSION,

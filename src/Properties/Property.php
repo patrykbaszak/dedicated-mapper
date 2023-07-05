@@ -27,11 +27,16 @@ class Property
     public const COLLECTION = 4; // 0100 example: array<App\Example>
     public const SIMPLE_OBJECT_COLLECTION = 6; // 0110 example: new ArrayObject(array<App\Example>)
 
+    /**
+     * Specific property for any options you need to store and use.
+     *
+     * @var array<string, mixed>
+     */
     public array $options = [];
     public ?Blueprint $blueprint = null;
 
     public function __construct(
-        public readonly string $originName,
+        public string $originName,
         \ReflectionProperty $reflection,
         \ReflectionParameter $constructorParameter = null,
         self $parent = null,
@@ -41,6 +46,7 @@ class Property
         $this->setParent($parent);
     }
 
+    /** @param class-string $name */
     public static function create(\ReflectionClass $class, string $name, self $parent = null): self
     {
         $reflection = $class->getProperty($name);
@@ -55,7 +61,9 @@ class Property
             if (count($innerTypes) > 1) {
                 throw new \Exception('Multiple inner types are not supported yet.');
             }
-
+            if (!class_exists($innerTypes[0], false)) {
+                throw new \Exception('Inner type must be a class.');
+            }
             $property->blueprint = Blueprint::create($innerTypes[0], true, $property);
         }
 

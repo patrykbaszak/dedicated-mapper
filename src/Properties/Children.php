@@ -23,6 +23,9 @@ trait Children
         return $this->parent;
     }
 
+    /**
+     * @return Property[]
+     */
     public function getAllParents(int $depth = null): array
     {
         $parents = [];
@@ -53,6 +56,9 @@ trait Children
         return !empty($this->children);
     }
 
+    /**
+     * @return Property[]
+     */
     public function getChildren(): array
     {
         return $this->children;

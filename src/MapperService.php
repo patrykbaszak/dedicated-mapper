@@ -17,6 +17,7 @@ class MapperService implements MapperServiceInterface
 {
     use HandleTrait;
 
+    /** @var array<string,callable> */
     private static array $mappers = [];
 
     public function __construct(
@@ -26,6 +27,9 @@ class MapperService implements MapperServiceInterface
         $this->messageBus = $messageBus;
     }
 
+    /**
+     * @param class-string $blueprint
+     */
     public function map(
         mixed $data,
         string $blueprint,
@@ -41,6 +45,9 @@ class MapperService implements MapperServiceInterface
         return $function($data);
     }
 
+    /**
+     * @param class-string $blueprint
+     */
     private function getFunction(
         string $mapperId,
         string $blueprint,

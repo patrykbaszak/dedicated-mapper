@@ -104,6 +104,9 @@ class ExpressionBuilder
                     $functionBody .= $this->createSimpleObjectExpression($property, $sourceVariableName, $targetVariableName);
                     break;
                 case Property::CLASS_OBJECT:
+                    if (!$property->blueprint) {
+                        throw new \Exception('Class object property must have blueprint.');
+                    }
                     $function = $this->functionBuilder->getFunction();
                     $functionName = $this->createUniqueVariableName($property->blueprint);
                     $functionBody .= sprintf(
@@ -127,6 +130,9 @@ class ExpressionBuilder
                     );
                     break;
                 case Property::COLLECTION:
+                    if (!$property->blueprint) {
+                        throw new \Exception('Collection property must have blueprint.');
+                    }
                     $function = $this->functionBuilder->getFunction();
                     $functionName = $this->createUniqueVariableName($property->blueprint);
                     $collectionItemVariableName = $this->createUniqueVariableName($property->blueprint);
@@ -165,6 +171,9 @@ class ExpressionBuilder
                     );
                     break;
                 case Property::SIMPLE_OBJECT_COLLECTION:
+                    if (!$property->blueprint) {
+                        throw new \Exception('Collection property must have blueprint.');
+                    }
                     $function = $this->functionBuilder->getFunction();
                     $functionName = $this->createUniqueVariableName($property->blueprint);
                     $collectionItemVariableName = $this->createUniqueVariableName($property->blueprint);
@@ -231,6 +240,7 @@ class ExpressionBuilder
         );
     }
 
+    /** @var string[] */
     private static array $usedVariableNames = [];
 
     private function createUniqueVariableName(Blueprint $blueprint): string
