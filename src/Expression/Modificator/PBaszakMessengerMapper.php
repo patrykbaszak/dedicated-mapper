@@ -6,4 +6,8 @@ namespace PBaszak\MessengerMapperBundle\Expression\Modificator;
 
 class PBaszakMessengerMapper implements ModificatorInterface
 {
+    public function getModificators(): array
+    {
+        return [];
+    }
 }

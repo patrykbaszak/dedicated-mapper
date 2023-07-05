@@ -9,8 +9,3 @@ services:
     _defaults:
         autowire: true      
         autoconfigure: true 
-
-    PBaszak\MessengerMapperBundle\Tests\:
-        resource: '../tests/*'
-        exclude:
-            - 'Kernel.php'

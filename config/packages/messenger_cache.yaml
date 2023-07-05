@@ -1,3 +1,0 @@
-messenger_cache:
-    pools:
-        default: runtime
