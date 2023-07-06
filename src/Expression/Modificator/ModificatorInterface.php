@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace PBaszak\MessengerMapperBundle\Expression\Modificator;
 
+use PBaszak\MessengerMapperBundle\Contract\AbstractExpressionInterface;
+
 interface ModificatorInterface
 {
-    /** @return Callback[] */
-    public function getModificators(): array;
+    public function getPriority(): int;
+
+    public function setBuilder(AbstractExpressionInterface $builder): void;
 }

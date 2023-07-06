@@ -9,6 +9,7 @@ use PBaszak\MessengerMapperBundle\Contract\GetterInterface;
 use PBaszak\MessengerMapperBundle\Contract\LoopInterface;
 use PBaszak\MessengerMapperBundle\Contract\SetterInterface;
 use PBaszak\MessengerMapperBundle\Expression\Builder\DefaultExpressionBuilder;
+use PBaszak\MessengerMapperBundle\Expression\Builder\ExpressionBuilderDecoratorBuilderTrait;
 use PBaszak\MessengerMapperBundle\Mapper;
 use PBaszak\MessengerMapperBundle\Properties\Blueprint;
 use PBaszak\MessengerMapperBundle\Properties\Property;
@@ -16,6 +17,8 @@ use Symfony\Component\Uid\Uuid;
 
 class ExpressionBuilder
 {
+    use ExpressionBuilderDecoratorBuilderTrait;
+
     protected Mapper $mapper;
     protected static int $seed = 0;
 
@@ -23,11 +26,14 @@ class ExpressionBuilder
         protected Blueprint $blueprint,
         protected GetterInterface $getterBuilder,
         protected SetterInterface $setterBuilder,
-        protected FunctionInterface $functionBuilder = new DefaultExpressionBuilder(),
-        protected LoopInterface $loopBuilder = new DefaultExpressionBuilder(),
-        protected string $originVariableName = 'data',
-        protected string $targetVariableName = 'output',
+        protected FunctionInterface $functionBuilder,
+        protected LoopInterface $loopBuilder,
+        protected ?string $group = null,
     ) {
+        $this->getterBuilder = $this->decoratesBuilder($getterBuilder);
+        $this->setterBuilder = $this->decoratesBuilder($setterBuilder);
+        $this->functionBuilder = $this->decoratesBuilder($functionBuilder);
+        $this->loopBuilder = $this->decoratesBuilder($loopBuilder);
     }
 
     public function createExpression(string $useStatements = ''): void

@@ -8,10 +8,6 @@ services:
         exclude:
             - '../../{Resources,DependencyInjection,MessengerMapperBundle.php,Mapper.php}'
 
-    PBaszak\MessengerMapperBundle\Handler\GetMapperHandler:
-        tags: 
-            - { name: 'messenger.message_handler', handles: PBaszak\MessengerMapperBundle\GetMapper }
-
     PBaszak\MessengerMapperBundle\Contract\MapperServiceInterface:
         alias: PBaszak\MessengerMapperBundle\MapperService
         public: true

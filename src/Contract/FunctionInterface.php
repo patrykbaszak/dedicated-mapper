@@ -6,7 +6,7 @@ namespace PBaszak\MessengerMapperBundle\Contract;
 
 use PBaszak\MessengerMapperBundle\Expression\Function_;
 
-interface FunctionInterface
+interface FunctionInterface extends AbstractExpressionInterface
 {
     public function getFunction(): Function_;
 }

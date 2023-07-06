@@ -9,7 +9,7 @@ use PBaszak\MessengerMapperBundle\Expression\Setter;
 use PBaszak\MessengerMapperBundle\Properties\Blueprint;
 use PBaszak\MessengerMapperBundle\Properties\Property;
 
-interface SetterInterface
+interface SetterInterface extends AbstractExpressionInterface
 {
     /**
      * @param string $initialExpressionId - unique id of initial expression because getter and setter have to know about each other

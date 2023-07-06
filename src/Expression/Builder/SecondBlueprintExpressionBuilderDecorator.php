@@ -31,6 +31,11 @@ class SecondBlueprintExpressionBuilderDecorator implements SetterInterface, Gett
     ) {
     }
 
+    public function getModificators(): array
+    {
+        return $this->expressionBuilder->getModificators();
+    }
+
     public function getSetterInitialExpression(Blueprint $blueprint, string $initialExpressionId): InitialExpression
     {
         $this->isInitialized || $this->init($blueprint);

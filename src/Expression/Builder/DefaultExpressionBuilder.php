@@ -31,4 +31,9 @@ class DefaultExpressionBuilder implements FunctionInterface, LoopInterface
             {{iterableSetter}}'
         );
     }
+
+    public function getModificators(): array
+    {
+        return [];
+    }
 }

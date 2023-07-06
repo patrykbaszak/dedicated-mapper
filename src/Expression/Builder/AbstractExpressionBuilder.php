@@ -21,6 +21,11 @@ abstract class AbstractExpressionBuilder
     ) {
     }
 
+    public function getModificators(): array
+    {
+        return $this->modificators;
+    }
+
     public function getSourceType(Blueprint $blueprint): string
     {
         return 'mixed';
