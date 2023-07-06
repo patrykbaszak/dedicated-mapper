@@ -13,6 +13,7 @@ class Kernel extends BaseKernel
         \Symfony\Bundle\FrameworkBundle\FrameworkBundle::class,
         \PBaszak\MessengerCacheBundle\MessengerCacheBundle::class,
         \PBaszak\MessengerMapperBundle\MessengerMapperBundle::class,
+        \JMS\SerializerBundle\JMSSerializerBundle::class,
     ];
 
     public function registerBundles(): iterable

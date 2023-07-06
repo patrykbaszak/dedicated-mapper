@@ -2,6 +2,8 @@
 
 namespace PBaszak\MessengerMapperBundle\Tests\assets;
 
+use JMS\Serializer\Annotation\Type;
+
 class Dummy
 {
     public string $id;
@@ -16,6 +18,7 @@ class EmbeddedDTO
     public int $pageSize;
     public int $total;
     /** @var ItemDTO[] */
+    #[Type("array<PBaszak\MessengerMapperBundle\Tests\assets\ItemDTO>")]
     public array $items;
 }
 
@@ -34,6 +37,7 @@ class ItemDTO
     public \DateTime $created_at;
     public \DateTime $updated_at;
     /** @var array<string> */
+    #[Type('array<string>')]
     public array $availableActions;
 }
 

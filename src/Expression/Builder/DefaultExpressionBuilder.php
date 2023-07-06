@@ -14,7 +14,7 @@ class DefaultExpressionBuilder implements FunctionInterface, LoopInterface
     public function getFunction(): Function_
     {
         return new Function_(
-            'function (mixed ${{originVariableName}}) {{useStatements}} {
+            'function ({{originVariableType}} ${{originVariableName}}){{useStatements}}{{returnType}} {
                 {{functionBody}}
                 return ${{outputVariableName}};
             }'

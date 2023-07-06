@@ -58,10 +58,14 @@ class ExpressionBuilder
         $getter = $this->getterBuilder->getGetterInitialExpression($blueprint, $initialExpressionId);
         $setter = $this->setterBuilder->getSetterInitialExpression($blueprint, $initialExpressionId);
 
-        return sprintf(
-            "%s\n%s\n",
+        $initialExpression = array_filter([
             $getter->toString($sourceVariableName),
-            $setter->toString($targetVariableName)
+            $setter->toString($targetVariableName),
+        ], fn (string $expression) => !empty($expression));
+
+        return sprintf(
+            "%s\n",
+            implode("\n", $initialExpression)
         );
     }
 
@@ -116,7 +120,9 @@ class ExpressionBuilder
                             $sourceVariableName,
                             $targetVariableName,
                             $this->createFunctionBodyExpression($property->blueprint, $sourceVariableName, $targetVariableName, $useStatements),
-                            $useStatements
+                            $useStatements,
+                            $this->getterBuilder->getSourceType($property->blueprint),
+                            $this->setterBuilder->getOutputType($property->blueprint),
                         ),
                         $this->setterBuilder->createSetter($property)
                             ->toString(
@@ -144,7 +150,9 @@ class ExpressionBuilder
                             $sourceVariableName,
                             $targetVariableName,
                             $this->createFunctionBodyExpression($property->blueprint, $sourceVariableName, $targetVariableName, $useStatements),
-                            $useStatements
+                            $useStatements,
+                            $this->getterBuilder->getSourceType($property->blueprint),
+                            $this->setterBuilder->getOutputType($property->blueprint),
                         ),
                         $this->loopBuilder->getLoop()->toString(
                             $collectionOutputVariableName,
@@ -185,7 +193,9 @@ class ExpressionBuilder
                             $sourceVariableName,
                             $targetVariableName,
                             $this->createFunctionBodyExpression($property->blueprint, $sourceVariableName, $targetVariableName, $useStatements),
-                            $useStatements
+                            $useStatements,
+                            $this->getterBuilder->getSourceType($property->blueprint),
+                            $this->setterBuilder->getOutputType($property->blueprint),
                         ),
                         $this->loopBuilder->getLoop()->toString(
                             $collectionOutputVariableName,
@@ -236,7 +246,9 @@ class ExpressionBuilder
             $sourceVariableName,
             $targetVariableName,
             $functionBody,
-            $useStatements
+            $useStatements,
+            $this->getterBuilder->getSourceType($blueprint),
+            $this->setterBuilder->getOutputType($blueprint),
         );
     }
 

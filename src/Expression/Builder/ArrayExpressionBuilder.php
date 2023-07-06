@@ -8,30 +8,20 @@ use PBaszak\MessengerMapperBundle\Contract\GetterInterface;
 use PBaszak\MessengerMapperBundle\Contract\SetterInterface;
 use PBaszak\MessengerMapperBundle\Expression\Getter;
 use PBaszak\MessengerMapperBundle\Expression\InitialExpression;
-use PBaszak\MessengerMapperBundle\Expression\Modificator\ModificatorInterface;
 use PBaszak\MessengerMapperBundle\Expression\Setter;
 use PBaszak\MessengerMapperBundle\Properties\Blueprint;
 use PBaszak\MessengerMapperBundle\Properties\Property;
 
-class ArrayExpressionBuilder implements GetterInterface, SetterInterface
+class ArrayExpressionBuilder extends AbstractExpressionBuilder implements GetterInterface, SetterInterface
 {
-    /**
-     * @param ModificatorInterface[] $modificators
-     */
-    public function __construct(
-        public array $modificators = []
-    ) {
+    public function getSourceType(Blueprint $blueprint): string
+    {
+        return 'array';
     }
 
-    public function getGetterInitialExpression(Blueprint $blueprint, string $initialExpressionId): InitialExpression
+    public function getOutputType(Blueprint $blueprint): ?string
     {
-        return new InitialExpression(
-            sprintf(
-                'is_array($%s) || throw new \InvalidArgumentException(\'Incoming data for property of type %s must be an array.\');',
-                InitialExpression::VARIABLE_NAME,
-                $blueprint->reflection->getName()
-            )
-        );
+        return 'array';
     }
 
     public function getSetterInitialExpression(Blueprint $blueprint, string $initialExpressionId): InitialExpression

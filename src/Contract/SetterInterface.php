@@ -19,4 +19,6 @@ interface SetterInterface
     public function createSetter(Property $property): Setter;
 
     public function createSimpleObjectSetter(Property $property): Setter;
+
+    public function getOutputType(Blueprint $blueprint): ?string;
 }

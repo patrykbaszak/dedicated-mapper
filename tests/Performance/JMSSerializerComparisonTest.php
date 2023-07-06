@@ -4,21 +4,21 @@ declare(strict_types=1);
 
 namespace PBaszak\MessengerMapperBundle\Tests\Performance;
 
+use JMS\Serializer\ArrayTransformerInterface;
+use JMS\Serializer\Serializer;
 use PBaszak\MessengerMapperBundle\Contract\MapperServiceInterface;
 use PBaszak\MessengerMapperBundle\Expression\Builder\ArrayExpressionBuilder;
 use PBaszak\MessengerMapperBundle\Expression\Builder\ReflectionClassExpressionBuilder;
 use PBaszak\MessengerMapperBundle\Tests\assets\Dummy;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
-use Symfony\Component\Serializer\Serializer;
-use Symfony\Component\Serializer\SerializerInterface;
 
-class SimpleData
+class SimpleDataForJMSSerializer
 {
     public string $name;
 }
 
 /** @group performance */
-class SymfonySerializerComparisonTest extends KernelTestCase
+class JMSSerializerComparisonTest extends KernelTestCase
 {
     private array $dummy;
 
@@ -35,9 +35,9 @@ class SymfonySerializerComparisonTest extends KernelTestCase
      */
     public function checkSameMappingResultsBeforeComparison(): void
     {
-        $serializer = self::getContainer()->get(SerializerInterface::class);
+        $serializer = self::getContainer()->get(ArrayTransformerInterface::class);
         $mapper = self::getContainer()->get(MapperServiceInterface::class);
-        $serializerDummyObject = $serializer->denormalize($this->dummy, Dummy::class);
+        $serializerDummyObject = $serializer->fromArray($this->dummy, Dummy::class);
         $mapperDummyObject = $mapper->map($this->dummy, Dummy::class, new ArrayExpressionBuilder(), new ReflectionClassExpressionBuilder());
 
         $this->assertEquals($serializerDummyObject, $mapperDummyObject);
@@ -46,10 +46,10 @@ class SymfonySerializerComparisonTest extends KernelTestCase
     /**
      * @test
      */
-    public function symfonySerializerBuildAndUseComparisonTest(): void
+    public function jmsSerializerBuildAndUseComparisonTest(): void
     {
         $time = (object) [
-            'symfonySerializer' => [],
+            'jmsSerializer' => [],
             'mapper' => [],
         ];
 
@@ -57,10 +57,10 @@ class SymfonySerializerComparisonTest extends KernelTestCase
             self::ensureKernelShutdown();
             self::bootKernel();
             $timeStart = microtime(true);
-            $serializer = self::getContainer()->get(SerializerInterface::class);
-            $output = $serializer->denormalize($this->dummy, Dummy::class);
+            $serializer = self::getContainer()->get(ArrayTransformerInterface::class);
+            $output = $serializer->fromArray($this->dummy, Dummy::class);
             $timeEnd = microtime(true);
-            $time->symfonySerializer[] = $timeEnd - $timeStart;
+            $time->jmsSerializer[] = $timeEnd - $timeStart;
 
             self::ensureKernelShutdown();
             self::bootKernel();
@@ -74,10 +74,10 @@ class SymfonySerializerComparisonTest extends KernelTestCase
         }
 
         $comparison = (object) [
-            'symfonySerializer' => (object) [
-                'avg' => array_sum($time->symfonySerializer) / count($time->symfonySerializer),
-                'min' => min($time->symfonySerializer),
-                'max' => max($time->symfonySerializer),
+            'jmsSerializer' => (object) [
+                'avg' => array_sum($time->jmsSerializer) / count($time->jmsSerializer),
+                'min' => min($time->jmsSerializer),
+                'max' => max($time->jmsSerializer),
             ],
             'mapper' => (object) [
                 'avg' => array_sum($time->mapper) / count($time->mapper),
@@ -86,17 +86,17 @@ class SymfonySerializerComparisonTest extends KernelTestCase
             ],
         ];
 
-        /* Mapper is from 5 to 30 times faster than Symfony Serializer */
-        $this->assertLessThan($comparison->symfonySerializer->avg, $comparison->mapper->avg);
-        $this->assertLessThan($comparison->symfonySerializer->min, $comparison->mapper->min);
-        $this->assertLessThan($comparison->symfonySerializer->max, $comparison->mapper->max);
+        /* Mapper is from 5 to 30 times faster than JMS Serializer */
+        $this->assertLessThan($comparison->jmsSerializer->avg, $comparison->mapper->avg);
+        $this->assertLessThan($comparison->jmsSerializer->min, $comparison->mapper->min);
+        $this->assertLessThan($comparison->jmsSerializer->max, $comparison->mapper->max);
 
         /* report */
         echo PHP_EOL."\033[1;34mBuild and use comparison test:\033[0m".PHP_EOL,
-        "\033[0;34mSymfony Serializer:\033[0m".PHP_EOL,
-        'avg: '.($savg = $comparison->symfonySerializer->avg).' s'.PHP_EOL,
-        'min: '.($smin = $comparison->symfonySerializer->min).' s'.PHP_EOL,
-        'max: '.($smax = $comparison->symfonySerializer->max).' s'.PHP_EOL,
+        "\033[0;34mJMS Serializer:\033[0m".PHP_EOL,
+        'avg: '.($savg = $comparison->jmsSerializer->avg).' s'.PHP_EOL,
+        'min: '.($smin = $comparison->jmsSerializer->min).' s'.PHP_EOL,
+        'max: '.($smax = $comparison->jmsSerializer->max).' s'.PHP_EOL,
         "\033[0;34mMapper:\033[0m".PHP_EOL,
         'avg: '.($mavg = $comparison->mapper->avg).' s ('.round($savg / $mavg, 2).' times faster)'.PHP_EOL,
         'min: '.($mmin = $comparison->mapper->min).' s ('.round($smin / $mmin, 2).' times faster)'.PHP_EOL,
@@ -107,21 +107,21 @@ class SymfonySerializerComparisonTest extends KernelTestCase
     /**
      * @test
      */
-    public function symfonySerializerUseComparisonTest(): void
+    public function jmsSerializerUseComparisonTest(): void
     {
         $time = (object) [
-            'symfonySerializer' => [],
+            'jmsSerializer' => [],
             'mapper' => [],
         ];
 
         for ($i = 0; $i < 100; ++$i) {
             self::ensureKernelShutdown();
             self::bootKernel();
-            $serializer = self::getContainer()->get(SerializerInterface::class);
+            $serializer = self::getContainer()->get(ArrayTransformerInterface::class);
             $timeStart = microtime(true);
-            $output = $serializer->denormalize($this->dummy, Dummy::class);
+            $output = $serializer->fromArray($this->dummy, Dummy::class);
             $timeEnd = microtime(true);
-            $time->symfonySerializer[] = $timeEnd - $timeStart;
+            $time->jmsSerializer[] = $timeEnd - $timeStart;
 
             self::ensureKernelShutdown();
             self::bootKernel();
@@ -135,10 +135,10 @@ class SymfonySerializerComparisonTest extends KernelTestCase
         }
 
         $comparison = (object) [
-            'symfonySerializer' => (object) [
-                'avg' => array_sum($time->symfonySerializer) / count($time->symfonySerializer),
-                'min' => min($time->symfonySerializer),
-                'max' => max($time->symfonySerializer),
+            'jmsSerializer' => (object) [
+                'avg' => array_sum($time->jmsSerializer) / count($time->jmsSerializer),
+                'min' => min($time->jmsSerializer),
+                'max' => max($time->jmsSerializer),
             ],
             'mapper' => (object) [
                 'avg' => array_sum($time->mapper) / count($time->mapper),
@@ -147,17 +147,17 @@ class SymfonySerializerComparisonTest extends KernelTestCase
             ],
         ];
 
-        /* Mapper is from 5 to 30 times faster than Symfony Serializer */
-        $this->assertLessThan($comparison->symfonySerializer->avg, $comparison->mapper->avg);
-        $this->assertLessThan($comparison->symfonySerializer->min, $comparison->mapper->min);
-        $this->assertLessThan($comparison->symfonySerializer->max, $comparison->mapper->max);
+        /* Mapper is from 5 to 30 times faster than JMS Serializer */
+        $this->assertLessThan($comparison->jmsSerializer->avg, $comparison->mapper->avg);
+        $this->assertLessThan($comparison->jmsSerializer->min, $comparison->mapper->min);
+        $this->assertLessThan($comparison->jmsSerializer->max, $comparison->mapper->max);
 
         /* report */
         echo PHP_EOL."\033[1;34mJust use one time comparison test:\033[0m".PHP_EOL,
-        "\033[0;34mSymfony Serializer:\033[0m".PHP_EOL,
-        'avg: '.($savg = $comparison->symfonySerializer->avg).' s'.PHP_EOL,
-        'min: '.($smin = $comparison->symfonySerializer->min).' s'.PHP_EOL,
-        'max: '.($smax = $comparison->symfonySerializer->max).' s'.PHP_EOL,
+        "\033[0;34mJMS Serializer:\033[0m".PHP_EOL,
+        'avg: '.($savg = $comparison->jmsSerializer->avg).' s'.PHP_EOL,
+        'min: '.($smin = $comparison->jmsSerializer->min).' s'.PHP_EOL,
+        'max: '.($smax = $comparison->jmsSerializer->max).' s'.PHP_EOL,
         "\033[0;34mMapper:\033[0m".PHP_EOL,
         'avg: '.($mavg = $comparison->mapper->avg).' s ('.round($savg / $mavg, 2).' times faster)'.PHP_EOL,
         'min: '.($mmin = $comparison->mapper->min).' s ('.round($smin / $mmin, 2).' times faster)'.PHP_EOL,
@@ -168,25 +168,25 @@ class SymfonySerializerComparisonTest extends KernelTestCase
     /**
      * @test
      */
-    public function symfonySerializerSecondUseComparisonTest(): void
+    public function jmsSerializerSecondUseComparisonTest(): void
     {
         $time = (object) [
-            'symfonySerializer' => [],
+            'jmsSerializer' => [],
             'mapper' => [],
         ];
 
         for ($i = 0; $i < 100; ++$i) {
             self::ensureKernelShutdown();
             self::bootKernel();
-            $serializer = self::getContainer()->get(SerializerInterface::class);
+            $serializer = self::getContainer()->get(ArrayTransformerInterface::class);
             $mapper = self::getContainer()->get(MapperServiceInterface::class);
-            $serializer->denormalize($this->dummy, Dummy::class);
+            $serializer->fromArray($this->dummy, Dummy::class);
             $mapper->map($this->dummy, Dummy::class, new ArrayExpressionBuilder(), new ReflectionClassExpressionBuilder());
 
             $timeStart = microtime(true);
-            $output = $serializer->denormalize($this->dummy, Dummy::class);
+            $output = $serializer->fromArray($this->dummy, Dummy::class);
             $timeEnd = microtime(true);
-            $time->symfonySerializer[] = $timeEnd - $timeStart;
+            $time->jmsSerializer[] = $timeEnd - $timeStart;
 
             $timeStart = microtime(true);
             $output = $mapper->map($this->dummy, Dummy::class, new ArrayExpressionBuilder(), new ReflectionClassExpressionBuilder());
@@ -195,10 +195,10 @@ class SymfonySerializerComparisonTest extends KernelTestCase
         }
 
         $comparison = (object) [
-            'symfonySerializer' => (object) [
-                'avg' => array_sum($time->symfonySerializer) / count($time->symfonySerializer),
-                'min' => min($time->symfonySerializer),
-                'max' => max($time->symfonySerializer),
+            'jmsSerializer' => (object) [
+                'avg' => array_sum($time->jmsSerializer) / count($time->jmsSerializer),
+                'min' => min($time->jmsSerializer),
+                'max' => max($time->jmsSerializer),
             ],
             'mapper' => (object) [
                 'avg' => array_sum($time->mapper) / count($time->mapper),
@@ -207,17 +207,17 @@ class SymfonySerializerComparisonTest extends KernelTestCase
             ],
         ];
 
-        /* Mapper is from 5 to 30 times faster than Symfony Serializer */
-        $this->assertLessThan($comparison->symfonySerializer->avg, $comparison->mapper->avg);
-        $this->assertLessThan($comparison->symfonySerializer->min, $comparison->mapper->min);
-        $this->assertLessThan($comparison->symfonySerializer->max, $comparison->mapper->max);
+        /* Mapper is from 5 to 30 times faster than JMS Serializer */
+        $this->assertLessThan($comparison->jmsSerializer->avg, $comparison->mapper->avg);
+        $this->assertLessThan($comparison->jmsSerializer->min, $comparison->mapper->min);
+        $this->assertLessThan($comparison->jmsSerializer->max, $comparison->mapper->max);
 
         /* report */
         echo PHP_EOL."\033[1;34mSecond use comparison test (same data):\033[0m".PHP_EOL,
-        "\033[0;34mSymfony Serializer:\033[0m".PHP_EOL,
-        'avg: '.($savg = $comparison->symfonySerializer->avg).' s'.PHP_EOL,
-        'min: '.($smin = $comparison->symfonySerializer->min).' s'.PHP_EOL,
-        'max: '.($smax = $comparison->symfonySerializer->max).' s'.PHP_EOL,
+        "\033[0;34mJMS Serializer:\033[0m".PHP_EOL,
+        'avg: '.($savg = $comparison->jmsSerializer->avg).' s'.PHP_EOL,
+        'min: '.($smin = $comparison->jmsSerializer->min).' s'.PHP_EOL,
+        'max: '.($smax = $comparison->jmsSerializer->max).' s'.PHP_EOL,
         "\033[0;34mMapper:\033[0m".PHP_EOL,
         'avg: '.($mavg = $comparison->mapper->avg).' s ('.round($savg / $mavg, 2).' times faster)'.PHP_EOL,
         'min: '.($mmin = $comparison->mapper->min).' s ('.round($smin / $mmin, 2).' times faster)'.PHP_EOL,
@@ -228,25 +228,25 @@ class SymfonySerializerComparisonTest extends KernelTestCase
     /**
      * @test
      */
-    public function symfonySerializerSecondUseComparisonButWithDifferentBlueprintsTest(): void
+    public function jmsSerializerSecondUseComparisonButWithDifferentBlueprintsTest(): void
     {
         $time = (object) [
-            'symfonySerializer' => [],
+            'jmsSerializer' => [],
             'mapper' => [],
         ];
 
         for ($i = 0; $i < 100; ++$i) {
             self::ensureKernelShutdown();
             self::bootKernel();
-            $serializer = self::getContainer()->get(SerializerInterface::class);
+            $serializer = self::getContainer()->get(ArrayTransformerInterface::class);
             $mapper = self::getContainer()->get(MapperServiceInterface::class);
-            $serializer->denormalize(['name' => 'test'], SimpleData::class);
-            $mapper->map(['name' => 'test'], SimpleData::class, new ArrayExpressionBuilder(), new ReflectionClassExpressionBuilder());
+            $serializer->fromArray(['name' => 'test'], SimpleDataForJMSSerializer::class);
+            $mapper->map(['name' => 'test'], SimpleDataForJMSSerializer::class, new ArrayExpressionBuilder(), new ReflectionClassExpressionBuilder());
 
             $timeStart = microtime(true);
-            $output = $serializer->denormalize($this->dummy, Dummy::class);
+            $output = $serializer->fromArray($this->dummy, Dummy::class);
             $timeEnd = microtime(true);
-            $time->symfonySerializer[] = $timeEnd - $timeStart;
+            $time->jmsSerializer[] = $timeEnd - $timeStart;
 
             $timeStart = microtime(true);
             $output = $mapper->map($this->dummy, Dummy::class, new ArrayExpressionBuilder(), new ReflectionClassExpressionBuilder());
@@ -255,10 +255,10 @@ class SymfonySerializerComparisonTest extends KernelTestCase
         }
 
         $comparison = (object) [
-            'symfonySerializer' => (object) [
-                'avg' => array_sum($time->symfonySerializer) / count($time->symfonySerializer),
-                'min' => min($time->symfonySerializer),
-                'max' => max($time->symfonySerializer),
+            'jmsSerializer' => (object) [
+                'avg' => array_sum($time->jmsSerializer) / count($time->jmsSerializer),
+                'min' => min($time->jmsSerializer),
+                'max' => max($time->jmsSerializer),
             ],
             'mapper' => (object) [
                 'avg' => array_sum($time->mapper) / count($time->mapper),
@@ -267,17 +267,17 @@ class SymfonySerializerComparisonTest extends KernelTestCase
             ],
         ];
 
-        /* Mapper is from 5 to 30 times faster than Symfony Serializer */
-        $this->assertLessThan($comparison->symfonySerializer->avg, $comparison->mapper->avg);
-        $this->assertLessThan($comparison->symfonySerializer->min, $comparison->mapper->min);
-        $this->assertLessThan($comparison->symfonySerializer->max, $comparison->mapper->max);
+        /* Mapper is from 5 to 30 times faster than JMS Serializer */
+        $this->assertLessThan($comparison->jmsSerializer->avg, $comparison->mapper->avg);
+        $this->assertLessThan($comparison->jmsSerializer->min, $comparison->mapper->min);
+        $this->assertLessThan($comparison->jmsSerializer->max, $comparison->mapper->max);
 
         /* report */
         echo PHP_EOL."\033[1;34mSecond use comparison test (different data):\033[0m".PHP_EOL,
-        "\033[0;34mSymfony Serializer:\033[0m".PHP_EOL,
-        'avg: '.($savg = $comparison->symfonySerializer->avg).' s'.PHP_EOL,
-        'min: '.($smin = $comparison->symfonySerializer->min).' s'.PHP_EOL,
-        'max: '.($smax = $comparison->symfonySerializer->max).' s'.PHP_EOL,
+        "\033[0;34mJMS Serializer:\033[0m".PHP_EOL,
+        'avg: '.($savg = $comparison->jmsSerializer->avg).' s'.PHP_EOL,
+        'min: '.($smin = $comparison->jmsSerializer->min).' s'.PHP_EOL,
+        'max: '.($smax = $comparison->jmsSerializer->max).' s'.PHP_EOL,
         "\033[0;34mMapper:\033[0m".PHP_EOL,
         'avg: '.($mavg = $comparison->mapper->avg).' s ('.round($savg / $mavg, 2).' times faster)'.PHP_EOL,
         'min: '.($mmin = $comparison->mapper->min).' s ('.round($smin / $mmin, 2).' times faster)'.PHP_EOL,

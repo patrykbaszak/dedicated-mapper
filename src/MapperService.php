@@ -39,7 +39,7 @@ class MapperService implements MapperServiceInterface
         LoopInterface $loopBuilder = new DefaultExpressionBuilder(),
         bool $isCollection = false
     ): mixed {
-        $mapperId = hash('crc32', $blueprint);
+        $mapperId = hash(in_array('xxh3', hash_algos()) ? 'xxh3' : 'crc32', var_export(array_slice(func_get_args(), 1), true));
         $function = self::$mappers[$mapperId] ??= $this->getFunction($mapperId, $blueprint, $getterBuilder, $setterBuilder, $functionBuilder, $loopBuilder, $isCollection);
 
         return $function($data);
@@ -57,7 +57,7 @@ class MapperService implements MapperServiceInterface
         LoopInterface $loopBuilder = new DefaultExpressionBuilder(),
         bool $isCollection = false
     ): callable {
-        $function = @include_once $this->directory.$mapperId.'.php';
+        $function = @include $this->directory.$mapperId.'.php';
 
         if ($function) {
             return $function;
@@ -75,6 +75,6 @@ class MapperService implements MapperServiceInterface
             }
         }
 
-        return include_once $this->directory.$mapperId.'.php';
+        return @include $this->directory.$mapperId.'.php';
     }
 }

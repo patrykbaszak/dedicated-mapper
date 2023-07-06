@@ -49,9 +49,8 @@ class ExpressionBuilderTest extends TestCase
         $mapper = $expressionBuilder->getMapper();
 
         $this->assertEquals(
-            'return function (mixed $data)  {
-                is_array($data) || throw new \InvalidArgumentException(\'Incoming data for property of type PBaszak\MessengerMapperBundle\Tests\Unit\Expression\SimpleClass must be an array.\');
-$output = [];
+            'return function (array $data): array {
+                $output = [];
 $output[\'property\'] = $data[\'property\'];
 
                 return $output;
@@ -98,12 +97,10 @@ $output[\'property\'] = $data[\'property\'];
         $function = eval($mapper->toString());
 
         $this->assertEqualsIgnoringCase(
-            'return function (mixed $data)  {
-                is_array($data) || throw new \InvalidArgumentException(\'Incoming data for property of type PBaszak\MessengerMapperBundle\Tests\Unit\Expression\SimpleCollectionClass must be an array.\');
-$output = [];
-$var_78c4d00f = function (mixed $data)  {
-                is_array($data) || throw new \InvalidArgumentException(\'Incoming data for property of type PBaszak\MessengerMapperBundle\Tests\Unit\Expression\SimpleClass must be an array.\');
-$output = [];
+            'return function (array $data): array {
+                $output = [];
+$var_78c4d00f = function (array $data): array {
+                $output = [];
 $output[\'property\'] = $data[\'property\'];
 
                 return $output;
@@ -163,13 +160,11 @@ $var_16ff5206 = [];
         $function = eval($mapper->toString());
 
         $this->assertEqualsIgnoringCase(
-            'return function (mixed $data)  {
-                is_array($data) || throw new \InvalidArgumentException(\'Incoming data for property of type PBaszak\MessengerMapperBundle\Tests\Unit\Expression\SimpleClassWithSimpleObject must be an array.\');
-$output = [];
+            'return function (array $data): array {
+                $output = [];
 $output[\'time\'] = ($a = $data[\'time\']) instanceof DateTime ? $a : new DateTime($a);
-$var_78c4d00f = function (mixed $data)  {
-                is_array($data) || throw new \InvalidArgumentException(\'Incoming data for property of type PBaszak\MessengerMapperBundle\Tests\Unit\Expression\SimpleClass must be an array.\');
-$output = [];
+$var_78c4d00f = function (array $data): array {
+                $output = [];
 $output[\'property\'] = $data[\'property\'];
 
                 return $output;
@@ -234,21 +229,18 @@ $var_16ff5206 = [];
         $function = eval($mapper->toString());
 
         $this->assertEqualsIgnoringCase(
-            'return function (mixed $data)  {
-                is_array($data) || throw new \InvalidArgumentException(\'Incoming data for property of type PBaszak\MessengerMapperBundle\Tests\assets\Dummy must be an array.\');
-$output = [];
+            'return function (array $data): array {
+                $output = [];
 $output[\'id\'] = $data[\'id\'];
 $output[\'name\'] = $data[\'name\'];
 $output[\'description\'] = $data[\'description\'];
-$var_6e52c0f5 = function (mixed $data)  {
-                is_array($data) || throw new \InvalidArgumentException(\'Incoming data for property of type PBaszak\MessengerMapperBundle\Tests\assets\EmbeddedDTO must be an array.\');
-$output = [];
+$var_6e52c0f5 = function (array $data): array {
+                $output = [];
 $output[\'page\'] = $data[\'page\'];
 $output[\'pageSize\'] = $data[\'pageSize\'];
 $output[\'total\'] = $data[\'total\'];
-$var_ccdcc381 = function (mixed $data)  {
-                is_array($data) || throw new \InvalidArgumentException(\'Incoming data for property of type PBaszak\MessengerMapperBundle\Tests\assets\ItemDTO must be an array.\');
-$output = [];
+$var_ccdcc381 = function (array $data): array {
+                $output = [];
 $output[\'id\'] = $data[\'id\'];
 $output[\'name\'] = $data[\'name\'];
 $output[\'description\'] = $data[\'description\'];
@@ -258,9 +250,8 @@ $output[\'quantity\'] = $data[\'quantity\'];
 $output[\'type\'] = $data[\'type\'];
 $output[\'category\'] = $data[\'category\'];
 $output[\'vat\'] = $data[\'vat\'];
-$var_5626685c = function (mixed $data)  {
-                is_array($data) || throw new \InvalidArgumentException(\'Incoming data for property of type PBaszak\MessengerMapperBundle\Tests\assets\MetadataDTO must be an array.\');
-$output = [];
+$var_5626685c = function (array $data): array {
+                $output = [];
 $output[\'test\'] = $data[\'test\'];
 $output[\'test2\'] = $data[\'test2\'];
 

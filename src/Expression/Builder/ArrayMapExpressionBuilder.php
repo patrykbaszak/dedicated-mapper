@@ -34,26 +34,26 @@ use PBaszak\MessengerMapperBundle\Properties\Property;
  *
  * but with separator `__` you can create nested array.
  */
-class ArrayMapExpressionBuilder implements GetterInterface, SetterInterface
+class ArrayMapExpressionBuilder extends AbstractExpressionBuilder implements GetterInterface, SetterInterface
 {
     /**
      * @param ModificatorInterface[] $modificators
      */
     public function __construct(
-        public readonly string $separator = '__',
-        public array $modificators = []
+        protected readonly string $separator = '__',
+        array $modificators = []
     ) {
+        parent::__construct($modificators);
     }
 
-    public function getGetterInitialExpression(Blueprint $blueprint, string $initialExpressionId): InitialExpression
+    public function getSourceType(Blueprint $blueprint): string
     {
-        return new InitialExpression(
-            sprintf(
-                'is_array($%s) || throw new \InvalidArgumentException(\'Incoming data for property of type %s must be an array.\');',
-                InitialExpression::VARIABLE_NAME,
-                $blueprint->reflection->getName()
-            )
-        );
+        return 'array';
+    }
+
+    public function getOutputType(Blueprint $blueprint): ?string
+    {
+        return 'array';
     }
 
     public function getSetterInitialExpression(Blueprint $blueprint, string $initialExpressionId): InitialExpression

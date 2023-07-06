@@ -8,30 +8,20 @@ use PBaszak\MessengerMapperBundle\Contract\GetterInterface;
 use PBaszak\MessengerMapperBundle\Contract\SetterInterface;
 use PBaszak\MessengerMapperBundle\Expression\Getter;
 use PBaszak\MessengerMapperBundle\Expression\InitialExpression;
-use PBaszak\MessengerMapperBundle\Expression\Modificator\ModificatorInterface;
 use PBaszak\MessengerMapperBundle\Expression\Setter;
 use PBaszak\MessengerMapperBundle\Properties\Blueprint;
 use PBaszak\MessengerMapperBundle\Properties\Property;
 
-class AnonymousObjectExpressionBuilder implements GetterInterface, SetterInterface
+class AnonymousObjectExpressionBuilder extends AbstractExpressionBuilder implements GetterInterface, SetterInterface
 {
-    /**
-     * @param ModificatorInterface[] $modificators
-     */
-    public function __construct(
-        public array $modificators = []
-    ) {
+    public function getSourceType(Blueprint $blueprint): string
+    {
+        return 'object';
     }
 
-    public function getGetterInitialExpression(Blueprint $blueprint, string $initialExpressionId): InitialExpression
+    public function getOutputType(Blueprint $blueprint): ?string
     {
-        return new InitialExpression(
-            sprintf(
-                'is_object($%s) || throw new \InvalidArgumentException(\'Incoming data for property of type %s must be an anonymous object.\');',
-                InitialExpression::VARIABLE_NAME,
-                $blueprint->reflection->getName()
-            )
-        );
+        return 'object';
     }
 
     public function getSetterInitialExpression(Blueprint $blueprint, string $initialExpressionId): InitialExpression

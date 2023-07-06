@@ -19,4 +19,6 @@ interface GetterInterface
     public function createGetter(Property $property): Getter;
 
     public function createSimpleObjectGetter(Property $property): Getter;
+
+    public function getSourceType(Blueprint $blueprint): string;
 }

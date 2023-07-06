@@ -75,6 +75,20 @@ class SecondBlueprintExpressionBuilderDecorator implements SetterInterface, Gett
         return $this->expressionBuilder->createSimpleObjectGetter($property);
     }
 
+    public function getSourceType(Blueprint $blueprint): string
+    {
+        $blueprint = $this->getBlueprint($blueprint);
+
+        return $this->expressionBuilder->getSourceType($blueprint);
+    }
+
+    public function getOutputType(Blueprint $blueprint): ?string
+    {
+        $blueprint = $this->getBlueprint($blueprint);
+
+        return $this->expressionBuilder->getOutputType($blueprint);
+    }
+
     private function init(Blueprint $originBlueprint): void
     {
         $this->blueprint instanceof Blueprint || $this->blueprint = Blueprint::create($this->blueprint);
