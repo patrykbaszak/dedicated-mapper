@@ -9,7 +9,6 @@ use PBaszak\MessengerMapperBundle\Contract\SetterInterface;
 use PBaszak\MessengerMapperBundle\Expression\Getter;
 use PBaszak\MessengerMapperBundle\Expression\InitialExpression;
 use PBaszak\MessengerMapperBundle\Expression\Modificator\ModificatorInterface;
-use PBaszak\MessengerMapperBundle\Expression\Modificator\PBaszakMessengerMapper;
 use PBaszak\MessengerMapperBundle\Expression\Setter;
 use PBaszak\MessengerMapperBundle\Properties\Blueprint;
 use PBaszak\MessengerMapperBundle\Properties\Property;
@@ -17,16 +16,10 @@ use PBaszak\MessengerMapperBundle\Properties\Property;
 class ReflectionClassExpressionBuilder implements GetterInterface, SetterInterface
 {
     /**
-     * @param ModificatorInterface[]      $modificators
-     * @param Blueprint|class-string|null $blueprint    If not `null` then it will be used as a source of reflection class
-     *                                                  instead of the property's reflection class. You can use it to create mapper from
-     *                                                  one class to another.
+     * @param ModificatorInterface[] $modificators
      */
     public function __construct(
-        public array $modificators = [
-            new PBaszakMessengerMapper(),
-        ],
-        private ?string $blueprint = null,
+        public array $modificators = [],
     ) {
     }
 
@@ -138,16 +131,5 @@ class ReflectionClassExpressionBuilder implements GetterInterface, SetterInterfa
             'ref_%s',
             hash('crc32', $className)
         );
-    }
-
-    private function overwriteBlueprint(Blueprint $blueprint): Blueprint
-    {
-        if (null === $this->blueprint) {
-            return $blueprint;
-        }
-
-        if (is_string($this->blueprint)) {
-            $this->blueprint = Blueprint::create($this->blueprint, $blueprint->isCollection);
-        }
     }
 }

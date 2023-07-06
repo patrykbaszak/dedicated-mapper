@@ -1,2 +1,36 @@
 parameters:
-	ignoreErrors: []
+	ignoreErrors:
+		-
+			message: "#^Call to an undefined method PBaszak\\\\MessengerMapperBundle\\\\Contract\\\\GetterInterface\\|PBaszak\\\\MessengerMapperBundle\\\\Contract\\\\SetterInterface\\:\\:createGetter\\(\\)\\.$#"
+			count: 1
+			path: ../../src/Expression/Builder/SecondBlueprintExpressionBuilderDecorator.php
+
+		-
+			message: "#^Call to an undefined method PBaszak\\\\MessengerMapperBundle\\\\Contract\\\\GetterInterface\\|PBaszak\\\\MessengerMapperBundle\\\\Contract\\\\SetterInterface\\:\\:createSetter\\(\\)\\.$#"
+			count: 1
+			path: ../../src/Expression/Builder/SecondBlueprintExpressionBuilderDecorator.php
+
+		-
+			message: "#^Call to an undefined method PBaszak\\\\MessengerMapperBundle\\\\Contract\\\\GetterInterface\\|PBaszak\\\\MessengerMapperBundle\\\\Contract\\\\SetterInterface\\:\\:createSimpleObjectGetter\\(\\)\\.$#"
+			count: 1
+			path: ../../src/Expression/Builder/SecondBlueprintExpressionBuilderDecorator.php
+
+		-
+			message: "#^Call to an undefined method PBaszak\\\\MessengerMapperBundle\\\\Contract\\\\GetterInterface\\|PBaszak\\\\MessengerMapperBundle\\\\Contract\\\\SetterInterface\\:\\:createSimpleObjectSetter\\(\\)\\.$#"
+			count: 1
+			path: ../../src/Expression/Builder/SecondBlueprintExpressionBuilderDecorator.php
+
+		-
+			message: "#^Call to an undefined method PBaszak\\\\MessengerMapperBundle\\\\Contract\\\\GetterInterface\\|PBaszak\\\\MessengerMapperBundle\\\\Contract\\\\SetterInterface\\:\\:getGetterInitialExpression\\(\\)\\.$#"
+			count: 1
+			path: ../../src/Expression/Builder/SecondBlueprintExpressionBuilderDecorator.php
+
+		-
+			message: "#^Call to an undefined method PBaszak\\\\MessengerMapperBundle\\\\Contract\\\\GetterInterface\\|PBaszak\\\\MessengerMapperBundle\\\\Contract\\\\SetterInterface\\:\\:getSetterInitialExpression\\(\\)\\.$#"
+			count: 1
+			path: ../../src/Expression/Builder/SecondBlueprintExpressionBuilderDecorator.php
+
+		-
+			message: "#^Parameter \\#2 \\$blueprint of method PBaszak\\\\MessengerMapperBundle\\\\Expression\\\\Builder\\\\SecondBlueprintExpressionBuilderDecorator\\:\\:matchBlueprints\\(\\) expects PBaszak\\\\MessengerMapperBundle\\\\Properties\\\\Blueprint, class\\-string\\|PBaszak\\\\MessengerMapperBundle\\\\Properties\\\\Blueprint given\\.$#"
+			count: 1
+			path: ../../src/Expression/Builder/SecondBlueprintExpressionBuilderDecorator.php

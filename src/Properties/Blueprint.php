@@ -6,6 +6,9 @@ namespace PBaszak\MessengerMapperBundle\Properties;
 
 class Blueprint
 {
+    /** @var array<string,mixed> */
+    public array $options = [];
+
     public function __construct(
         public \ReflectionClass $reflection,
         /** @var Property[] $properties */
@@ -30,5 +33,20 @@ class Blueprint
         }
 
         return new self($reflection, $properties, $isCollection);
+    }
+
+    public function getProperty(string $name, bool $throwException = false): ?Property
+    {
+        foreach ($this->properties as $property) {
+            if ($property->originName === $name) {
+                return $property;
+            }
+        }
+
+        if ($throwException) {
+            throw new \InvalidArgumentException(sprintf('Property %s not found in %s.', $name, $this->reflection->getName()));
+        }
+
+        return null;
     }
 }
