@@ -36,13 +36,28 @@ class AnonymousObjectExpressionBuilder extends AbstractExpressionBuilder impleme
 
     public function createGetter(Property $property): Getter
     {
-        return new Getter(
-            sprintf(
-                '$%s->%s',
-                Getter::SOURCE_VARIABLE_NAME,
-                $property->originName
-            )
+        $getter = sprintf(
+            '$%s->%s',
+            Getter::SOURCE_VARIABLE_NAME,
+            $property->originName
         );
+
+        if ($property->hasDefaultValue() && 'null' !== ($var = var_export($property->getDefaultValue(), true))) {
+            $getter = sprintf(
+                '%s ?? %s',
+                $getter,
+                $var
+            );
+        }
+
+        if ($property->isNullable()) {
+            $getter = sprintf(
+                '%s ?? null',
+                $getter
+            );
+        }
+
+        return new Getter($getter);
     }
 
     public function createSimpleObjectGetter(Property $property): Getter

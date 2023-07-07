@@ -14,8 +14,6 @@ class Blueprint
         /** @var Property[] $properties */
         public array $properties = [],
         public bool $isCollection = false,
-        public ?string $originVariableName = null,
-        public ?string $targetVariableName = null,
     ) {
     }
 

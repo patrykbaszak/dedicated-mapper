@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace PBaszak\MessengerMapperBundle\Contract;
 
-use PBaszak\MessengerMapperBundle\Expression\Builder\DefaultExpressionBuilder;
-
 interface MapperServiceInterface
 {
     public function map(
@@ -13,8 +11,8 @@ interface MapperServiceInterface
         string $blueprint,
         GetterInterface $getterBuilder,
         SetterInterface $setterBuilder,
-        FunctionInterface $functionBuilder = new DefaultExpressionBuilder(),
-        LoopInterface $loopBuilder = new DefaultExpressionBuilder(),
+        FunctionInterface $functionBuilder = null,
+        LoopInterface $loopBuilder = null,
         bool $isCollection = false,
     ): mixed;
 }

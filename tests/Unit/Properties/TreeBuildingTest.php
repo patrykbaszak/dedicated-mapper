@@ -23,8 +23,6 @@ class TreeBuildingTest extends TestCase
         $this->assertEquals(self::BLUEPRINT_CLASS, $blueprint->reflection->getName());
         $this->assertCount(4, $blueprint->properties);
         $this->assertSame(false, $blueprint->isCollection);
-        $this->assertNull($blueprint->originVariableName);
-        $this->assertNull($blueprint->targetVariableName);
         foreach ($blueprint->properties as $property) {
             $this->assertInstanceOf(Property::class, $property);
         }

@@ -27,6 +27,39 @@ trait Type
         throw new \RuntimeException(sprintf('Class not found. Property: %s.', $this->reflection->getName()));
     }
 
+    public function isNullable(): bool
+    {
+        foreach ($this->getTypes()->types as $type) {
+            if ('null' === $type) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public function hasDefaultValue(): bool
+    {
+        if (!$this->reflection->isDefault()) {
+            return $this->constructorParameter?->isDefaultValueAvailable() ?? false;
+        }
+
+        return true;
+    }
+
+    public function getDefaultValue(): mixed
+    {
+        if (!$this->reflection->isDefault()) {
+            if (!$this->constructorParameter?->isDefaultValueAvailable()) {
+                return null;
+            }
+
+            return $this->constructorParameter->getDefaultValue();
+        }
+
+        return $this->reflection->getDefaultValue();
+    }
+
     public function getTypes(): Types
     {
         if (isset($this->types)) {
