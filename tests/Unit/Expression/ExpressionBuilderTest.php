@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace PBaszak\MessengerMapperBundle\Tests\Unit\Expression;
 
 use PBaszak\MessengerMapperBundle\Expression\Builder\ArrayExpressionBuilder;
+use PBaszak\MessengerMapperBundle\Expression\Builder\DefaultExpressionBuilder;
 use PBaszak\MessengerMapperBundle\Expression\ExpressionBuilder;
 use PBaszak\MessengerMapperBundle\Properties\Blueprint;
 use PBaszak\MessengerMapperBundle\Tests\assets\Dummy;
@@ -43,6 +44,8 @@ class ExpressionBuilderTest extends TestCase
             Blueprint::create(SimpleClass::class, false),
             new ArrayExpressionBuilder(),
             new ArrayExpressionBuilder(),
+            new DefaultExpressionBuilder(),
+            new DefaultExpressionBuilder(),
         );
 
         $expressionBuilder->createExpression();
@@ -66,6 +69,8 @@ $output[\'property\'] = $data[\'property\'];
             Blueprint::create(SimpleClass::class, false),
             new ArrayExpressionBuilder(),
             new ArrayExpressionBuilder(),
+            new DefaultExpressionBuilder(),
+            new DefaultExpressionBuilder(),
         );
 
         $expressionBuilder->createExpression();
@@ -90,6 +95,8 @@ $output[\'property\'] = $data[\'property\'];
             Blueprint::create(SimpleCollectionClass::class, false),
             new ArrayExpressionBuilder(),
             new ArrayExpressionBuilder(),
+            new DefaultExpressionBuilder(),
+            new DefaultExpressionBuilder(),
         );
 
         $expressionBuilder->createExpression();
@@ -124,6 +131,8 @@ $var_16ff5206 = [];
             Blueprint::create(SimpleCollectionClass::class, false),
             new ArrayExpressionBuilder(),
             new ArrayExpressionBuilder(),
+            new DefaultExpressionBuilder(),
+            new DefaultExpressionBuilder(),
         );
 
         $expressionBuilder->createExpression();
@@ -153,6 +162,8 @@ $var_16ff5206 = [];
             Blueprint::create(SimpleClassWithSimpleObject::class, false),
             new ArrayExpressionBuilder(),
             new ArrayExpressionBuilder(),
+            new DefaultExpressionBuilder(),
+            new DefaultExpressionBuilder(),
         );
 
         $expressionBuilder->createExpression();
@@ -188,6 +199,8 @@ $var_16ff5206 = [];
             Blueprint::create(SimpleClassWithSimpleObject::class, false),
             new ArrayExpressionBuilder(),
             new ArrayExpressionBuilder(),
+            new DefaultExpressionBuilder(),
+            new DefaultExpressionBuilder(),
         );
 
         $expressionBuilder->createExpression();
@@ -221,6 +234,8 @@ $var_16ff5206 = [];
             Blueprint::create(Dummy::class, false),
             new ArrayExpressionBuilder(),
             new ArrayExpressionBuilder(),
+            new DefaultExpressionBuilder(),
+            new DefaultExpressionBuilder(),
         );
 
         $expressionBuilder->createExpression();
@@ -287,6 +302,8 @@ $output[\'_embedded\'] = $var_6e52c0f5($data[\'_embedded\']);
             Blueprint::create(Dummy::class, false),
             new ArrayExpressionBuilder(),
             new ArrayExpressionBuilder(),
+            new DefaultExpressionBuilder(),
+            new DefaultExpressionBuilder(),
         );
 
         $expressionBuilder->createExpression();

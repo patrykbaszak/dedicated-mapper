@@ -16,6 +16,5 @@ class SymfonyValidator implements ModificatorInterface
 
     public function setBuilder(AbstractExpressionInterface $builder): void
     {
-        
     }
 }

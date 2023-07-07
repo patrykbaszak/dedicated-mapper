@@ -6,6 +6,7 @@ namespace PBaszak\MessengerMapperBundle\Expression;
 
 use PBaszak\MessengerMapperBundle\Expression\Builder\AnonymousObjectExpressionBuilder;
 use PBaszak\MessengerMapperBundle\Expression\Builder\ArrayExpressionBuilder;
+use PBaszak\MessengerMapperBundle\Expression\Builder\DefaultExpressionBuilder;
 use PBaszak\MessengerMapperBundle\Properties\Blueprint;
 use PBaszak\MessengerMapperBundle\Tests\assets\Dummy;
 use PHPUnit\Framework\TestCase;
@@ -20,6 +21,8 @@ class AnonymousObjectExpressionBuilderTest extends TestCase
             Blueprint::create(Dummy::class, false),
             new ArrayExpressionBuilder(),
             new AnonymousObjectExpressionBuilder(),
+            new DefaultExpressionBuilder(),
+            new DefaultExpressionBuilder(),
         );
 
         $expressionBuilder->createExpression();
@@ -76,6 +79,8 @@ class AnonymousObjectExpressionBuilderTest extends TestCase
             Blueprint::create(Dummy::class, false),
             new ArrayExpressionBuilder(),
             new AnonymousObjectExpressionBuilder(),
+            new DefaultExpressionBuilder(),
+            new DefaultExpressionBuilder(),
         );
 
         $expressionBuilder->createExpression();
@@ -88,6 +93,8 @@ class AnonymousObjectExpressionBuilderTest extends TestCase
             Blueprint::create(Dummy::class, false),
             new AnonymousObjectExpressionBuilder(),
             new ArrayExpressionBuilder(),
+            new DefaultExpressionBuilder(),
+            new DefaultExpressionBuilder(),
         );
 
         $expressionBuilder->createExpression();

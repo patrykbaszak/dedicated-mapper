@@ -16,6 +16,5 @@ class SymfonySerializer implements ModificatorInterface
 
     public function setBuilder(AbstractExpressionInterface $builder): void
     {
-        
     }
 }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace PBaszak\MessengerMapperBundle\Expression;
 
 use PBaszak\MessengerMapperBundle\Expression\Builder\ArrayExpressionBuilder;
+use PBaszak\MessengerMapperBundle\Expression\Builder\DefaultExpressionBuilder;
 use PBaszak\MessengerMapperBundle\Expression\Builder\ReflectionClassExpressionBuilder;
 use PBaszak\MessengerMapperBundle\Properties\Blueprint;
 use PBaszak\MessengerMapperBundle\Tests\assets\Dummy;
@@ -20,6 +21,8 @@ class ReflectionClassExpressionBuilderTest extends TestCase
             Blueprint::create(Dummy::class, false),
             new ArrayExpressionBuilder(),
             new ReflectionClassExpressionBuilder(),
+            new DefaultExpressionBuilder(),
+            new DefaultExpressionBuilder(),
         );
 
         $expressionBuilder->createExpression();
@@ -76,6 +79,8 @@ class ReflectionClassExpressionBuilderTest extends TestCase
             Blueprint::create(Dummy::class, false),
             new ArrayExpressionBuilder(),
             new ReflectionClassExpressionBuilder(),
+            new DefaultExpressionBuilder(),
+            new DefaultExpressionBuilder(),
         );
 
         $expressionBuilder->createExpression();
@@ -88,6 +93,8 @@ class ReflectionClassExpressionBuilderTest extends TestCase
             Blueprint::create(Dummy::class, false),
             new ReflectionClassExpressionBuilder(),
             new ArrayExpressionBuilder(),
+            new DefaultExpressionBuilder(),
+            new DefaultExpressionBuilder(),
         );
 
         $expressionBuilder->createExpression();

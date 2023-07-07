@@ -7,8 +7,8 @@ namespace PBaszak\MessengerMapperBundle\Expression\Builder;
 use PBaszak\MessengerMapperBundle\Contract\AbstractExpressionInterface;
 use PBaszak\MessengerMapperBundle\Contract\GetterInterface;
 use PBaszak\MessengerMapperBundle\Contract\SetterInterface;
-use PBaszak\MessengerMapperBundle\Expression\Modificator\ModificatorInterface;
 use PBaszak\MessengerMapperBundle\Expression\Modificator\Mapper\NullablePropertyModificator;
+use PBaszak\MessengerMapperBundle\Expression\Modificator\ModificatorInterface;
 
 trait ExpressionBuilderDecoratorBuilderTrait
 {

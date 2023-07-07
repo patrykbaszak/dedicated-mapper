@@ -20,7 +20,8 @@ class MapperService implements MapperServiceInterface
 
     public function __construct(
         private string $directory,
-    ) {}
+    ) {
+    }
 
     /**
      * @param class-string $blueprint
@@ -33,7 +34,7 @@ class MapperService implements MapperServiceInterface
         FunctionInterface $functionBuilder = null,
         LoopInterface $loopBuilder = null,
         bool $isCollection = false,
-        ?string $group = null
+        string $group = null
     ): mixed {
         $mapperId = hash(in_array('xxh3', hash_algos()) ? 'xxh3' : 'crc32', var_export(array_slice(func_get_args(), 1), true));
         $function = self::$mappers[$mapperId] ??= $this->getFunction($mapperId, $blueprint, $getterBuilder, $setterBuilder, $functionBuilder, $loopBuilder, $isCollection, $group);
@@ -52,7 +53,7 @@ class MapperService implements MapperServiceInterface
         FunctionInterface $functionBuilder = null,
         LoopInterface $loopBuilder = null,
         bool $isCollection = false,
-        ?string $group = null
+        string $group = null
     ): callable {
         if ($function = @include $fileName = $this->directory.$mapperId.'.php') {
             return $function;
