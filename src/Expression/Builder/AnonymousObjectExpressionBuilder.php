@@ -81,12 +81,10 @@ class AnonymousObjectExpressionBuilder extends AbstractExpressionBuilder impleme
     {
         return new Setter(
             sprintf(
-                "$%s->%s = (\$a = %s) instanceof %s ? \$a : new %s(\$a);\n",
+                "$%s->%s = %s;\n",
                 Setter::TARGET_VARIABLE_NAME,
                 $property->originName,
-                Setter::GETTER_EXPRESSION,
-                $property->getClassType(),
-                $property->getClassType(),
+                $this->getSimpleObjectSetterExpression($property)
             )
         );
     }

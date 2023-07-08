@@ -110,7 +110,7 @@ class ArrayMapExpressionBuilder extends AbstractExpressionBuilder implements Get
     {
         return new Setter(
             sprintf(
-                "$%s['%s'] = (\$a = %s) instanceof %s ? \$a : new %s(\$a);\n",
+                "$%s['%s'] = %s;\n",
                 Setter::TARGET_VARIABLE_NAME,
                 implode(
                     $this->separator,
@@ -119,9 +119,7 @@ class ArrayMapExpressionBuilder extends AbstractExpressionBuilder implements Get
                         [$property->originName]
                     ),
                 ),
-                Setter::GETTER_EXPRESSION,
-                $property->getClassType(),
-                $property->getClassType(),
+                $this->getSimpleObjectSetterExpression($property)
             )
         );
     }

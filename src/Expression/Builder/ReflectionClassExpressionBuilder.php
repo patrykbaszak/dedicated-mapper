@@ -103,13 +103,11 @@ class ReflectionClassExpressionBuilder extends AbstractExpressionBuilder impleme
     {
         return new Setter(
             sprintf(
-                "$%s->getProperty('%s')->setValue($%s, (\$a = %s) instanceof %s ? \$a : new %s(\$a));\n",
+                "$%s->getProperty('%s')->setValue($%s, %s);\n",
                 $this->getReflectionClassVariableName($property),
                 $property->originName,
                 Setter::TARGET_VARIABLE_NAME,
-                Setter::GETTER_EXPRESSION,
-                $property->getClassType(),
-                $property->getClassType(),
+                $this->getSimpleObjectSetterExpression($property)
             )
         );
     }
