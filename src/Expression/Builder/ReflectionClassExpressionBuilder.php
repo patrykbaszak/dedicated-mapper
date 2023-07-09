@@ -14,6 +14,16 @@ use PBaszak\MessengerMapperBundle\Properties\Property;
 
 class ReflectionClassExpressionBuilder extends AbstractExpressionBuilder implements GetterInterface, SetterInterface
 {
+    public function getSourceType(Blueprint $blueprint): string
+    {
+        return $blueprint->reflection->getName();
+    }
+
+    public function getOutputType(Blueprint $blueprint): ?string
+    {
+        return $blueprint->reflection->getName();
+    }
+
     public function getGetterInitialExpression(Blueprint $blueprint, string $initialExpressionId): InitialExpression
     {
         if (in_array($initialExpressionId, self::$initialExpressionIds)) {
@@ -27,16 +37,6 @@ class ReflectionClassExpressionBuilder extends AbstractExpressionBuilder impleme
                 $blueprint->reflection->getName()
             )
         );
-    }
-
-    public function getSourceType(Blueprint $blueprint): string
-    {
-        return $blueprint->reflection->getName();
-    }
-
-    public function getOutputType(Blueprint $blueprint): ?string
-    {
-        return $blueprint->reflection->getName();
     }
 
     public function getSetterInitialExpression(Blueprint $blueprint, string $initialExpressionId): InitialExpression
@@ -86,8 +86,38 @@ class ReflectionClassExpressionBuilder extends AbstractExpressionBuilder impleme
         return $this->createGetter($property);
     }
 
-    public function createSetter(Property $property): Setter
+    public function createSetter(Property $property, bool $throwException): Setter
     {
+        $getter = Setter::GETTER_EXPRESSION;
+
+        if ($property->hasDefaultValue() && 'null' !== strtolower($var = var_export($property->getDefaultValue(), true))) {
+            $getter = sprintf(
+                '%s ?? %s',
+                $getter,
+                $var
+            );
+        }
+
+        if ($property->isNullable()) {
+            $getter = sprintf(
+                '%s ?? null',
+                $getter
+            );
+        }
+
+        if (!$throwException && Setter::GETTER_EXPRESSION === $getter) {
+            return new Setter(
+                sprintf(
+                    "if (isset(%s)) $%s->getProperty('%s')->setValue($%s, %s);\n",
+                    $getter,
+                    $this->getReflectionClassVariableName($property),
+                    $property->originName,
+                    Setter::TARGET_VARIABLE_NAME,
+                    $getter,
+                )
+            );
+        }
+
         return new Setter(
             sprintf(
                 "$%s->getProperty('%s')->setValue($%s, %s);\n",
@@ -99,8 +129,21 @@ class ReflectionClassExpressionBuilder extends AbstractExpressionBuilder impleme
         );
     }
 
-    public function createSimpleObjectSetter(Property $property): Setter
+    public function createSimpleObjectSetter(Property $property, bool $throwException): Setter
     {
+        if (!$throwException) {
+            return new Setter(
+                sprintf(
+                    "if (isset(%s)) $%s->getProperty('%s')->setValue($%s, %s);\n",
+                    Setter::GETTER_EXPRESSION,
+                    $this->getReflectionClassVariableName($property),
+                    $property->originName,
+                    Setter::TARGET_VARIABLE_NAME,
+                    $this->getSimpleObjectSetterExpression($property),
+                )
+            );
+        }
+
         return new Setter(
             sprintf(
                 "$%s->getProperty('%s')->setValue($%s, %s);\n",

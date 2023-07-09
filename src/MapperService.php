@@ -11,6 +11,7 @@ use PBaszak\MessengerMapperBundle\Contract\MapperServiceInterface;
 use PBaszak\MessengerMapperBundle\Contract\SetterInterface;
 use PBaszak\MessengerMapperBundle\Expression\Builder\DefaultExpressionBuilder;
 use PBaszak\MessengerMapperBundle\Expression\ExpressionBuilder;
+use PBaszak\MessengerMapperBundle\Expression\Modificator\ModificatorInterface;
 use PBaszak\MessengerMapperBundle\Properties\Blueprint;
 
 class MapperService implements MapperServiceInterface
@@ -24,7 +25,8 @@ class MapperService implements MapperServiceInterface
     }
 
     /**
-     * @param class-string $blueprint
+     * @param class-string           $blueprint
+     * @param ModificatorInterface[] $modificators
      */
     public function map(
         mixed $data,
@@ -33,17 +35,31 @@ class MapperService implements MapperServiceInterface
         SetterInterface $setterBuilder,
         FunctionInterface $functionBuilder = null,
         LoopInterface $loopBuilder = null,
+        bool $throwException = false,
         bool $isCollection = false,
+        array $modificators = [],
         string $group = null
     ): mixed {
         $mapperId = hash(in_array('xxh3', hash_algos()) ? 'xxh3' : 'crc32', var_export(array_slice(func_get_args(), 1), true));
-        $function = self::$mappers[$mapperId] ??= $this->getFunction($mapperId, $blueprint, $getterBuilder, $setterBuilder, $functionBuilder, $loopBuilder, $isCollection, $group);
+        $function = self::$mappers[$mapperId] ??= $this->getFunction(
+            $mapperId,
+            $blueprint,
+            $getterBuilder,
+            $setterBuilder,
+            $functionBuilder,
+            $loopBuilder,
+            $throwException,
+            $isCollection,
+            $modificators,
+            $group
+        );
 
         return $function($data);
     }
 
     /**
-     * @param class-string $blueprint
+     * @param class-string           $blueprint
+     * @param ModificatorInterface[] $modificators
      */
     private function getFunction(
         string $mapperId,
@@ -52,7 +68,9 @@ class MapperService implements MapperServiceInterface
         SetterInterface $setterBuilder,
         FunctionInterface $functionBuilder = null,
         LoopInterface $loopBuilder = null,
+        bool $throwException = false,
         bool $isCollection = false,
+        array $modificators = [],
         string $group = null
     ): callable {
         if ($function = @include $fileName = $this->directory.$mapperId.'.php') {
@@ -67,14 +85,16 @@ class MapperService implements MapperServiceInterface
             $setterBuilder,
             $functionBuilder ?? new DefaultExpressionBuilder(),
             $loopBuilder ?? new DefaultExpressionBuilder(),
-            $group
+            $group,
         );
-
-        $expressionBuilder->createExpression();
 
         $mapper = sprintf(
             "<?php\n\ndeclare(strict_types=1);\n\n%s",
-            $expressionBuilder->getMapper()->toString()
+            $expressionBuilder
+                ->applyModificators($modificators)
+                ->createExpression($throwException)
+                ->getMapper()
+                ->toString()
         );
 
         if (!file_exists($this->directory)) {

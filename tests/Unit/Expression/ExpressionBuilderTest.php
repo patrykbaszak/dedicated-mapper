@@ -48,8 +48,7 @@ class ExpressionBuilderTest extends TestCase
             new DefaultExpressionBuilder(),
         );
 
-        $expressionBuilder->createExpression();
-        $mapper = $expressionBuilder->getMapper();
+        $mapper = $expressionBuilder->createExpression(true)->getMapper();
 
         $this->assertEquals(
             'return function (array $data): array {
@@ -73,8 +72,7 @@ $output[\'property\'] = $data[\'property\'];
             new DefaultExpressionBuilder(),
         );
 
-        $expressionBuilder->createExpression();
-        $mapper = $expressionBuilder->getMapper();
+        $mapper = $expressionBuilder->createExpression(true)->getMapper();
 
         $this->assertEquals(
             [
@@ -99,8 +97,7 @@ $output[\'property\'] = $data[\'property\'];
             new DefaultExpressionBuilder(),
         );
 
-        $expressionBuilder->createExpression();
-        $mapper = $expressionBuilder->getMapper();
+        $mapper = $expressionBuilder->createExpression(true)->getMapper();
         $function = eval($mapper->toString());
 
         $this->assertEqualsIgnoringCase(
@@ -135,8 +132,7 @@ $var_16ff5206 = [];
             new DefaultExpressionBuilder(),
         );
 
-        $expressionBuilder->createExpression();
-        $mapper = $expressionBuilder->getMapper();
+        $mapper = $expressionBuilder->createExpression(true)->getMapper();
 
         $collection = [
             'properties' => [
@@ -166,14 +162,13 @@ $var_16ff5206 = [];
             new DefaultExpressionBuilder(),
         );
 
-        $expressionBuilder->createExpression();
-        $mapper = $expressionBuilder->getMapper();
+        $mapper = $expressionBuilder->createExpression(true)->getMapper();
         $function = eval($mapper->toString());
 
         $this->assertEqualsIgnoringCase(
             'return function (array $data): array {
                 $output = [];
-$output[\'time\'] = ($a = $data[\'time\']) instanceof DateTime ? $a : new DateTime($a);
+$output[\'time\'] = ($x = $data[\'time\']) instanceof DateTime ? $x : new DateTime($x);
 $var_78c4d00f = function (array $data): array {
                 $output = [];
 $output[\'property\'] = $data[\'property\'];
@@ -203,8 +198,7 @@ $var_16ff5206 = [];
             new DefaultExpressionBuilder(),
         );
 
-        $expressionBuilder->createExpression();
-        $mapper = $expressionBuilder->getMapper();
+        $mapper = $expressionBuilder->createExpression(true)->getMapper();
 
         $collection = [
             'time' => (new \DateTime())->format(\DateTime::ATOM),
@@ -238,8 +232,7 @@ $var_16ff5206 = [];
             new DefaultExpressionBuilder(),
         );
 
-        $expressionBuilder->createExpression();
-        $mapper = $expressionBuilder->getMapper();
+        $mapper = $expressionBuilder->createExpression(true)->getMapper();
 
         $function = eval($mapper->toString());
 
@@ -273,8 +266,8 @@ $output[\'test2\'] = $data[\'test2\'];
                 return $output;
             };
 $output[\'metadata\'] = $var_5626685c($data[\'metadata\']);
-$output[\'created_at\'] = ($a = $data[\'created_at\']) instanceof DateTime ? $a : new DateTime($a);
-$output[\'updated_at\'] = ($a = $data[\'updated_at\']) instanceof DateTime ? $a : new DateTime($a);
+$output[\'created_at\'] = ($x = $data[\'created_at\']) instanceof DateTime ? $x : new DateTime($x);
+$output[\'updated_at\'] = ($x = $data[\'updated_at\']) instanceof DateTime ? $x : new DateTime($x);
 $output[\'availableActions\'] = $data[\'availableActions\'];
 
                 return $output;
@@ -306,8 +299,7 @@ $output[\'_embedded\'] = $var_6e52c0f5($data[\'_embedded\']);
             new DefaultExpressionBuilder(),
         );
 
-        $expressionBuilder->createExpression();
-        $mapper = $expressionBuilder->getMapper();
+        $mapper = $expressionBuilder->createExpression(true)->getMapper();
 
         $dummy = json_decode(file_get_contents(__DIR__.'/../../assets/dummy.json'), true);
         $mappedDummy = $mapper($dummy);

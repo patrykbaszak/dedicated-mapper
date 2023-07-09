@@ -8,7 +8,6 @@ use PBaszak\MessengerMapperBundle\Contract\GetterInterface;
 use PBaszak\MessengerMapperBundle\Contract\SetterInterface;
 use PBaszak\MessengerMapperBundle\Expression\Getter;
 use PBaszak\MessengerMapperBundle\Expression\InitialExpression;
-use PBaszak\MessengerMapperBundle\Expression\Modificator\ModificatorInterface;
 use PBaszak\MessengerMapperBundle\Expression\Setter;
 use PBaszak\MessengerMapperBundle\Properties\Blueprint;
 use PBaszak\MessengerMapperBundle\Properties\Property;
@@ -36,14 +35,9 @@ use PBaszak\MessengerMapperBundle\Properties\Property;
  */
 class ArrayMapExpressionBuilder extends AbstractExpressionBuilder implements GetterInterface, SetterInterface
 {
-    /**
-     * @param ModificatorInterface[] $modificators
-     */
     public function __construct(
         protected readonly string $separator = '__',
-        array $modificators = []
     ) {
-        parent::__construct($modificators);
     }
 
     public function getSourceType(Blueprint $blueprint): string
@@ -88,37 +82,81 @@ class ArrayMapExpressionBuilder extends AbstractExpressionBuilder implements Get
         return $this->createGetter($property);
     }
 
-    public function createSetter(Property $property): Setter
+    public function createSetter(Property $property, bool $throwException): Setter
     {
+        $getter = Setter::GETTER_EXPRESSION;
+        $arrayKey = implode(
+            $this->separator,
+            array_merge(
+                array_map(fn (Property $parent) => $parent->originName, $property->getAllParents()),
+                [$property->originName]
+            ),
+        );
+
+        if ($property->hasDefaultValue() && 'null' !== strtolower($var = var_export($property->getDefaultValue(), true))) {
+            $getter = sprintf(
+                '%s ?? %s',
+                $getter,
+                $var
+            );
+        }
+
+        if ($property->isNullable()) {
+            $getter = sprintf(
+                '%s ?? null',
+                $getter
+            );
+        }
+
+        if (!$throwException && Setter::GETTER_EXPRESSION === $getter) {
+            return new Setter(
+                sprintf(
+                    "if (isset(%s)) $%s['%s'] = %s;\n",
+                    $getter,
+                    Setter::TARGET_VARIABLE_NAME,
+                    $arrayKey,
+                    $getter,
+                )
+            );
+        }
+
         return new Setter(
             sprintf(
                 "$%s['%s'] = %s;\n",
                 Setter::TARGET_VARIABLE_NAME,
-                implode(
-                    $this->separator,
-                    array_merge(
-                        array_map(fn (Property $parent) => $parent->originName, $property->getAllParents()),
-                        [$property->originName]
-                    ),
-                ),
-                Setter::GETTER_EXPRESSION
+                $arrayKey,
+                $getter
             )
         );
     }
 
-    public function createSimpleObjectSetter(Property $property): Setter
+    public function createSimpleObjectSetter(Property $property, bool $throwException): Setter
     {
+        $arrayKey = implode(
+            $this->separator,
+            array_merge(
+                array_map(fn (Property $parent) => $parent->originName, $property->getAllParents()),
+                [$property->originName]
+            ),
+        );
+
+        if (!$throwException) {
+            return new Setter(
+                sprintf(
+                    "if (isset(%s)) $%s['%s'] = %s;\n",
+                    Setter::GETTER_EXPRESSION,
+                    Setter::TARGET_VARIABLE_NAME,
+                    $arrayKey,
+                    $this->getSimpleObjectSetterExpression($property),
+                )
+            );
+        }
+
         return new Setter(
             sprintf(
                 "$%s['%s'] = %s;\n",
                 Setter::TARGET_VARIABLE_NAME,
-                implode(
-                    $this->separator,
-                    array_merge(
-                        array_map(fn (Property $parent) => $parent->originName, $property->getAllParents()),
-                        [$property->originName]
-                    ),
-                ),
+                $arrayKey,
                 $this->getSimpleObjectSetterExpression($property)
             )
         );

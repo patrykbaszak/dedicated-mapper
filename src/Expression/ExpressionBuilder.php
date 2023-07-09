@@ -8,7 +8,7 @@ use PBaszak\MessengerMapperBundle\Contract\FunctionInterface;
 use PBaszak\MessengerMapperBundle\Contract\GetterInterface;
 use PBaszak\MessengerMapperBundle\Contract\LoopInterface;
 use PBaszak\MessengerMapperBundle\Contract\SetterInterface;
-use PBaszak\MessengerMapperBundle\Expression\Builder\ExpressionBuilderDecoratorBuilderTrait;
+use PBaszak\MessengerMapperBundle\Expression\Modificator\ModificatorInterface;
 use PBaszak\MessengerMapperBundle\Mapper;
 use PBaszak\MessengerMapperBundle\Properties\Blueprint;
 use PBaszak\MessengerMapperBundle\Properties\Property;
@@ -16,10 +16,9 @@ use Symfony\Component\Uid\Uuid;
 
 class ExpressionBuilder
 {
-    use ExpressionBuilderDecoratorBuilderTrait;
-
     protected Mapper $mapper;
     protected static int $seed = 0;
+    protected string $useStatements = '';
 
     public function __construct(
         protected Blueprint $blueprint,
@@ -29,13 +28,21 @@ class ExpressionBuilder
         protected LoopInterface $loopBuilder,
         protected ?string $group = null,
     ) {
-        $this->getterBuilder = $this->decoratesBuilder($getterBuilder);
-        $this->setterBuilder = $this->decoratesBuilder($setterBuilder);
-        $this->functionBuilder = $this->decoratesBuilder($functionBuilder);
-        $this->loopBuilder = $this->decoratesBuilder($loopBuilder);
     }
 
-    public function createExpression(string $useStatements = ''): void
+    /**
+     * @param ModificatorInterface[] $modificators
+     */
+    public function applyModificators(array $modificators): self
+    {
+        foreach ($modificators as $modificator) {
+            // $modificator->modify($this->blueprint);
+        }
+
+        return $this;
+    }
+
+    public function createExpression(bool $throwException = false): self
     {
         $this->mapper = new Mapper(
             sprintf(
@@ -44,15 +51,45 @@ class ExpressionBuilder
                     $this->blueprint,
                     'data',
                     'output',
-                    $useStatements
+                    $this->useStatements,
+                    $throwException
                 )
             )
         );
+
+        return $this;
     }
 
     public function getMapper(): Mapper
     {
         return $this->mapper;
+    }
+
+    protected function createBlueprintExpression(
+        Blueprint $blueprint,
+        string $sourceVariableName,
+        string $targetVariableName,
+        string $useStatements,
+        bool $throwException,
+    ): string {
+        $function = $this->functionBuilder->getFunction();
+
+        $functionBody = $this->createFunctionBodyExpression(
+            $blueprint,
+            $sourceVariableName,
+            $targetVariableName,
+            $useStatements,
+            $throwException,
+        );
+
+        return $function->toString(
+            $sourceVariableName,
+            $targetVariableName,
+            $functionBody,
+            $useStatements,
+            $this->getterBuilder->getSourceType($blueprint),
+            $this->setterBuilder->getOutputType($blueprint),
+        );
     }
 
     protected function createInitialExpression(Blueprint $blueprint, string $sourceVariableName, string $targetVariableName): string
@@ -74,10 +111,10 @@ class ExpressionBuilder
         );
     }
 
-    protected function createSinglePropertyExpression(Property $property, string $sourceVariableName, string $targetVariableName): string
+    protected function createSinglePropertyExpression(Property $property, string $sourceVariableName, string $targetVariableName, bool $throwException): string
     {
         $getter = $this->getterBuilder->createGetter($property);
-        $setter = $this->setterBuilder->createSetter($property);
+        $setter = $this->setterBuilder->createSetter($property, $throwException);
 
         return $setter->toString(
             $targetVariableName,
@@ -85,10 +122,10 @@ class ExpressionBuilder
         );
     }
 
-    protected function createSimpleObjectExpression(Property $property, string $sourceVariableName, string $targetVariableName): string
+    protected function createSimpleObjectExpression(Property $property, string $sourceVariableName, string $targetVariableName, bool $throwException): string
     {
         $getter = $this->getterBuilder->createSimpleObjectGetter($property);
-        $setter = $this->setterBuilder->createSimpleObjectSetter($property);
+        $setter = $this->setterBuilder->createSimpleObjectSetter($property, $throwException);
 
         return $setter->toString(
             $targetVariableName,
@@ -100,17 +137,18 @@ class ExpressionBuilder
         Blueprint $blueprint,
         string $sourceVariableName,
         string $targetVariableName,
-        string $useStatements
+        string $useStatements,
+        bool $throwException,
     ): string {
         $functionBody = $this->createInitialExpression($blueprint, $sourceVariableName, $targetVariableName);
 
         foreach ($blueprint->properties as $property) {
             switch ($property->getPropertyType()) {
                 case Property::PROPERTY:
-                    $functionBody .= $this->createSinglePropertyExpression($property, $sourceVariableName, $targetVariableName);
+                    $functionBody .= $this->createSinglePropertyExpression($property, $sourceVariableName, $targetVariableName, $throwException);
                     break;
                 case Property::SIMPLE_OBJECT:
-                    $functionBody .= $this->createSimpleObjectExpression($property, $sourceVariableName, $targetVariableName);
+                    $functionBody .= $this->createSimpleObjectExpression($property, $sourceVariableName, $targetVariableName, $throwException);
                     break;
                 case Property::CLASS_OBJECT:
                     if (!$property->blueprint) {
@@ -124,12 +162,12 @@ class ExpressionBuilder
                         $function->toString(
                             $sourceVariableName,
                             $targetVariableName,
-                            $this->createFunctionBodyExpression($property->blueprint, $sourceVariableName, $targetVariableName, $useStatements),
+                            $this->createFunctionBodyExpression($property->blueprint, $sourceVariableName, $targetVariableName, $useStatements, $throwException),
                             $useStatements,
                             $this->getterBuilder->getSourceType($property->blueprint),
                             $this->setterBuilder->getOutputType($property->blueprint),
                         ),
-                        $this->setterBuilder->createSetter($property)
+                        $this->setterBuilder->createSetter($property, true)
                             ->toString(
                                 $targetVariableName,
                                 sprintf(
@@ -154,7 +192,7 @@ class ExpressionBuilder
                         $function->toString(
                             $sourceVariableName,
                             $targetVariableName,
-                            $this->createFunctionBodyExpression($property->blueprint, $sourceVariableName, $targetVariableName, $useStatements),
+                            $this->createFunctionBodyExpression($property->blueprint, $sourceVariableName, $targetVariableName, $useStatements, $throwException),
                             $useStatements,
                             $this->getterBuilder->getSourceType($property->blueprint),
                             $this->setterBuilder->getOutputType($property->blueprint),
@@ -172,7 +210,7 @@ class ExpressionBuilder
                                     $collectionItemVariableName
                                 )
                             ),
-                            $this->setterBuilder->createSetter($property)
+                            $this->setterBuilder->createSetter($property, true)
                                 ->toString(
                                     $targetVariableName,
                                     sprintf(
@@ -197,7 +235,7 @@ class ExpressionBuilder
                         $function->toString(
                             $sourceVariableName,
                             $targetVariableName,
-                            $this->createFunctionBodyExpression($property->blueprint, $sourceVariableName, $targetVariableName, $useStatements),
+                            $this->createFunctionBodyExpression($property->blueprint, $sourceVariableName, $targetVariableName, $useStatements, $throwException),
                             $useStatements,
                             $this->getterBuilder->getSourceType($property->blueprint),
                             $this->setterBuilder->getOutputType($property->blueprint),
@@ -215,7 +253,7 @@ class ExpressionBuilder
                                     $collectionItemVariableName
                                 )
                             ),
-                            $this->setterBuilder->createSetter($property)
+                            $this->setterBuilder->createSetter($property, true)
                                 ->toString(
                                     $targetVariableName,
                                     sprintf(
@@ -233,28 +271,6 @@ class ExpressionBuilder
         }
 
         return $functionBody;
-    }
-
-    protected function createBlueprintExpression(
-        Blueprint $blueprint,
-        string $sourceVariableName,
-        string $targetVariableName,
-        string $useStatements,
-    ): string {
-        $function = $this->functionBuilder->getFunction();
-        $from = 'data';
-        $to = 'output';
-
-        $functionBody = $this->createFunctionBodyExpression($blueprint, $from, $to, $useStatements);
-
-        return $function->toString(
-            $sourceVariableName,
-            $targetVariableName,
-            $functionBody,
-            $useStatements,
-            $this->getterBuilder->getSourceType($blueprint),
-            $this->setterBuilder->getOutputType($blueprint),
-        );
     }
 
     /** @var string[] */

@@ -36,13 +36,25 @@ class AnonymousObjectExpressionBuilder extends AbstractExpressionBuilder impleme
 
     public function createGetter(Property $property): Getter
     {
-        $getter = sprintf(
-            '$%s->%s',
-            Getter::SOURCE_VARIABLE_NAME,
-            $property->originName
+        return new Getter(
+            sprintf(
+                '$%s->%s',
+                Getter::SOURCE_VARIABLE_NAME,
+                $property->originName
+            )
         );
+    }
 
-        if ($property->hasDefaultValue() && 'null' !== ($var = var_export($property->getDefaultValue(), true))) {
+    public function createSimpleObjectGetter(Property $property): Getter
+    {
+        return $this->createGetter($property);
+    }
+
+    public function createSetter(Property $property, bool $throwException): Setter
+    {
+        $getter = Setter::GETTER_EXPRESSION;
+
+        if ($property->hasDefaultValue() && 'null' !== strtolower($var = var_export($property->getDefaultValue(), true))) {
             $getter = sprintf(
                 '%s ?? %s',
                 $getter,
@@ -57,28 +69,42 @@ class AnonymousObjectExpressionBuilder extends AbstractExpressionBuilder impleme
             );
         }
 
-        return new Getter($getter);
-    }
+        if (!$throwException && Setter::GETTER_EXPRESSION === $getter) {
+            return new Setter(
+                sprintf(
+                    "if (isset(%s)) $%s->%s = %s;\n",
+                    $getter,
+                    Setter::TARGET_VARIABLE_NAME,
+                    $property->originName,
+                    $getter,
+                )
+            );
+        }
 
-    public function createSimpleObjectGetter(Property $property): Getter
-    {
-        return $this->createGetter($property);
-    }
-
-    public function createSetter(Property $property): Setter
-    {
         return new Setter(
             sprintf(
                 "$%s->%s = %s;\n",
                 Setter::TARGET_VARIABLE_NAME,
                 $property->originName,
-                Setter::GETTER_EXPRESSION
+                $getter
             )
         );
     }
 
-    public function createSimpleObjectSetter(Property $property): Setter
+    public function createSimpleObjectSetter(Property $property, bool $throwException): Setter
     {
+        if (!$throwException) {
+            return new Setter(
+                sprintf(
+                    "if (isset(%s)) $%s->%s = %s;\n",
+                    Setter::GETTER_EXPRESSION,
+                    Setter::TARGET_VARIABLE_NAME,
+                    $property->originName,
+                    $this->getSimpleObjectSetterExpression($property),
+                )
+            );
+        }
+
         return new Setter(
             sprintf(
                 "$%s->%s = %s;\n",

@@ -31,11 +31,6 @@ class SecondBlueprintExpressionBuilderDecorator implements SetterInterface, Gett
     ) {
     }
 
-    public function getModificators(): array
-    {
-        return $this->expressionBuilder->getModificators();
-    }
-
     public function getSetterInitialExpression(Blueprint $blueprint, string $initialExpressionId): InitialExpression
     {
         $this->isInitialized || $this->init($blueprint);
@@ -44,18 +39,18 @@ class SecondBlueprintExpressionBuilderDecorator implements SetterInterface, Gett
         return $this->expressionBuilder->getSetterInitialExpression($blueprint, $initialExpressionId);
     }
 
-    public function createSetter(Property $property): Setter
+    public function createSetter(Property $property, bool $throwException): Setter
     {
         $property = $this->getProperty($property);
 
-        return $this->expressionBuilder->createSetter($property);
+        return $this->expressionBuilder->createSetter($property, $throwException);
     }
 
-    public function createSimpleObjectSetter(Property $property): Setter
+    public function createSimpleObjectSetter(Property $property, bool $throwException): Setter
     {
         $property = $this->getProperty($property);
 
-        return $this->expressionBuilder->createSimpleObjectSetter($property);
+        return $this->expressionBuilder->createSimpleObjectSetter($property, $throwException);
     }
 
     public function getGetterInitialExpression(Blueprint $blueprint, string $initialExpressionId): InitialExpression

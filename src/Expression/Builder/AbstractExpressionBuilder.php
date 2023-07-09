@@ -6,7 +6,6 @@ namespace PBaszak\MessengerMapperBundle\Expression\Builder;
 
 use PBaszak\MessengerMapperBundle\Attribute\SimpleObject;
 use PBaszak\MessengerMapperBundle\Expression\InitialExpression;
-use PBaszak\MessengerMapperBundle\Expression\Modificator\ModificatorInterface;
 use PBaszak\MessengerMapperBundle\Expression\Setter;
 use PBaszak\MessengerMapperBundle\Properties\Blueprint;
 use PBaszak\MessengerMapperBundle\Properties\Property;
@@ -15,19 +14,6 @@ abstract class AbstractExpressionBuilder
 {
     /** @var string[] */
     protected static $initialExpressionIds = [];
-
-    /**
-     * @param ModificatorInterface[] $modificators
-     */
-    public function __construct(
-        protected array $modificators = []
-    ) {
-    }
-
-    public function getModificators(): array
-    {
-        return $this->modificators;
-    }
 
     public function getSourceType(Blueprint $blueprint): string
     {
@@ -50,7 +36,6 @@ abstract class AbstractExpressionBuilder
         $constructor = $simpleObjectAttr && $simpleObjectAttr->staticConstructor
             ? sprintf('%s::%s(%s)', $property->getClassType(), $simpleObjectAttr->staticConstructor, '%s')
             : sprintf('new %s(%s)', $property->getClassType(), '%s');
-
 
         $constructorArguments = $simpleObjectAttr && $simpleObjectAttr->nameOfArgument
             ? sprintf('\'%s\' => %s', $simpleObjectAttr->nameOfArgument, '%s')

@@ -6,7 +6,7 @@ namespace PBaszak\MessengerMapperBundle\Contract;
 
 use PBaszak\MessengerMapperBundle\Expression\Loop;
 
-interface LoopInterface extends AbstractExpressionInterface
+interface LoopInterface
 {
     public function getLoop(): Loop;
 }

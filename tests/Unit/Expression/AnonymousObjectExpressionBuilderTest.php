@@ -25,8 +25,7 @@ class AnonymousObjectExpressionBuilderTest extends TestCase
             new DefaultExpressionBuilder(),
         );
 
-        $expressionBuilder->createExpression();
-        $mapper = $expressionBuilder->getMapper();
+        $mapper = $expressionBuilder->createExpression(true)->getMapper();
 
         $dummy = json_decode(file_get_contents(__DIR__.'/../../assets/dummy.json'), true);
         $mappedDummy = $mapper($dummy);
@@ -83,8 +82,7 @@ class AnonymousObjectExpressionBuilderTest extends TestCase
             new DefaultExpressionBuilder(),
         );
 
-        $expressionBuilder->createExpression();
-        $mapper = $expressionBuilder->getMapper();
+        $mapper = $expressionBuilder->createExpression(true)->getMapper();
 
         $dummy = json_decode(file_get_contents(__DIR__.'/../../assets/dummy.json'), true);
         $mappedDummy = $mapper($dummy);
@@ -97,8 +95,7 @@ class AnonymousObjectExpressionBuilderTest extends TestCase
             new DefaultExpressionBuilder(),
         );
 
-        $expressionBuilder->createExpression();
-        $mapper = $expressionBuilder->getMapper();
+        $mapper = $expressionBuilder->createExpression(true)->getMapper();
 
         $arrayDummy = $mapper($mappedDummy);
 
