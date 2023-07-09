@@ -8,6 +8,7 @@ use PBaszak\MessengerMapperBundle\Contract\FunctionInterface;
 use PBaszak\MessengerMapperBundle\Contract\GetterInterface;
 use PBaszak\MessengerMapperBundle\Contract\LoopInterface;
 use PBaszak\MessengerMapperBundle\Contract\SetterInterface;
+use PBaszak\MessengerMapperBundle\Expression\Modificator\MapperModificator;
 use PBaszak\MessengerMapperBundle\Expression\Modificator\ModificatorInterface;
 use PBaszak\MessengerMapperBundle\Mapper;
 use PBaszak\MessengerMapperBundle\Properties\Blueprint;
@@ -35,6 +36,7 @@ class ExpressionBuilder
      */
     public function applyModificators(array $modificators): self
     {
+        (new MapperModificator())->init($this->blueprint, $this->group);
         foreach ($modificators as $modificator) {
             // $modificator->modify($this->blueprint);
         }

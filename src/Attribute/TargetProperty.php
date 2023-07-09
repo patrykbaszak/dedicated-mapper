@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace PBaszak\MessengerMapperBundle\Attribute;
 
+/**
+ * Part of the mapping process.
+ */
 #[\Attribute(\Attribute::TARGET_PROPERTY)]
 class TargetProperty
 {

@@ -2,12 +2,11 @@
 
 declare(strict_types=1);
 
-namespace PBaszak\MessengerMapperBundle\Expression\Modificator\Symfony;
+namespace PBaszak\MessengerMapperBundle\Expression\Modificator;
 
-use PBaszak\MessengerMapperBundle\Expression\Modificator\ModificatorInterface;
 use PBaszak\MessengerMapperBundle\Properties\Blueprint;
 
-class SymfonySerializer implements ModificatorInterface
+class MapperModificator implements ModificatorInterface
 {
     public function init(Blueprint $blueprint, string $group = null): void
     {

@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace PBaszak\MessengerMapperBundle\Attribute;
 
+/**
+ * Part of the mapping process.
+ * Use is if You got class like DateTime or ArrayObject but Your own.
+ */
 #[\Attribute(\Attribute::TARGET_PROPERTY)]
 class SimpleObject
 {
