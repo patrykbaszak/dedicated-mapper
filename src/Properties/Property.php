@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PBaszak\MessengerMapperBundle\Properties;
 
+use PBaszak\MessengerMapperBundle\Attribute\MappingCallback;
 use PBaszak\MessengerMapperBundle\Attribute\SimpleObject;
 
 class Property
@@ -33,6 +34,12 @@ class Property
      * @var array<string, mixed>
      */
     public array $options = [];
+
+    /**
+     * @var MappingCallback[]
+     */
+    public array $callbacks = [];
+
     public ?Blueprint $blueprint = null;
 
     public function __construct(
@@ -121,5 +128,22 @@ class Property
         }
 
         return $attributes[0]->newInstance();
+    }
+
+    /**
+     * @return array<MappingCallback>
+     */
+    public function getSortedCallbacks(): array
+    {
+        $this->sortCallbacksByPriority();
+
+        return $this->callbacks;
+    }
+
+    private function sortCallbacksByPriority(): void
+    {
+        usort($this->callbacks, function (MappingCallback $a, MappingCallback $b) {
+            return $b->priority <=> $a->priority;
+        });
     }
 }

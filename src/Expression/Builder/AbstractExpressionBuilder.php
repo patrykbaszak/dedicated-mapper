@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PBaszak\MessengerMapperBundle\Expression\Builder;
 
+use PBaszak\MessengerMapperBundle\Attribute\MappingCallback;
 use PBaszak\MessengerMapperBundle\Attribute\SimpleObject;
 use PBaszak\MessengerMapperBundle\Expression\InitialExpression;
 use PBaszak\MessengerMapperBundle\Expression\Setter;
@@ -48,6 +49,14 @@ abstract class AbstractExpressionBuilder
     public function getGetterInitialExpression(Blueprint $blueprint, string $initialExpressionId): InitialExpression
     {
         return new InitialExpression('');
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getMappingCallbacks(Property $property): array
+    {
+        return array_map(fn (MappingCallback $callback) => $callback->callback, $property->getSortedCallbacks());
     }
 
     protected function getSimpleObjectSetterExpression(Property $property): string

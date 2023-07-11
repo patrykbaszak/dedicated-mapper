@@ -75,6 +75,13 @@ class SecondBlueprintExpressionBuilderDecorator implements SetterInterface, Gett
         return $this->getPropertyDefaultValue($property);
     }
 
+    public function getMappingCallbacks(Property $property): array
+    {
+        $property = $this->getProperty($property);
+
+        return $this->getMappingCallbacks($property);
+    }
+
     public function getGetterInitialExpression(Blueprint $blueprint, string $initialExpressionId): InitialExpression
     {
         $this->isInitialized || $this->init($blueprint);
@@ -111,11 +118,11 @@ class SecondBlueprintExpressionBuilderDecorator implements SetterInterface, Gett
         return $this->expressionBuilder->getOutputType($blueprint);
     }
 
-    public function getIssetStatement(Property $property): Statement
+    public function getIssetStatement(Property $property, bool $hasDefaultValue): Statement
     {
         $property = $this->getProperty($property);
 
-        return $this->expressionBuilder->getIssetStatement($property);
+        return $this->expressionBuilder->getIssetStatement($property, $hasDefaultValue);
     }
 
     private function init(Blueprint $originBlueprint): void

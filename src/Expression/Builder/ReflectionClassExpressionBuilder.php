@@ -125,8 +125,37 @@ class ReflectionClassExpressionBuilder extends AbstractExpressionBuilder impleme
         );
     }
 
-    public function getIssetStatement(Property $property): Statement
+    public function getIssetStatement(Property $property, bool $hasDefaultValue): Statement
     {
+        if ($hasDefaultValue) {
+            return new Statement(
+                sprintf(
+                    "if (\$%s->getProperty('%s')->isInitialized(\$%s)) {\n".
+                    "\t\$%s = %s;\n".
+                    "\t%s".
+                    "} else if (\$%s->getProperty('%s')->getType()?->allowsNull()) {\n".
+                    "\t\$%s->getProperty('%s')->setValue(\$%s, null);\n".
+                    "\t\$%s = %s;\n".
+                    "\t%s".
+                    "}\n",
+                    $this->getReflectionClassVariableName($property),
+                    $property->originName,
+                    Statement::SOURCE_VARIABLE_NAME,
+                    Statement::VARIABLE_NAME,
+                    Statement::GETTER,
+                    Statement::CODE,
+                    $this->getReflectionClassVariableName($property),
+                    $property->originName,
+                    $this->getReflectionClassVariableName($property),
+                    $property->originName,
+                    Statement::SOURCE_VARIABLE_NAME,
+                    Statement::VARIABLE_NAME,
+                    Statement::GETTER,
+                    Statement::CODE,
+                )
+            );
+        }
+
         return new Statement(
             sprintf(
                 "if (\$%s->getProperty('%s')->isInitialized(\$%s)) {\n".

@@ -110,8 +110,20 @@ class ArrayMapExpressionBuilder extends AbstractExpressionBuilder implements Get
         );
     }
 
-    public function getIssetStatement(Property $property): Statement
+    public function getIssetStatement(Property $property, bool $hasDefaultValue): Statement
     {
+        if ($hasDefaultValue) {
+            return new Statement(
+                sprintf(
+                    "\$%s = %s;\n".
+                    '%s',
+                    Statement::VARIABLE_NAME,
+                    Statement::GETTER,
+                    Statement::CODE,
+                )
+            );
+        }
+
         return new Statement(
             sprintf(
                 "if (array_key_exists('%s', \$%s)) {\n".

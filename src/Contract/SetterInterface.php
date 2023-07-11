@@ -27,4 +27,9 @@ interface SetterInterface
     public function hasPropertyDefaultValue(Property $property): bool;
 
     public function getPropertyDefaultValue(Property $property): mixed;
+
+    /**
+     * @return string[]
+     */
+    public function getMappingCallbacks(Property $property): array;
 }

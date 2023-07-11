@@ -6,7 +6,7 @@ namespace PBaszak\MessengerMapperBundle\Expression;
 
 class Expression
 {
-    /** @param Modifier[] $modifiers */
+    /** @param string[] $modifiers */
     public function __construct(
         public Getter $getter,
         public Setter $setter,
@@ -31,10 +31,7 @@ class Expression
             $getter .= ' ?? null';
         }
 
-        $modifiers = implode("\n", array_map(
-            fn (Modifier $modifier) => $modifier->toString('var'),
-            $this->modifiers
-        ));
+        $modifiers = implode("\n", $this->modifiers);
 
         if ($this->throwException && '' === $modifiers) {
             return $this->setter->toString(
@@ -52,6 +49,19 @@ class Expression
                         '$var',
                     )
             );
+            // case when we have no modifiers and we don't want to throw exception
+            // should be possible to set variable without $var variable as a middleman
+            // } elseif (!$this->throwException && '' === $modifiers) {
+            //     return $this->statement->toString(
+            //         $sourceVariableName,
+            //         'var',
+            //         $this->getter->toString($sourceVariableName),
+            //         ($modifiers ? $modifiers."\n" : '').
+            //         $this->setter->toString(
+            //             $targetVariableName,
+            //             '$var',
+            //         )
+            //     );
         } else {
             return $this->statement->toString(
                 $sourceVariableName,

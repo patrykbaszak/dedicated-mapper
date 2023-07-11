@@ -40,7 +40,7 @@ trait Type
 
     public function hasDefaultValue(): bool
     {
-        if (!$this->reflection->isDefault()) {
+        if (!$this->reflection->hasDefaultValue()) {
             return $this->constructorParameter?->isDefaultValueAvailable() ?? false;
         }
 
@@ -49,7 +49,7 @@ trait Type
 
     public function getDefaultValue(): mixed
     {
-        if (!$this->reflection->isDefault()) {
+        if (!$this->reflection->hasDefaultValue()) {
             if (!$this->constructorParameter?->isDefaultValueAvailable()) {
                 return null;
             }

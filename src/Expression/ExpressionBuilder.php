@@ -110,7 +110,7 @@ class ExpressionBuilder
 
     protected function createPropertyExpression(Property $property, string $sourceVariableName, string $targetVariableName, bool $throwException, bool $isSimpleObject): string
     {
-        $statement = $this->getterBuilder->getIssetStatement($property);
+        $statement = $this->getterBuilder->getIssetStatement($property, $this->setterBuilder->isPropertyNullable($property) || $this->setterBuilder->hasPropertyDefaultValue($property));
         $getter = $isSimpleObject
             ? $this->getterBuilder->createSimpleObjectGetter($property)
             : $this->getterBuilder->createGetter($property);
@@ -121,7 +121,7 @@ class ExpressionBuilder
             $getter,
             $setter,
             $statement,
-            [],
+            $this->setterBuilder->getMappingCallbacks($property),
             $throwException,
             $this->setterBuilder->isPropertyNullable($property),
             $this->setterBuilder->hasPropertyDefaultValue($property),
