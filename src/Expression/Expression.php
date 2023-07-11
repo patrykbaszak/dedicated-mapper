@@ -24,7 +24,7 @@ class Expression
         $getter = $this->getter->toString($sourceVariableName);
 
         if ($this->hasDefaultValue && 'null' !== strtolower($defaultValue = var_export($this->defaultValue, true))) {
-            $getter .= ' ?? ' . $defaultValue;
+            $getter .= ' ?? '.$defaultValue;
         }
 
         if ($this->isNullable) {
@@ -43,10 +43,10 @@ class Expression
             );
         } elseif ($this->throwException && $modifiers) {
             return sprintf(
-                "\$var = %s;\n" .
+                "\$var = %s;\n".
                     "%s\n",
                 $getter,
-                $modifiers . "\n" .
+                $modifiers."\n".
                     $this->setter->toString(
                         $targetVariableName,
                         '$var',
@@ -57,7 +57,7 @@ class Expression
                 $sourceVariableName,
                 'var',
                 $this->getter->toString($sourceVariableName),
-                ($modifiers ? $modifiers . "\n" : '') .
+                ($modifiers ? $modifiers."\n" : '').
                 $this->setter->toString(
                     $targetVariableName,
                     '$var',

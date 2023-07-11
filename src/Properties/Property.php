@@ -108,4 +108,18 @@ class Property
 
         return self::PROPERTY;
     }
+
+    public function getPropertySimpleObjectAttribute(): ?SimpleObject
+    {
+        $attributes = $this->reflection->getAttributes(SimpleObject::class);
+        if (empty($attributes)) {
+            if (in_array($this->getClassType(), self::NATIVE_SIMPLE_OBJECTS)) {
+                return new SimpleObject();
+            }
+
+            return null;
+        }
+
+        return $attributes[0]->newInstance();
+    }
 }

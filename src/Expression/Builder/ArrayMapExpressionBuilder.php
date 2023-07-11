@@ -96,7 +96,16 @@ class ArrayMapExpressionBuilder extends AbstractExpressionBuilder implements Get
                 "$%s['%s'] = %s;\n",
                 Setter::TARGET_VARIABLE_NAME,
                 $this->getPropertyMapKey($property),
-                $this->getSimpleObjectSetterExpression($property)
+                $property->getPropertySimpleObjectAttribute()?->deconstructor
+                    ? sprintf(
+                        '(%s)->%s(%s)',
+                        $this->getSimpleObjectSetterExpression($property),
+                        $property->getPropertySimpleObjectAttribute()->deconstructor,
+                        $property->getPropertySimpleObjectAttribute()->deconstructorArguments
+                            ? sprintf('...%s', var_export($property->getPropertySimpleObjectAttribute()->deconstructorArguments, true))
+                            : ''
+                    )
+                    : $this->getSimpleObjectSetterExpression($property)
             )
         );
     }

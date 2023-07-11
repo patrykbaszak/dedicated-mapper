@@ -8,10 +8,11 @@ namespace PBaszak\MessengerMapperBundle\Attribute;
 class MappingCallback
 {
     /**
-     * @example 'doSth' - method name (accepted only for objects with `doSth` method)
-     * @example 'PBaszak\MessengerMapperBundle\Contract\GetMapper::map' - static method
-     * @example '($var = %s) === null ? null : (string) $var' - expression (only one %s placeholder is allowed)
-     *
+     * @param string  $callback - You got access to the `$var` property with the value,
+     *                          You can do antythig with it, just type php as string.
+     *                          Remember that:
+     *                          - you can use `$this` to access to the MapperService.
+     *                          - $data and $output variables are used and You should not use them.
      * @param int     $priority - higher priority callbacks will be executed first
      * @param mixed[] $options  - any options required but custom actions
      */

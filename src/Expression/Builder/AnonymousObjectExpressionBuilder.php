@@ -70,7 +70,16 @@ class AnonymousObjectExpressionBuilder extends AbstractExpressionBuilder impleme
                 "$%s->%s = %s;\n",
                 Setter::TARGET_VARIABLE_NAME,
                 $this->getPropertyName($property),
-                $this->getSimpleObjectSetterExpression($property)
+                $property->getPropertySimpleObjectAttribute()?->deconstructor
+                    ? sprintf(
+                        '(%s)->%s(%s)',
+                        $this->getSimpleObjectSetterExpression($property),
+                        $property->getPropertySimpleObjectAttribute()->deconstructor,
+                        $property->getPropertySimpleObjectAttribute()->deconstructorArguments
+                            ? sprintf('...%s', var_export($property->getPropertySimpleObjectAttribute()->deconstructorArguments, true))
+                            : ''
+                    )
+                    : $this->getSimpleObjectSetterExpression($property)
             )
         );
     }
@@ -80,9 +89,9 @@ class AnonymousObjectExpressionBuilder extends AbstractExpressionBuilder impleme
         return new Statement(
             sprintf(
                 "if (property_exists(\$%s, '%s')) {\n".
-                "\t\$%s = %s;\n".
-                "\t%s".
-                "}\n",
+                    "\t\$%s = %s;\n".
+                    "\t%s".
+                    "}\n",
                 Statement::SOURCE_VARIABLE_NAME,
                 $this->getPropertyName($property),
                 Statement::VARIABLE_NAME,
