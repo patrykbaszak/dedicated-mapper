@@ -6,6 +6,7 @@ namespace PBaszak\MessengerMapperBundle\Contract;
 
 use PBaszak\MessengerMapperBundle\Expression\Getter;
 use PBaszak\MessengerMapperBundle\Expression\InitialExpression;
+use PBaszak\MessengerMapperBundle\Expression\Statement;
 use PBaszak\MessengerMapperBundle\Properties\Blueprint;
 use PBaszak\MessengerMapperBundle\Properties\Property;
 
@@ -21,4 +22,6 @@ interface GetterInterface
     public function createSimpleObjectGetter(Property $property): Getter;
 
     public function getSourceType(Blueprint $blueprint): string;
+
+    public function getIssetStatement(Property $property): Statement;
 }

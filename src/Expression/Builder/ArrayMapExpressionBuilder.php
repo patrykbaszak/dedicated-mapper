@@ -9,6 +9,7 @@ use PBaszak\MessengerMapperBundle\Contract\SetterInterface;
 use PBaszak\MessengerMapperBundle\Expression\Getter;
 use PBaszak\MessengerMapperBundle\Expression\InitialExpression;
 use PBaszak\MessengerMapperBundle\Expression\Setter;
+use PBaszak\MessengerMapperBundle\Expression\Statement;
 use PBaszak\MessengerMapperBundle\Properties\Blueprint;
 use PBaszak\MessengerMapperBundle\Properties\Property;
 
@@ -66,13 +67,7 @@ class ArrayMapExpressionBuilder extends AbstractExpressionBuilder implements Get
             sprintf(
                 '$%s[\'%s\']',
                 Getter::SOURCE_VARIABLE_NAME,
-                implode(
-                    $this->separator,
-                    array_merge(
-                        array_map(fn (Property $parent) => $parent->originName, $property->getAllParents()),
-                        [$property->originName]
-                    ),
-                )
+                $this->getPropertyMapKey($property)
             )
         );
     }
@@ -82,83 +77,55 @@ class ArrayMapExpressionBuilder extends AbstractExpressionBuilder implements Get
         return $this->createGetter($property);
     }
 
-    public function createSetter(Property $property, bool $throwException): Setter
+    public function createSetter(Property $property): Setter
     {
-        $getter = Setter::GETTER_EXPRESSION;
-        $arrayKey = implode(
-            $this->separator,
-            array_merge(
-                array_map(fn (Property $parent) => $parent->originName, $property->getAllParents()),
-                [$property->originName]
-            ),
-        );
-
-        if ($property->hasDefaultValue() && 'null' !== strtolower($var = var_export($property->getDefaultValue(), true))) {
-            $getter = sprintf(
-                '%s ?? %s',
-                $getter,
-                $var
-            );
-        }
-
-        if ($property->isNullable()) {
-            $getter = sprintf(
-                '%s ?? null',
-                $getter
-            );
-        }
-
-        if (!$throwException && Setter::GETTER_EXPRESSION === $getter) {
-            return new Setter(
-                sprintf(
-                    "if (isset(%s)) $%s['%s'] = %s;\n",
-                    $getter,
-                    Setter::TARGET_VARIABLE_NAME,
-                    $arrayKey,
-                    $getter,
-                )
-            );
-        }
-
         return new Setter(
             sprintf(
                 "$%s['%s'] = %s;\n",
                 Setter::TARGET_VARIABLE_NAME,
-                $arrayKey,
-                $getter
+                $this->getPropertyMapKey($property),
+                Setter::GETTER_EXPRESSION,
             )
         );
     }
 
-    public function createSimpleObjectSetter(Property $property, bool $throwException): Setter
+    public function createSimpleObjectSetter(Property $property): Setter
     {
-        $arrayKey = implode(
-            $this->separator,
-            array_merge(
-                array_map(fn (Property $parent) => $parent->originName, $property->getAllParents()),
-                [$property->originName]
-            ),
-        );
-
-        if (!$throwException) {
-            return new Setter(
-                sprintf(
-                    "if (isset(%s)) $%s['%s'] = %s;\n",
-                    Setter::GETTER_EXPRESSION,
-                    Setter::TARGET_VARIABLE_NAME,
-                    $arrayKey,
-                    $this->getSimpleObjectSetterExpression($property),
-                )
-            );
-        }
-
         return new Setter(
             sprintf(
                 "$%s['%s'] = %s;\n",
                 Setter::TARGET_VARIABLE_NAME,
-                $arrayKey,
+                $this->getPropertyMapKey($property),
                 $this->getSimpleObjectSetterExpression($property)
             )
+        );
+    }
+
+    public function getIssetStatement(Property $property): Statement
+    {
+        return new Statement(
+            sprintf(
+                "if (array_key_exists('%s', \$%s)) {\n".
+                "\t\$%s = %s;\n".
+                "\t%s".
+                "}\n",
+                $this->getPropertyMapKey($property),
+                Statement::SOURCE_VARIABLE_NAME,
+                Statement::VARIABLE_NAME,
+                Statement::GETTER,
+                Statement::CODE,
+            )
+        );
+    }
+
+    protected function getPropertyMapKey(Property $property): string
+    {
+        return implode(
+            $this->separator,
+            array_merge(
+                array_map(fn (Property $parent) => $this->getPropertyName($parent), $property->getAllParents()),
+                [$this->getPropertyName($property)]
+            ),
         );
     }
 }

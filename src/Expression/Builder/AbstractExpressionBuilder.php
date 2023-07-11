@@ -15,6 +15,26 @@ abstract class AbstractExpressionBuilder
     /** @var string[] */
     protected static $initialExpressionIds = [];
 
+    protected function getPropertyName(Property $property): string
+    {
+        return $property->options['name'] ?? $property->originName;
+    }
+
+    public function isPropertyNullable(Property $property): bool
+    {
+        return $property->isNullable();
+    }
+
+    public function hasPropertyDefaultValue(Property $property): bool
+    {
+        return $property->hasDefaultValue();
+    }
+
+    public function getPropertyDefaultValue(Property $property): mixed
+    {
+        return $property->getDefaultValue();
+    }
+
     public function getSourceType(Blueprint $blueprint): string
     {
         return 'mixed';

@@ -8,7 +8,6 @@ use PBaszak\MessengerMapperBundle\Contract\FunctionInterface;
 use PBaszak\MessengerMapperBundle\Contract\GetterInterface;
 use PBaszak\MessengerMapperBundle\Contract\LoopInterface;
 use PBaszak\MessengerMapperBundle\Contract\SetterInterface;
-use PBaszak\MessengerMapperBundle\Expression\Modificator\MapperModificator;
 use PBaszak\MessengerMapperBundle\Expression\Modificator\ModificatorInterface;
 use PBaszak\MessengerMapperBundle\Mapper;
 use PBaszak\MessengerMapperBundle\Properties\Blueprint;
@@ -36,11 +35,7 @@ class ExpressionBuilder
      */
     public function applyModificators(array $modificators): self
     {
-        (new MapperModificator())->init($this->blueprint, $this->group);
-        foreach ($modificators as $modificator) {
-            // $modificator->modify($this->blueprint);
-        }
-
+        // todo
         return $this;
     }
 
@@ -113,25 +108,29 @@ class ExpressionBuilder
         );
     }
 
-    protected function createSinglePropertyExpression(Property $property, string $sourceVariableName, string $targetVariableName, bool $throwException): string
+    protected function createPropertyExpression(Property $property, string $sourceVariableName, string $targetVariableName, bool $throwException, bool $isSimpleObject): string
     {
-        $getter = $this->getterBuilder->createGetter($property);
-        $setter = $this->setterBuilder->createSetter($property, $throwException);
-
-        return $setter->toString(
-            $targetVariableName,
-            $getter->toString($sourceVariableName)
+        $statement = $this->getterBuilder->getIssetStatement($property);
+        $getter = $isSimpleObject
+            ? $this->getterBuilder->createSimpleObjectGetter($property)
+            : $this->getterBuilder->createGetter($property);
+        $setter = $isSimpleObject
+            ? $this->setterBuilder->createSimpleObjectSetter($property)
+            : $this->setterBuilder->createSetter($property);
+        $expression = new Expression(
+            $getter,
+            $setter,
+            $statement,
+            [],
+            $throwException,
+            $this->setterBuilder->isPropertyNullable($property),
+            $this->setterBuilder->hasPropertyDefaultValue($property),
+            $this->setterBuilder->getPropertyDefaultValue($property),
         );
-    }
 
-    protected function createSimpleObjectExpression(Property $property, string $sourceVariableName, string $targetVariableName, bool $throwException): string
-    {
-        $getter = $this->getterBuilder->createSimpleObjectGetter($property);
-        $setter = $this->setterBuilder->createSimpleObjectSetter($property, $throwException);
-
-        return $setter->toString(
+        return $expression->toString(
+            $sourceVariableName,
             $targetVariableName,
-            $getter->toString($sourceVariableName)
         );
     }
 
@@ -147,10 +146,10 @@ class ExpressionBuilder
         foreach ($blueprint->properties as $property) {
             switch ($property->getPropertyType()) {
                 case Property::PROPERTY:
-                    $functionBody .= $this->createSinglePropertyExpression($property, $sourceVariableName, $targetVariableName, $throwException);
+                    $functionBody .= $this->createPropertyExpression($property, $sourceVariableName, $targetVariableName, $throwException, false);
                     break;
                 case Property::SIMPLE_OBJECT:
-                    $functionBody .= $this->createSimpleObjectExpression($property, $sourceVariableName, $targetVariableName, $throwException);
+                    $functionBody .= $this->createPropertyExpression($property, $sourceVariableName, $targetVariableName, $throwException, true);
                     break;
                 case Property::CLASS_OBJECT:
                     if (!$property->blueprint) {
@@ -169,7 +168,7 @@ class ExpressionBuilder
                             $this->getterBuilder->getSourceType($property->blueprint),
                             $this->setterBuilder->getOutputType($property->blueprint),
                         ),
-                        $this->setterBuilder->createSetter($property, true)
+                        $this->setterBuilder->createSetter($property)
                             ->toString(
                                 $targetVariableName,
                                 sprintf(
@@ -212,7 +211,7 @@ class ExpressionBuilder
                                     $collectionItemVariableName
                                 )
                             ),
-                            $this->setterBuilder->createSetter($property, true)
+                            $this->setterBuilder->createSetter($property)
                                 ->toString(
                                     $targetVariableName,
                                     sprintf(
@@ -255,7 +254,7 @@ class ExpressionBuilder
                                     $collectionItemVariableName
                                 )
                             ),
-                            $this->setterBuilder->createSetter($property, true)
+                            $this->setterBuilder->createSetter($property)
                                 ->toString(
                                     $targetVariableName,
                                     sprintf(

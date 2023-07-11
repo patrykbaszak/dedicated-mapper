@@ -16,9 +16,15 @@ interface SetterInterface
      */
     public function getSetterInitialExpression(Blueprint $blueprint, string $initialExpressionId): InitialExpression;
 
-    public function createSetter(Property $property, bool $throwException): Setter;
+    public function createSetter(Property $property): Setter;
 
-    public function createSimpleObjectSetter(Property $property, bool $throwException): Setter;
+    public function createSimpleObjectSetter(Property $property): Setter;
 
     public function getOutputType(Blueprint $blueprint): ?string;
+
+    public function isPropertyNullable(Property $property): bool;
+
+    public function hasPropertyDefaultValue(Property $property): bool;
+
+    public function getPropertyDefaultValue(Property $property): mixed;
 }

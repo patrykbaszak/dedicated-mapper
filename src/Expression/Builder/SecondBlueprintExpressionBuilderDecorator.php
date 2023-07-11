@@ -10,6 +10,7 @@ use PBaszak\MessengerMapperBundle\Contract\SetterInterface;
 use PBaszak\MessengerMapperBundle\Expression\Getter;
 use PBaszak\MessengerMapperBundle\Expression\InitialExpression;
 use PBaszak\MessengerMapperBundle\Expression\Setter;
+use PBaszak\MessengerMapperBundle\Expression\Statement;
 use PBaszak\MessengerMapperBundle\Properties\Blueprint;
 use PBaszak\MessengerMapperBundle\Properties\Property;
 use Symfony\Component\Uid\Uuid;
@@ -39,18 +40,39 @@ class SecondBlueprintExpressionBuilderDecorator implements SetterInterface, Gett
         return $this->expressionBuilder->getSetterInitialExpression($blueprint, $initialExpressionId);
     }
 
-    public function createSetter(Property $property, bool $throwException): Setter
+    public function createSetter(Property $property): Setter
     {
         $property = $this->getProperty($property);
 
-        return $this->expressionBuilder->createSetter($property, $throwException);
+        return $this->expressionBuilder->createSetter($property);
     }
 
-    public function createSimpleObjectSetter(Property $property, bool $throwException): Setter
+    public function createSimpleObjectSetter(Property $property): Setter
     {
         $property = $this->getProperty($property);
 
-        return $this->expressionBuilder->createSimpleObjectSetter($property, $throwException);
+        return $this->expressionBuilder->createSimpleObjectSetter($property);
+    }
+
+    public function isPropertyNullable(Property $property): bool
+    {
+        $property = $this->getProperty($property);
+
+        return $this->isPropertyNullable($property);
+    }
+
+    public function hasPropertyDefaultValue(Property $property): bool
+    {
+        $property = $this->getProperty($property);
+
+        return $this->hasPropertyDefaultValue($property);
+    }
+
+    public function getPropertyDefaultValue(Property $property): mixed
+    {
+        $property = $this->getProperty($property);
+
+        return $this->getPropertyDefaultValue($property);
     }
 
     public function getGetterInitialExpression(Blueprint $blueprint, string $initialExpressionId): InitialExpression
@@ -87,6 +109,13 @@ class SecondBlueprintExpressionBuilderDecorator implements SetterInterface, Gett
         $blueprint = $this->getBlueprint($blueprint);
 
         return $this->expressionBuilder->getOutputType($blueprint);
+    }
+
+    public function getIssetStatement(Property $property): Statement
+    {
+        $property = $this->getProperty($property);
+
+        return $this->expressionBuilder->getIssetStatement($property);
     }
 
     private function init(Blueprint $originBlueprint): void

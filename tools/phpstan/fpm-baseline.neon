@@ -26,6 +26,11 @@ parameters:
 			path: ../../src/Expression/Builder/SecondBlueprintExpressionBuilderDecorator.php
 
 		-
+			message: "#^Call to an undefined method PBaszak\\\\MessengerMapperBundle\\\\Contract\\\\GetterInterface\\|PBaszak\\\\MessengerMapperBundle\\\\Contract\\\\SetterInterface\\:\\:getIssetStatement\\(\\)\\.$#"
+			count: 1
+			path: ../../src/Expression/Builder/SecondBlueprintExpressionBuilderDecorator.php
+
+		-
 			message: "#^Call to an undefined method PBaszak\\\\MessengerMapperBundle\\\\Contract\\\\GetterInterface\\|PBaszak\\\\MessengerMapperBundle\\\\Contract\\\\SetterInterface\\:\\:getOutputType\\(\\)\\.$#"
 			count: 1
 			path: ../../src/Expression/Builder/SecondBlueprintExpressionBuilderDecorator.php

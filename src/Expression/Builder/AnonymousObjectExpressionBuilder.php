@@ -9,6 +9,7 @@ use PBaszak\MessengerMapperBundle\Contract\SetterInterface;
 use PBaszak\MessengerMapperBundle\Expression\Getter;
 use PBaszak\MessengerMapperBundle\Expression\InitialExpression;
 use PBaszak\MessengerMapperBundle\Expression\Setter;
+use PBaszak\MessengerMapperBundle\Expression\Statement;
 use PBaszak\MessengerMapperBundle\Properties\Blueprint;
 use PBaszak\MessengerMapperBundle\Properties\Property;
 
@@ -40,7 +41,7 @@ class AnonymousObjectExpressionBuilder extends AbstractExpressionBuilder impleme
             sprintf(
                 '$%s->%s',
                 Getter::SOURCE_VARIABLE_NAME,
-                $property->originName
+                $this->getPropertyName($property)
             )
         );
     }
@@ -50,67 +51,43 @@ class AnonymousObjectExpressionBuilder extends AbstractExpressionBuilder impleme
         return $this->createGetter($property);
     }
 
-    public function createSetter(Property $property, bool $throwException): Setter
+    public function createSetter(Property $property): Setter
     {
-        $getter = Setter::GETTER_EXPRESSION;
-
-        if ($property->hasDefaultValue() && 'null' !== strtolower($var = var_export($property->getDefaultValue(), true))) {
-            $getter = sprintf(
-                '%s ?? %s',
-                $getter,
-                $var
-            );
-        }
-
-        if ($property->isNullable()) {
-            $getter = sprintf(
-                '%s ?? null',
-                $getter
-            );
-        }
-
-        if (!$throwException && Setter::GETTER_EXPRESSION === $getter) {
-            return new Setter(
-                sprintf(
-                    "if (isset(%s)) $%s->%s = %s;\n",
-                    $getter,
-                    Setter::TARGET_VARIABLE_NAME,
-                    $property->originName,
-                    $getter,
-                )
-            );
-        }
-
         return new Setter(
             sprintf(
                 "$%s->%s = %s;\n",
                 Setter::TARGET_VARIABLE_NAME,
-                $property->originName,
-                $getter
+                $this->getPropertyName($property),
+                Setter::GETTER_EXPRESSION
             )
         );
     }
 
-    public function createSimpleObjectSetter(Property $property, bool $throwException): Setter
+    public function createSimpleObjectSetter(Property $property): Setter
     {
-        if (!$throwException) {
-            return new Setter(
-                sprintf(
-                    "if (isset(%s)) $%s->%s = %s;\n",
-                    Setter::GETTER_EXPRESSION,
-                    Setter::TARGET_VARIABLE_NAME,
-                    $property->originName,
-                    $this->getSimpleObjectSetterExpression($property),
-                )
-            );
-        }
-
         return new Setter(
             sprintf(
                 "$%s->%s = %s;\n",
                 Setter::TARGET_VARIABLE_NAME,
-                $property->originName,
+                $this->getPropertyName($property),
                 $this->getSimpleObjectSetterExpression($property)
+            )
+        );
+    }
+
+    public function getIssetStatement(Property $property): Statement
+    {
+        return new Statement(
+            sprintf(
+                "if (property_exists(\$%s, '%s')) {\n".
+                "\t\$%s = %s;\n".
+                "\t%s".
+                "}\n",
+                Statement::SOURCE_VARIABLE_NAME,
+                $this->getPropertyName($property),
+                Statement::VARIABLE_NAME,
+                Statement::GETTER,
+                Statement::CODE,
             )
         );
     }
