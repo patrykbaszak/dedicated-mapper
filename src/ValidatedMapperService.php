@@ -28,6 +28,13 @@ class ValidatedMapperService extends MapperService implements MapperServiceInter
         parent::__construct($directory);
     }
 
+    /**
+     * @throws ValidationFailedException
+     *
+     * @warning This method will throw ValidationFailedException if any validation error occurs.
+     * If You change `throwException` flag into `false`, all properties without default value will
+     * be optional and will not be validated if they are not present in input data.
+     */
     public function map(
         mixed $data,
         string $blueprint,
@@ -35,7 +42,7 @@ class ValidatedMapperService extends MapperService implements MapperServiceInter
         SetterInterface $setterBuilder,
         FunctionInterface $functionBuilder = null,
         LoopInterface $loopBuilder = null,
-        bool $throwException = false,
+        bool $throwException = true,
         bool $isCollection = false,
         array $modificators = [],
         string $group = null
