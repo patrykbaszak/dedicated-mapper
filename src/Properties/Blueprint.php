@@ -9,9 +9,9 @@ class Blueprint
     /** @var array<string,mixed> */
     public array $options = [];
 
+    /** @param Property[] $properties */
     public function __construct(
         public \ReflectionClass $reflection,
-        /** @var Property[] $properties */
         public array $properties = [],
         public bool $isCollection = false,
     ) {

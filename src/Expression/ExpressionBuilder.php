@@ -8,6 +8,7 @@ use PBaszak\MessengerMapperBundle\Contract\FunctionInterface;
 use PBaszak\MessengerMapperBundle\Contract\GetterInterface;
 use PBaszak\MessengerMapperBundle\Contract\LoopInterface;
 use PBaszak\MessengerMapperBundle\Contract\SetterInterface;
+use PBaszak\MessengerMapperBundle\Expression\Builder\SecondBlueprintExpressionBuilderDecorator;
 use PBaszak\MessengerMapperBundle\Expression\Modificator\ModificatorInterface;
 use PBaszak\MessengerMapperBundle\Mapper;
 use PBaszak\MessengerMapperBundle\Properties\Blueprint;
@@ -18,7 +19,6 @@ class ExpressionBuilder
 {
     protected Mapper $mapper;
     protected static int $seed = 0;
-    protected string $useStatements = '';
 
     public function __construct(
         protected Blueprint $blueprint,
@@ -35,7 +35,18 @@ class ExpressionBuilder
      */
     public function applyModificators(array $modificators): self
     {
-        // todo
+        if ($this->getterBuilder instanceof SecondBlueprintExpressionBuilderDecorator) {
+            $this->getterBuilder->applyModificators($this->blueprint, $this->getterBuilder, $this->setterBuilder, $this->group, $modificators);
+        }
+
+        if ($this->setterBuilder instanceof SecondBlueprintExpressionBuilderDecorator) {
+            $this->setterBuilder->applyModificators($this->blueprint, $this->getterBuilder, $this->setterBuilder, $this->group, $modificators);
+        }
+
+        foreach ($modificators as $modificator) {
+            $modificator->init($this->blueprint, $this->getterBuilder, $this->setterBuilder);
+        }
+
         return $this;
     }
 
@@ -48,7 +59,6 @@ class ExpressionBuilder
                     $this->blueprint,
                     'data',
                     'output',
-                    $this->useStatements,
                     $throwException
                 )
             )
@@ -66,7 +76,6 @@ class ExpressionBuilder
         Blueprint $blueprint,
         string $sourceVariableName,
         string $targetVariableName,
-        string $useStatements,
         bool $throwException,
     ): string {
         $function = $this->functionBuilder->getFunction();
@@ -75,7 +84,6 @@ class ExpressionBuilder
             $blueprint,
             $sourceVariableName,
             $targetVariableName,
-            $useStatements,
             $throwException,
         );
 
@@ -83,7 +91,6 @@ class ExpressionBuilder
             $sourceVariableName,
             $targetVariableName,
             $functionBody,
-            $useStatements,
             $this->getterBuilder->getSourceType($blueprint),
             $this->setterBuilder->getOutputType($blueprint),
         );
@@ -138,7 +145,6 @@ class ExpressionBuilder
         Blueprint $blueprint,
         string $sourceVariableName,
         string $targetVariableName,
-        string $useStatements,
         bool $throwException,
     ): string {
         $functionBody = $this->createInitialExpression($blueprint, $sourceVariableName, $targetVariableName);
@@ -161,10 +167,9 @@ class ExpressionBuilder
                         "$%s = %s;\n%s",
                         $functionName,
                         $function->toString(
-                            $sourceVariableName,
+                            $sourceVariableName.', string $path = \'\'',
                             $targetVariableName,
-                            $this->createFunctionBodyExpression($property->blueprint, $sourceVariableName, $targetVariableName, $useStatements, $throwException),
-                            $useStatements,
+                            $this->createFunctionBodyExpression($property->blueprint, $sourceVariableName, $targetVariableName, $throwException),
                             $this->getterBuilder->getSourceType($property->blueprint),
                             $this->setterBuilder->getOutputType($property->blueprint),
                         ),
@@ -172,9 +177,10 @@ class ExpressionBuilder
                             ->toString(
                                 $targetVariableName,
                                 sprintf(
-                                    '$%s(%s)',
+                                    '$%s(%s, implode(\'.\', array_filter([$path ?? null, \'%s\'], fn ($p) => null !== $p)))',
                                     $functionName,
-                                    $this->getterBuilder->createGetter($property)->toString($sourceVariableName)
+                                    $this->getterBuilder->createGetter($property)->toString($sourceVariableName),
+                                    $this->getterBuilder->getPropertyName($property)
                                 )
                             )
                     );
@@ -191,10 +197,9 @@ class ExpressionBuilder
                         "$%s = %s;\n%s",
                         $functionName,
                         $function->toString(
-                            $sourceVariableName,
+                            $sourceVariableName.', string $path = \'\'',
                             $targetVariableName,
-                            $this->createFunctionBodyExpression($property->blueprint, $sourceVariableName, $targetVariableName, $useStatements, $throwException),
-                            $useStatements,
+                            $this->createFunctionBodyExpression($property->blueprint, $sourceVariableName, $targetVariableName, $throwException),
                             $this->getterBuilder->getSourceType($property->blueprint),
                             $this->setterBuilder->getOutputType($property->blueprint),
                         ),
@@ -206,7 +211,7 @@ class ExpressionBuilder
                                 '$%s[] = %s;',
                                 $collectionOutputVariableName,
                                 sprintf(
-                                    '$%s($%s)',
+                                    '$%s($%s, implode(\'.\', array_filter([$path ?? null, $index], fn ($p) => null !== $p)))',
                                     $functionName,
                                     $collectionItemVariableName
                                 )
@@ -234,10 +239,9 @@ class ExpressionBuilder
                         "$%s = %s;\n%s",
                         $functionName,
                         $function->toString(
-                            $sourceVariableName,
+                            $sourceVariableName.', string $path = \'\'',
                             $targetVariableName,
-                            $this->createFunctionBodyExpression($property->blueprint, $sourceVariableName, $targetVariableName, $useStatements, $throwException),
-                            $useStatements,
+                            $this->createFunctionBodyExpression($property->blueprint, $sourceVariableName, $targetVariableName, $throwException),
                             $this->getterBuilder->getSourceType($property->blueprint),
                             $this->setterBuilder->getOutputType($property->blueprint),
                         ),
@@ -249,7 +253,7 @@ class ExpressionBuilder
                                 '$%s[] = %s;',
                                 $collectionOutputVariableName,
                                 sprintf(
-                                    '$%s($%s)',
+                                    '$%s($%s, implode(\'.\', array_filter([$path ?? null, $index], fn ($p) => null !== $p)))',
                                     $functionName,
                                     $collectionItemVariableName
                                 )

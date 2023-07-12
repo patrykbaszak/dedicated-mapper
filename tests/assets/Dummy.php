@@ -3,10 +3,14 @@
 namespace PBaszak\MessengerMapperBundle\Tests\assets;
 
 use JMS\Serializer\Annotation\Type;
+use Symfony\Component\Validator\Constraints as Assert;
 
 class Dummy
 {
+    #[Assert\NotBlank()]
     public string $id;
+
+    #[Assert\Length(min: 3, max: 255)]
     public string $name;
     public string $description;
     public EmbeddedDTO $_embedded;
@@ -28,6 +32,7 @@ class ItemDTO
     public string $name;
     public string $description;
     public float $price;
+    #[Assert\Choice(choices: ['PLN', 'EUR', 'USD'])]
     public string $currency;
     public int $quantity;
     public string $type;

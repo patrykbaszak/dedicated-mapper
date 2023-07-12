@@ -24,4 +24,6 @@ interface GetterInterface
     public function getSourceType(Blueprint $blueprint): string;
 
     public function getIssetStatement(Property $property, bool $hasDefaultValue): Statement;
+
+    public function getPropertyName(Property $property): string;
 }

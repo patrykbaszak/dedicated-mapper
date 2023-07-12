@@ -15,6 +15,11 @@ use PBaszak\MessengerMapperBundle\Properties\Property;
 
 class ReflectionClassExpressionBuilder extends AbstractExpressionBuilder implements GetterInterface, SetterInterface
 {
+    public function getPropertyName(Property $property): string
+    {
+        return $property->originName;
+    }
+
     public function getSourceType(Blueprint $blueprint): string
     {
         return $blueprint->reflection->getName();
@@ -76,7 +81,7 @@ class ReflectionClassExpressionBuilder extends AbstractExpressionBuilder impleme
             sprintf(
                 '$%s->getProperty(\'%s\')->getValue($%s)',
                 $this->getReflectionClassVariableName($property),
-                $property->originName,
+                $this->getPropertyName($property),
                 Getter::SOURCE_VARIABLE_NAME,
             )
         );
@@ -93,7 +98,7 @@ class ReflectionClassExpressionBuilder extends AbstractExpressionBuilder impleme
             sprintf(
                 "$%s->getProperty('%s')->setValue($%s, %s);\n",
                 $this->getReflectionClassVariableName($property),
-                $property->originName,
+                $this->getPropertyName($property),
                 Setter::TARGET_VARIABLE_NAME,
                 Setter::GETTER_EXPRESSION,
             )
@@ -106,7 +111,7 @@ class ReflectionClassExpressionBuilder extends AbstractExpressionBuilder impleme
             sprintf(
                 "$%s->getProperty('%s')->setValue($%s, %s);\n",
                 $this->getReflectionClassVariableName($property),
-                $property->originName,
+                $this->getPropertyName($property),
                 Setter::TARGET_VARIABLE_NAME,
                 $this->getSimpleObjectSetterExpression($property)
             )
@@ -139,15 +144,15 @@ class ReflectionClassExpressionBuilder extends AbstractExpressionBuilder impleme
                     "\t%s".
                     "}\n",
                     $this->getReflectionClassVariableName($property),
-                    $property->originName,
+                    $this->getPropertyName($property),
                     Statement::SOURCE_VARIABLE_NAME,
                     Statement::VARIABLE_NAME,
                     Statement::GETTER,
                     Statement::CODE,
                     $this->getReflectionClassVariableName($property),
-                    $property->originName,
+                    $this->getPropertyName($property),
                     $this->getReflectionClassVariableName($property),
-                    $property->originName,
+                    $this->getPropertyName($property),
                     Statement::SOURCE_VARIABLE_NAME,
                     Statement::VARIABLE_NAME,
                     Statement::GETTER,
@@ -163,7 +168,7 @@ class ReflectionClassExpressionBuilder extends AbstractExpressionBuilder impleme
                 "\t%s".
                 "}\n",
                 $this->getReflectionClassVariableName($property),
-                $property->originName,
+                $this->getPropertyName($property),
                 Statement::SOURCE_VARIABLE_NAME,
                 Statement::VARIABLE_NAME,
                 Statement::GETTER,

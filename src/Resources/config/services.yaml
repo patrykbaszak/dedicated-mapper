@@ -15,3 +15,8 @@ services:
     PBaszak\MessengerMapperBundle\MapperService:
         arguments:
             $directory: '%kernel.project_dir%/var/mapper/'
+
+    PBaszak\MessengerMapperBundle\ValidatedMapperService:
+        public: true
+        arguments:
+            $directory: '%kernel.project_dir%/var/mapper/'

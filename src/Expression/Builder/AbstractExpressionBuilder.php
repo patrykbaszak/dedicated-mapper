@@ -16,7 +16,7 @@ abstract class AbstractExpressionBuilder
     /** @var string[] */
     protected static $initialExpressionIds = [];
 
-    protected function getPropertyName(Property $property): string
+    public function getPropertyName(Property $property): string
     {
         return $property->options['name'] ?? $property->originName;
     }

@@ -103,15 +103,15 @@ $output[\'property\'] = $data[\'property\'];
         $this->assertEqualsIgnoringCase(
             'return function (array $data): array {
                 $output = [];
-$var_78c4d00f = function (array $data): array {
+$var_78c4d00f = function (array $data, string $path = \'\'): array {
                 $output = [];
 $output[\'property\'] = $data[\'property\'];
 
                 return $output;
             };
 $var_16ff5206 = [];
-            foreach ($data[\'properties\'] as $var_cfd9110b) {
-                $var_16ff5206[] = $var_78c4d00f($var_cfd9110b);
+            foreach ($data[\'properties\'] as $index => $var_cfd9110b) {
+                $var_16ff5206[] = $var_78c4d00f($var_cfd9110b, implode(\'.\', array_filter([$path ?? null, $index], fn ($p) => null !== $p)));
             }
             $output[\'properties\'] = $var_16ff5206;
 
@@ -169,15 +169,15 @@ $var_16ff5206 = [];
             'return function (array $data): array {
                 $output = [];
 $output[\'time\'] = ($x = $data[\'time\']) instanceof DateTime ? $x : new DateTime($x);
-$var_78c4d00f = function (array $data): array {
+$var_78c4d00f = function (array $data, string $path = \'\'): array {
                 $output = [];
 $output[\'property\'] = $data[\'property\'];
 
                 return $output;
             };
 $var_16ff5206 = [];
-            foreach ($data[\'properties\'] as $var_cfd9110b) {
-                $var_16ff5206[] = $var_78c4d00f($var_cfd9110b);
+            foreach ($data[\'properties\'] as $index => $var_cfd9110b) {
+                $var_16ff5206[] = $var_78c4d00f($var_cfd9110b, implode(\'.\', array_filter([$path ?? null, $index], fn ($p) => null !== $p)));
             }
             $output[\'properties\'] = new ArrayObject($var_16ff5206);
 
@@ -242,12 +242,12 @@ $var_16ff5206 = [];
 $output[\'id\'] = $data[\'id\'];
 $output[\'name\'] = $data[\'name\'];
 $output[\'description\'] = $data[\'description\'];
-$var_6e52c0f5 = function (array $data): array {
+$var_6e52c0f5 = function (array $data, string $path = \'\'): array {
                 $output = [];
 $output[\'page\'] = $data[\'page\'];
 $output[\'pageSize\'] = $data[\'pageSize\'];
 $output[\'total\'] = $data[\'total\'];
-$var_ccdcc381 = function (array $data): array {
+$var_ccdcc381 = function (array $data, string $path = \'\'): array {
                 $output = [];
 $output[\'id\'] = $data[\'id\'];
 $output[\'name\'] = $data[\'name\'];
@@ -258,14 +258,14 @@ $output[\'quantity\'] = $data[\'quantity\'];
 $output[\'type\'] = $data[\'type\'];
 $output[\'category\'] = $data[\'category\'];
 $output[\'vat\'] = $data[\'vat\'];
-$var_5626685c = function (array $data): array {
+$var_5626685c = function (array $data, string $path = \'\'): array {
                 $output = [];
 $output[\'test\'] = $data[\'test\'];
 $output[\'test2\'] = $data[\'test2\'];
 
                 return $output;
             };
-$output[\'metadata\'] = $var_5626685c($data[\'metadata\']);
+$output[\'metadata\'] = $var_5626685c($data[\'metadata\'], implode(\'.\', array_filter([$path ?? null, \'metadata\'], fn ($p) => null !== $p)));
 $output[\'created_at\'] = ($x = $data[\'created_at\']) instanceof DateTime ? $x : new DateTime($x);
 $output[\'updated_at\'] = ($x = $data[\'updated_at\']) instanceof DateTime ? $x : new DateTime($x);
 $output[\'availableActions\'] = $data[\'availableActions\'];
@@ -273,14 +273,14 @@ $output[\'availableActions\'] = $data[\'availableActions\'];
                 return $output;
             };
 $var_a2e74188 = [];
-            foreach ($data[\'items\'] as $var_15fa808c) {
-                $var_a2e74188[] = $var_ccdcc381($var_15fa808c);
+            foreach ($data[\'items\'] as $index => $var_15fa808c) {
+                $var_a2e74188[] = $var_ccdcc381($var_15fa808c, implode(\'.\', array_filter([$path ?? null, $index], fn ($p) => null !== $p)));
             }
             $output[\'items\'] = $var_a2e74188;
 
                 return $output;
             };
-$output[\'_embedded\'] = $var_6e52c0f5($data[\'_embedded\']);
+$output[\'_embedded\'] = $var_6e52c0f5($data[\'_embedded\'], implode(\'.\', array_filter([$path ?? null, \'_embedded\'], fn ($p) => null !== $p)));
 
                 return $output;
             };',

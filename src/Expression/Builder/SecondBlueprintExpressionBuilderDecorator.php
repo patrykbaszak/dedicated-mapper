@@ -9,6 +9,7 @@ use PBaszak\MessengerMapperBundle\Contract\GetterInterface;
 use PBaszak\MessengerMapperBundle\Contract\SetterInterface;
 use PBaszak\MessengerMapperBundle\Expression\Getter;
 use PBaszak\MessengerMapperBundle\Expression\InitialExpression;
+use PBaszak\MessengerMapperBundle\Expression\Modificator\ModificatorInterface;
 use PBaszak\MessengerMapperBundle\Expression\Setter;
 use PBaszak\MessengerMapperBundle\Expression\Statement;
 use PBaszak\MessengerMapperBundle\Properties\Blueprint;
@@ -30,6 +31,26 @@ class SecondBlueprintExpressionBuilderDecorator implements SetterInterface, Gett
         private SetterInterface|GetterInterface $expressionBuilder,
         private string|Blueprint $blueprint,
     ) {
+    }
+
+    public function getPropertyName(Property $property): string
+    {
+        $property = $this->getProperty($property);
+
+        return $this->expressionBuilder->getPropertyName($property);
+    }
+
+    /**
+     * @param ModificatorInterface[] $modificators
+     */
+    public function applyModificators(Blueprint $blueprint, GetterInterface $getterBuilder, SetterInterface $setterBuilder, string $group = null, array $modificators): void
+    {
+        $this->isInitialized || $this->init($blueprint);
+        $blueprint = $this->getBlueprint($blueprint);
+
+        foreach ($modificators as $modificator) {
+            $modificator->init($blueprint, $getterBuilder, $setterBuilder, $group);
+        }
     }
 
     public function getSetterInitialExpression(Blueprint $blueprint, string $initialExpressionId): InitialExpression

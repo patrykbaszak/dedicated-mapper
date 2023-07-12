@@ -12,7 +12,7 @@
                 "name": "test",
                 "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla nec velit vitae arcu aliquam tincidunt.",
                 "price": 100.0,
-                "currency": "EUR",
+                "currency": "CHF",
                 "quantity": 1,
                 "type": "PHYSICAL",
                 "category": "FOOD",
