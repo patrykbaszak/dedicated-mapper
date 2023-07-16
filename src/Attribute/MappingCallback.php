@@ -8,7 +8,7 @@ namespace PBaszak\MessengerMapperBundle\Attribute;
 class MappingCallback
 {
     /**
-     * @param string  $callback - You got access to the `$var` property with the value,
+     * @param string  $callback - You got access to the `${{var}}` property with the value,
      *                          You can do antythig with it, just type php as string.
      *                          Remember that:
      *                          - you can use `$this` to access to the MapperService.

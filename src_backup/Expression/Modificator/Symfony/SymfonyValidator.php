@@ -25,14 +25,14 @@ class SymfonyValidator implements ModificatorInterface
             throw new \RuntimeException('Symfony validator is not installed.');
         }
 
-        $this->applyCallbacks($blueprint, $group);
+        $this->applyValidationCallbacks($blueprint, $group);
     }
 
-    private function applyCallbacks(Blueprint $blueprint, string $group = null): void
+    private function applyValidationCallbacks(Blueprint $blueprint, string $group = null): void
     {
         foreach ($blueprint->properties as &$property) {
             if ($property->blueprint) {
-                $this->applyCallbacks($property->blueprint);
+                $this->applyValidationCallbacks($property->blueprint, $group);
             }
 
             $constraints = array_filter(

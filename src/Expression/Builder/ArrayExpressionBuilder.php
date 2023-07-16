@@ -4,112 +4,184 @@ declare(strict_types=1);
 
 namespace PBaszak\MessengerMapperBundle\Expression\Builder;
 
-use PBaszak\MessengerMapperBundle\Contract\GetterInterface;
-use PBaszak\MessengerMapperBundle\Contract\SetterInterface;
-use PBaszak\MessengerMapperBundle\Expression\Getter;
-use PBaszak\MessengerMapperBundle\Expression\InitialExpression;
-use PBaszak\MessengerMapperBundle\Expression\Setter;
-use PBaszak\MessengerMapperBundle\Expression\Statement;
-use PBaszak\MessengerMapperBundle\Properties\Blueprint;
+use PBaszak\MessengerMapperBundle\Expression\Assets\Getter;
+use PBaszak\MessengerMapperBundle\Expression\Assets\Setter;
 use PBaszak\MessengerMapperBundle\Properties\Property;
 
-class ArrayExpressionBuilder extends AbstractExpressionBuilder implements GetterInterface, SetterInterface
+class ArrayExpressionBuilder
 {
-    public function getSourceType(Blueprint $blueprint): string
+    public function getGetter(Property $property): Getter
     {
-        return 'array';
-    }
+        $name = $property->options['name'] ?? $property->originName;
 
-    public function getOutputType(Blueprint $blueprint): ?string
-    {
-        return 'array';
-    }
-
-    public function getSetterInitialExpression(Blueprint $blueprint, string $initialExpressionId): InitialExpression
-    {
-        return new InitialExpression(
-            sprintf(
-                '$%s = [];',
-                InitialExpression::VARIABLE_NAME,
-            )
-        );
-    }
-
-    public function createGetter(Property $property): Getter
-    {
         return new Getter(
-            sprintf(
-                '$%s[\'%s\']',
-                Getter::SOURCE_VARIABLE_NAME,
-                $property->originName
-            )
+            [
+                'name' => $name,
+                'basic' => "\${{source}}['{$name}']",
+                '00000' => "if (array_key_exists('{$name}', \${{source}})) {\n"
+                    . "{{setter}}\n"
+                    . "}\n",
+                '00001' => "if (array_key_exists('{$name}', \${{source}})) {\n"
+                    . "{{setter}}\n"
+                    . "} else {\n"
+                    . "{{valueNotFoundCallbacks}}"
+                    . "}\n",
+                '00010' => "if (array_key_exists('{$name}', \${{source}})) {\n"
+                    . "\${{var}} = \${{source}}['{$name}'];\n"
+                    . "{{callbacks}}\n"
+                    . "{{setter}}\n"
+                    . "}\n",
+                '00011' => "if (array_key_exists('{$name}', \${{source}})) {\n"
+                    . "\${{var}} = \${{source}}['{$name}'];\n"
+                    . "{{callbacks}}\n"
+                    . "{{setter}}\n"
+                    . "} else {\n"
+                    . "{{valueNotFoundCallbacks}}"
+                    . "}\n",
+                '00100' => "\${{source}}['{$name}'] ?? {{defaultValue}}",
+                '00101' => "\${{source}}['{$name}'] ?? {{defaultValue}}",
+                '00110' => "\${{var}} = \${{source}}['{$name}'] ?? {{defaultValue}};\n"
+                    . "{{callbacks}}\n"
+                    . "{{setter}}\n",
+                '00111' => "\${{var}} = \${{source}}['{$name}'] ?? {{defaultValue}};\n"
+                    . "{{callbacks}}\n"
+                    . "{{setter}}\n",
+                '01000' => "\${{source}}['{$name}']",
+                '01001' => "if (array_key_exists('{$name}', \${{source}})) {\n"
+                    . "{{setter}}\n"
+                    . "} else {\n"
+                    . "{{valueNotFoundCallbacks}}"
+                    . "}\n",
+                '01010' => "\${{var}} = \${{source}}['{$name}'];\n"
+                    . "{{callbacks}}\n"
+                    . "{{setter}}\n",
+                '01011' => "if (array_key_exists('{$name}', \${{source}})) {\n"
+                    . "\${{var}} = \${{source}}['{$name}'];\n"
+                    . "{{callbacks}}\n"
+                    . "{{setter}}\n"
+                    . "} else {\n"
+                    . "{{valueNotFoundCallbacks}}"
+                    . "}\n",
+                '01100' => "\${{source}}['{$name}'] ?? {{defaultValue}}",
+                '01101' => "\${{source}}['{$name}'] ?? {{defaultValue}}",
+                '01110' => "\${{var}} = \${{source}}['{$name}'] ?? {{defaultValue}};\n"
+                    . "{{callbacks}}\n"
+                    . "{{setter}}\n",
+                '01111' => "\${{var}} = \${{source}}['{$name}'] ?? {{defaultValue}};\n"
+                    . "{{callbacks}}\n"
+                    . "{{setter}}\n",
+                '10000' => "if (array_key_exists('{$name}', \${{source}})) {\n"
+                    . "\${{var}} = {{simpleObject}};\n"
+                    . "{{setter}}\n"
+                    . "}\n",
+                '10001' => "if (array_key_exists('{$name}', \${{source}})) {\n"
+                    . "\${{var}} = {{simpleObject}};\n"
+                    . "{{setter}}\n"
+                    . "} else {\n"
+                    . "{{valueNotFoundCallbacks}}"
+                    . "}\n",
+                '10010' => "if (array_key_exists('{$name}', \${{source}})) {\n"
+                    . "\${{var}} = {{simpleObject}};\n"
+                    . "{{callbacks}}\n"
+                    . "{{setter}}\n"
+                    . "}\n",
+                '10011' => "if (array_key_exists('{$name}', \${{source}})) {\n"
+                    . "\${{var}} = {{simpleObject}};\n"
+                    . "{{callbacks}}\n"
+                    . "{{setter}}\n"
+                    . "} else {\n"
+                    . "{{valueNotFoundCallbacks}}"
+                    . "}\n",
+                '10100' => "if (array_key_exists('{$name}', \${{source}})) {\n"
+                    . "\${{var}} = {{simpleObject}};\n"
+                    . "} else {\n"
+                    . "\${{var}} = {{defaultValue}};\n"
+                    . "}\n"
+                    . "{{setter}}\n",
+                '10101' => "if (array_key_exists('{$name}', \${{source}})) {\n"
+                    . "\${{var}} = {{simpleObject}};\n"
+                    . "} else {\n"
+                    . "\${{var}} = {{defaultValue}};\n"
+                    . "}\n"
+                    . "{{setter}}\n",
+                '10110' => "if (array_key_exists('{$name}', \${{source}})) {\n"
+                    . "\${{var}} = {{simpleObject}};\n"
+                    . "} else {\n"
+                    . "\${{var}} = {{defaultValue}};\n"
+                    . "}\n"
+                    . "{{callbacks}}\n"
+                    . "{{setter}}\n",
+                '10111' => "if (array_key_exists('{$name}', \${{source}})) {\n"
+                    . "\${{var}} = {{simpleObject}};\n"
+                    . "} else {\n"
+                    . "\${{var}} = {{defaultValue}};\n"
+                    . "}\n"
+                    . "{{callbacks}}\n"
+                    . "{{setter}}\n",
+                '11000' => "{{simpleObject}}",
+                '11001' => "if (array_key_exists('{$name}', \${{source}})) {\n"
+                    . "\${{var}} = {{simpleObject}};\n"
+                    . "{{setter}}\n"
+                    . "} else {\n"
+                    . "{{valueNotFoundCallbacks}}"
+                    . "}\n",
+                '11010' => "\${{var}} = {{simpleObject}};\n"
+                    . "{{callbacks}}\n"
+                    . "{{setter}}\n",
+                '11011' => "if (array_key_exists('{$name}', \${{source}})) {\n"
+                    . "\${{var}} = {{simpleObject}};\n"
+                    . "{{callbacks}}\n"
+                    . "{{setter}}\n"
+                    . "} else {\n"
+                    . "{{valueNotFoundCallbacks}}"
+                    . "}\n",
+                '11100' => "if (array_key_exists('{$name}', \${{source}})) {\n"
+                    . "\${{var}} = {{simpleObject}};\n"
+                    . "} else {\n"
+                    . "\${{var}} = {{defaultValue}};\n"
+                    . "}\n"
+                    . "{{setter}}\n",
+                '11101' => "if (array_key_exists('{$name}', \${{source}})) {\n"
+                    . "\${{var}} = {{simpleObject}};\n"
+                    . "} else {\n"
+                    . "\${{var}} = {{defaultValue}};\n"
+                    . "}\n"
+                    . "{{setter}}\n",
+                '11110' => "if (array_key_exists('{$name}', \${{source}})) {\n"
+                    . "\${{var}} = {{simpleObject}};\n"
+                    . "} else {\n"
+                    . "\${{var}} = {{defaultValue}};\n"
+                    . "}\n"
+                    . "{{callbacks}}\n"
+                    . "{{setter}}\n",
+                '11111' => "if (array_key_exists('{$name}', \${{source}})) {\n"
+                    . "\${{var}} = {{simpleObject}};\n"
+                    . "} else {\n"
+                    . "\${{var}} = {{defaultValue}};\n"
+                    . "}\n"
+                    . "{{callbacks}}\n"
+                    . "{{setter}}\n",
+            ]
         );
     }
 
-    public function createSimpleObjectGetter(Property $property): Getter
+    public function getSetter(Property $property): Setter
     {
-        return $this->createGetter($property);
-    }
+        $name = $property->options['name'] ?? $property->originName;
 
-    public function createSetter(Property $property): Setter
-    {
         return new Setter(
-            sprintf(
-                "$%s['%s'] = %s;\n",
-                Setter::TARGET_VARIABLE_NAME,
-                $this->getPropertyName($property),
-                Setter::GETTER_EXPRESSION
-            )
-        );
-    }
-
-    public function createSimpleObjectSetter(Property $property): Setter
-    {
-        return new Setter(
-            sprintf(
-                "$%s['%s'] = %s;\n",
-                Setter::TARGET_VARIABLE_NAME,
-                $this->getPropertyName($property),
-                $property->getPropertySimpleObjectAttribute()?->deconstructor
-                    ? sprintf(
-                        '(%s)->%s(%s)',
-                        $this->getSimpleObjectSetterExpression($property),
-                        $property->getPropertySimpleObjectAttribute()->deconstructor,
-                        $property->getPropertySimpleObjectAttribute()->deconstructorArguments
-                            ? sprintf('...%s', var_export($property->getPropertySimpleObjectAttribute()->deconstructorArguments, true))
-                            : ''
-                    )
-                    : $this->getSimpleObjectSetterExpression($property)
-            )
-        );
-    }
-
-    public function getIssetStatement(Property $property, bool $hasDefaultValue): Statement
-    {
-        if ($hasDefaultValue) {
-            return new Statement(
-                sprintf(
-                    "\$%s = %s;\n".
-                        '%s',
-                    Statement::VARIABLE_NAME,
-                    Statement::GETTER,
-                    Statement::CODE,
-                )
-            );
-        }
-
-        return new Statement(
-            sprintf(
-                "if (array_key_exists('%s', \$%s)) {\n".
-                    "\t\$%s = %s;\n".
-                    "\t%s".
-                    "}\n",
-                $this->getPropertyName($property),
-                Statement::SOURCE_VARIABLE_NAME,
-                Statement::VARIABLE_NAME,
-                Statement::GETTER,
-                Statement::CODE,
-            )
+            [
+                'name' => $name,
+                'basic' => "\${{target}}['{$name}'] = {{getter}};\n",
+                '000' => "\${{target}}['{$name}'] = {{getter}};\n",
+                '001' => "\${{target}}['{$name}'] = \${{var}};\n",
+                '010' => "\${{target}}['{$name}'] = ({{getter}}){{simpleObjectDeconstructor}};\n",
+                '011' => "\${{target}}['{$name}'] = \${{var}}{{simpleObjectDeconstructor}};\n",
+                '100' => "\${{target}}['{$name}'] = {{getter}};\n",
+                '101' => "\${{target}}['{$name}'] = \${{var}};\n",
+                '110' => "\${{target}}['{$name}'] = ({{getter}}){{simpleObjectDeconstructor}};\n",
+                '111' => "\${{target}}['{$name}'] = \${{var}}{{simpleObjectDeconstructor}};\n",
+            ]
         );
     }
 }

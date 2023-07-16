@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace PBaszak\MessengerMapperBundle\Attribute;
 
+use PBaszak\MessengerMapperBundle\Expression\Assets\Setter;
+
 /**
  * Part of the mapping process.
  * Use is if You got class like DateTime or ArrayObject but Your own.
@@ -28,5 +30,57 @@ class SimpleObject
         public readonly array $deconstructorArguments = [],
         public readonly array $options = [],
     ) {
+    }
+
+    /** 
+     * @param class-string $class
+     */
+    public function getConstructorExpression(string $class): string
+    {
+        $constructor = $this->staticConstructor
+            ? sprintf('%s::%s(%s)', $class, $this->staticConstructor, '%s')
+            : sprintf('new %s(%s)', $class, '%s');
+
+        $constructorArguments = $this->nameOfArgument
+            ? sprintf('\'%s\' => %s', $this->nameOfArgument, '%s')
+            : '%s';
+
+        if ($this->nameOfArgument) {
+            foreach ($this->namedArguments as $name => $value) {
+                $constructorArguments = sprintf(
+                    '%s, \'%s\' => %s',
+                    $constructorArguments,
+                    $name,
+                    var_export($value, true),
+                );
+            }
+        }
+
+        return sprintf(
+            '($x = %s) instanceof %s ? $x : %s',
+            Setter::GETTER_EXPRESSION,
+            $class,
+            sprintf(
+                $constructor,
+                '%s' === $constructorArguments ? '$x' : sprintf('...[%s]', $constructorArguments)
+            )
+        );
+    }
+
+    public function getDeconstructorExpression(): string
+    {
+        if (!$this->deconstructor) {
+            return '';
+        }
+
+        if ($this->deconstructorArguments) {
+            return sprintf(
+                '->%s(...%s)',
+                $this->deconstructor,
+                var_export($this->deconstructorArguments, true),
+            );
+        }
+
+        return sprintf('->%s()', $this->deconstructor);
     }
 }
