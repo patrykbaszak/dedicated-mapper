@@ -4,20 +4,17 @@ declare(strict_types=1);
 
 namespace PBaszak\MessengerMapperBundle\Tests\Unit\Expression;
 
-use ArrayObject;
 use PBaszak\MessengerMapperBundle\Expression\Assets\Expression;
 use PBaszak\MessengerMapperBundle\Expression\Assets\Getter;
 use PBaszak\MessengerMapperBundle\Expression\Assets\Setter;
 use PBaszak\MessengerMapperBundle\Expression\Builder\ArrayExpressionBuilder;
 use PBaszak\MessengerMapperBundle\Properties\Blueprint;
-use PBaszak\MessengerMapperBundle\Properties\Property;
 use PHPUnit\Framework\TestCase;
-use ReflectionProperty;
 
 class ArrayExpressionBuilderTestedClass
 {
     /** @var string[] */
-    public ArrayObject $test;
+    public \ArrayObject $test;
     public string $test2;
 }
 
@@ -49,15 +46,15 @@ class ArrayExpressionBuilderTest extends TestCase
             $this->blueprint->getProperty('test'),
         );
 
-        return (new ReflectionProperty($getter, 'expressions'))->getValue($getter);
+        return (new \ReflectionProperty($getter, 'expressions'))->getValue($getter);
     }
 
     protected function getExpression(string $property, string $key): string
     {
         $expr = $this->getExpressions($property)[$key];
 
-        $hasVarVariable = strpos($expr, Expression::VAR_VARIABLE) !== false;
-        $hasSetter = strpos($expr, Getter::SETTER_EXPRESSION) !== false;
+        $hasVarVariable = false !== strpos($expr, Expression::VAR_VARIABLE);
+        $hasSetter = false !== strpos($expr, Getter::SETTER_EXPRESSION);
 
         do {
             $expr = str_replace(
@@ -79,7 +76,7 @@ class ArrayExpressionBuilderTest extends TestCase
                 ],
                 $expr
             );
-    
+
             $expr = str_replace(
                 [
                     Setter::GETTER_EXPRESSION,
@@ -93,10 +90,9 @@ class ArrayExpressionBuilderTest extends TestCase
                 ],
                 $expr
             );
-        }
-        while (strpos($expr, '{{') !== false);
+        } while (false !== strpos($expr, '{{'));
 
-        return $hasSetter ? $expr : '$output = ' . $expr . ';';
+        return $hasSetter ? $expr : '$output = '.$expr.';';
     }
 
     protected function assertOutputHasValue(string $property, mixed $value, string $key): void

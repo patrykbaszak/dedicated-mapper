@@ -32,7 +32,7 @@ class SimpleObject
     ) {
     }
 
-    /** 
+    /**
      * @param class-string $class
      */
     public function getConstructorExpression(string $class): string

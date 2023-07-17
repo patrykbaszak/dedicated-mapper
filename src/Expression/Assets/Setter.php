@@ -18,14 +18,15 @@ class Setter
 
     public function __construct(
         private array $expressions,
-    ) {}
+    ) {
+    }
 
     public function getExpression(
         $isSimpleObject,
         $hasSimpleObjectDeconstructor,
         $isVarVariableUsed,
     ): string {
-        $key = implode('', array_map(fn($statement) => (int) $$statement, self::STATEMENTS_ORDER));
+        $key = implode('', array_map(fn ($statement) => (int) $statement, func_get_args()));
         $expression = $this->expressions[$key];
 
         return $expression;

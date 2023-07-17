@@ -19,148 +19,148 @@ class ArrayExpressionBuilder
                 'name' => $name,
                 'basic' => "\${{source}}['{$name}']",
                 '00000' => "if (array_key_exists('{$name}', \${{source}})) {\n"
-                    . "{{setter}}\n"
-                    . "}\n",
+                    ."{{setter}}\n"
+                    ."}\n",
                 '00001' => "if (array_key_exists('{$name}', \${{source}})) {\n"
-                    . "{{setter}}\n"
-                    . "} else {\n"
-                    . "{{valueNotFoundCallbacks}}"
-                    . "}\n",
+                    ."{{setter}}\n"
+                    ."} else {\n"
+                    .'{{valueNotFoundCallbacks}}'
+                    ."}\n",
                 '00010' => "if (array_key_exists('{$name}', \${{source}})) {\n"
-                    . "\${{var}} = \${{source}}['{$name}'];\n"
-                    . "{{callbacks}}\n"
-                    . "{{setter}}\n"
-                    . "}\n",
+                    ."\${{var}} = \${{source}}['{$name}'];\n"
+                    ."{{callbacks}}\n"
+                    ."{{setter}}\n"
+                    ."}\n",
                 '00011' => "if (array_key_exists('{$name}', \${{source}})) {\n"
-                    . "\${{var}} = \${{source}}['{$name}'];\n"
-                    . "{{callbacks}}\n"
-                    . "{{setter}}\n"
-                    . "} else {\n"
-                    . "{{valueNotFoundCallbacks}}"
-                    . "}\n",
+                    ."\${{var}} = \${{source}}['{$name}'];\n"
+                    ."{{callbacks}}\n"
+                    ."{{setter}}\n"
+                    ."} else {\n"
+                    .'{{valueNotFoundCallbacks}}'
+                    ."}\n",
                 '00100' => "\${{source}}['{$name}'] ?? {{defaultValue}}",
                 '00101' => "\${{source}}['{$name}'] ?? {{defaultValue}}",
                 '00110' => "\${{var}} = \${{source}}['{$name}'] ?? {{defaultValue}};\n"
-                    . "{{callbacks}}\n"
-                    . "{{setter}}\n",
+                    ."{{callbacks}}\n"
+                    ."{{setter}}\n",
                 '00111' => "\${{var}} = \${{source}}['{$name}'] ?? {{defaultValue}};\n"
-                    . "{{callbacks}}\n"
-                    . "{{setter}}\n",
+                    ."{{callbacks}}\n"
+                    ."{{setter}}\n",
                 '01000' => "\${{source}}['{$name}']",
                 '01001' => "if (array_key_exists('{$name}', \${{source}})) {\n"
-                    . "{{setter}}\n"
-                    . "} else {\n"
-                    . "{{valueNotFoundCallbacks}}"
-                    . "}\n",
+                    ."{{setter}}\n"
+                    ."} else {\n"
+                    .'{{valueNotFoundCallbacks}}'
+                    ."}\n",
                 '01010' => "\${{var}} = \${{source}}['{$name}'];\n"
-                    . "{{callbacks}}\n"
-                    . "{{setter}}\n",
+                    ."{{callbacks}}\n"
+                    ."{{setter}}\n",
                 '01011' => "if (array_key_exists('{$name}', \${{source}})) {\n"
-                    . "\${{var}} = \${{source}}['{$name}'];\n"
-                    . "{{callbacks}}\n"
-                    . "{{setter}}\n"
-                    . "} else {\n"
-                    . "{{valueNotFoundCallbacks}}"
-                    . "}\n",
+                    ."\${{var}} = \${{source}}['{$name}'];\n"
+                    ."{{callbacks}}\n"
+                    ."{{setter}}\n"
+                    ."} else {\n"
+                    .'{{valueNotFoundCallbacks}}'
+                    ."}\n",
                 '01100' => "\${{source}}['{$name}'] ?? {{defaultValue}}",
                 '01101' => "\${{source}}['{$name}'] ?? {{defaultValue}}",
                 '01110' => "\${{var}} = \${{source}}['{$name}'] ?? {{defaultValue}};\n"
-                    . "{{callbacks}}\n"
-                    . "{{setter}}\n",
+                    ."{{callbacks}}\n"
+                    ."{{setter}}\n",
                 '01111' => "\${{var}} = \${{source}}['{$name}'] ?? {{defaultValue}};\n"
-                    . "{{callbacks}}\n"
-                    . "{{setter}}\n",
+                    ."{{callbacks}}\n"
+                    ."{{setter}}\n",
                 '10000' => "if (array_key_exists('{$name}', \${{source}})) {\n"
-                    . "\${{var}} = {{simpleObject}};\n"
-                    . "{{setter}}\n"
-                    . "}\n",
+                    ."\${{var}} = {{simpleObject}};\n"
+                    ."{{setter}}\n"
+                    ."}\n",
                 '10001' => "if (array_key_exists('{$name}', \${{source}})) {\n"
-                    . "\${{var}} = {{simpleObject}};\n"
-                    . "{{setter}}\n"
-                    . "} else {\n"
-                    . "{{valueNotFoundCallbacks}}"
-                    . "}\n",
+                    ."\${{var}} = {{simpleObject}};\n"
+                    ."{{setter}}\n"
+                    ."} else {\n"
+                    .'{{valueNotFoundCallbacks}}'
+                    ."}\n",
                 '10010' => "if (array_key_exists('{$name}', \${{source}})) {\n"
-                    . "\${{var}} = {{simpleObject}};\n"
-                    . "{{callbacks}}\n"
-                    . "{{setter}}\n"
-                    . "}\n",
+                    ."\${{var}} = {{simpleObject}};\n"
+                    ."{{callbacks}}\n"
+                    ."{{setter}}\n"
+                    ."}\n",
                 '10011' => "if (array_key_exists('{$name}', \${{source}})) {\n"
-                    . "\${{var}} = {{simpleObject}};\n"
-                    . "{{callbacks}}\n"
-                    . "{{setter}}\n"
-                    . "} else {\n"
-                    . "{{valueNotFoundCallbacks}}"
-                    . "}\n",
+                    ."\${{var}} = {{simpleObject}};\n"
+                    ."{{callbacks}}\n"
+                    ."{{setter}}\n"
+                    ."} else {\n"
+                    .'{{valueNotFoundCallbacks}}'
+                    ."}\n",
                 '10100' => "if (array_key_exists('{$name}', \${{source}})) {\n"
-                    . "\${{var}} = {{simpleObject}};\n"
-                    . "} else {\n"
-                    . "\${{var}} = {{defaultValue}};\n"
-                    . "}\n"
-                    . "{{setter}}\n",
+                    ."\${{var}} = {{simpleObject}};\n"
+                    ."} else {\n"
+                    ."\${{var}} = {{defaultValue}};\n"
+                    ."}\n"
+                    ."{{setter}}\n",
                 '10101' => "if (array_key_exists('{$name}', \${{source}})) {\n"
-                    . "\${{var}} = {{simpleObject}};\n"
-                    . "} else {\n"
-                    . "\${{var}} = {{defaultValue}};\n"
-                    . "}\n"
-                    . "{{setter}}\n",
+                    ."\${{var}} = {{simpleObject}};\n"
+                    ."} else {\n"
+                    ."\${{var}} = {{defaultValue}};\n"
+                    ."}\n"
+                    ."{{setter}}\n",
                 '10110' => "if (array_key_exists('{$name}', \${{source}})) {\n"
-                    . "\${{var}} = {{simpleObject}};\n"
-                    . "} else {\n"
-                    . "\${{var}} = {{defaultValue}};\n"
-                    . "}\n"
-                    . "{{callbacks}}\n"
-                    . "{{setter}}\n",
+                    ."\${{var}} = {{simpleObject}};\n"
+                    ."} else {\n"
+                    ."\${{var}} = {{defaultValue}};\n"
+                    ."}\n"
+                    ."{{callbacks}}\n"
+                    ."{{setter}}\n",
                 '10111' => "if (array_key_exists('{$name}', \${{source}})) {\n"
-                    . "\${{var}} = {{simpleObject}};\n"
-                    . "} else {\n"
-                    . "\${{var}} = {{defaultValue}};\n"
-                    . "}\n"
-                    . "{{callbacks}}\n"
-                    . "{{setter}}\n",
-                '11000' => "{{simpleObject}}",
+                    ."\${{var}} = {{simpleObject}};\n"
+                    ."} else {\n"
+                    ."\${{var}} = {{defaultValue}};\n"
+                    ."}\n"
+                    ."{{callbacks}}\n"
+                    ."{{setter}}\n",
+                '11000' => '{{simpleObject}}',
                 '11001' => "if (array_key_exists('{$name}', \${{source}})) {\n"
-                    . "\${{var}} = {{simpleObject}};\n"
-                    . "{{setter}}\n"
-                    . "} else {\n"
-                    . "{{valueNotFoundCallbacks}}"
-                    . "}\n",
+                    ."\${{var}} = {{simpleObject}};\n"
+                    ."{{setter}}\n"
+                    ."} else {\n"
+                    .'{{valueNotFoundCallbacks}}'
+                    ."}\n",
                 '11010' => "\${{var}} = {{simpleObject}};\n"
-                    . "{{callbacks}}\n"
-                    . "{{setter}}\n",
+                    ."{{callbacks}}\n"
+                    ."{{setter}}\n",
                 '11011' => "if (array_key_exists('{$name}', \${{source}})) {\n"
-                    . "\${{var}} = {{simpleObject}};\n"
-                    . "{{callbacks}}\n"
-                    . "{{setter}}\n"
-                    . "} else {\n"
-                    . "{{valueNotFoundCallbacks}}"
-                    . "}\n",
+                    ."\${{var}} = {{simpleObject}};\n"
+                    ."{{callbacks}}\n"
+                    ."{{setter}}\n"
+                    ."} else {\n"
+                    .'{{valueNotFoundCallbacks}}'
+                    ."}\n",
                 '11100' => "if (array_key_exists('{$name}', \${{source}})) {\n"
-                    . "\${{var}} = {{simpleObject}};\n"
-                    . "} else {\n"
-                    . "\${{var}} = {{defaultValue}};\n"
-                    . "}\n"
-                    . "{{setter}}\n",
+                    ."\${{var}} = {{simpleObject}};\n"
+                    ."} else {\n"
+                    ."\${{var}} = {{defaultValue}};\n"
+                    ."}\n"
+                    ."{{setter}}\n",
                 '11101' => "if (array_key_exists('{$name}', \${{source}})) {\n"
-                    . "\${{var}} = {{simpleObject}};\n"
-                    . "} else {\n"
-                    . "\${{var}} = {{defaultValue}};\n"
-                    . "}\n"
-                    . "{{setter}}\n",
+                    ."\${{var}} = {{simpleObject}};\n"
+                    ."} else {\n"
+                    ."\${{var}} = {{defaultValue}};\n"
+                    ."}\n"
+                    ."{{setter}}\n",
                 '11110' => "if (array_key_exists('{$name}', \${{source}})) {\n"
-                    . "\${{var}} = {{simpleObject}};\n"
-                    . "} else {\n"
-                    . "\${{var}} = {{defaultValue}};\n"
-                    . "}\n"
-                    . "{{callbacks}}\n"
-                    . "{{setter}}\n",
+                    ."\${{var}} = {{simpleObject}};\n"
+                    ."} else {\n"
+                    ."\${{var}} = {{defaultValue}};\n"
+                    ."}\n"
+                    ."{{callbacks}}\n"
+                    ."{{setter}}\n",
                 '11111' => "if (array_key_exists('{$name}', \${{source}})) {\n"
-                    . "\${{var}} = {{simpleObject}};\n"
-                    . "} else {\n"
-                    . "\${{var}} = {{defaultValue}};\n"
-                    . "}\n"
-                    . "{{callbacks}}\n"
-                    . "{{setter}}\n",
+                    ."\${{var}} = {{simpleObject}};\n"
+                    ."} else {\n"
+                    ."\${{var}} = {{defaultValue}};\n"
+                    ."}\n"
+                    ."{{callbacks}}\n"
+                    ."{{setter}}\n",
             ]
         );
     }

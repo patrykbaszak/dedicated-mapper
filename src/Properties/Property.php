@@ -51,6 +51,7 @@ class Property
         $this->reflection = $reflection;
         $this->constructorParameter = $constructorParameter;
         $this->setParent($parent);
+        $this->applyCallbacks();
     }
 
     /** @param class-string $name */
@@ -120,7 +121,7 @@ class Property
     {
         $attributes = $this->reflection->getAttributes(SimpleObject::class);
         if (empty($attributes)) {
-            if (in_array($this->getClassType(), self::NATIVE_SIMPLE_OBJECTS)) {
+            if (in_array($this->getClassType(), array_keys(self::NATIVE_SIMPLE_OBJECTS))) {
                 return new SimpleObject();
             }
 
@@ -128,6 +129,16 @@ class Property
         }
 
         return $attributes[0]->newInstance();
+    }
+
+    public function getPropertyMappingCallbackAttributes(): array
+    {
+        return array_filter(
+            array_map(
+                fn (\ReflectionAttribute $attr) => is_subclass_of($attr, MappingCallback::class) ? $attr->newInstance() : null,
+                $this->reflection->getAttributes()
+            )
+        );
     }
 
     /**
@@ -138,6 +149,11 @@ class Property
         $this->sortCallbacksByPriority();
 
         return $this->callbacks;
+    }
+
+    private function applyCallbacks(): void
+    {
+        $this->callbacks = $this->getPropertyMappingCallbackAttributes();
     }
 
     private function sortCallbacksByPriority(): void

@@ -25,7 +25,8 @@ class Getter
 
     public function __construct(
         private array $expressions,
-    ) {}
+    ) {
+    }
 
     public function getSimpleGetter(): string
     {
@@ -39,13 +40,10 @@ class Getter
         $hasCallbacks,
         $hasValueNotFoundCallbacks,
     ): string {
-        $key = implode('', array_map(fn($statement) => (int) $$statement, self::STATEMENTS_ORDER));
+        $key = implode('', array_map(fn ($statement) => (int) $statement, func_get_args()));
 
         $expression = $this->expressions[$key];
-
-        if (strpos($expression, Expression::VAR_VARIABLE) !== false) {
-            $this->isVarVariableUsed = true;
-        }
+        $this->isVarVariableUsed = false !== strpos($expression, Expression::VAR_VARIABLE);
 
         return $expression;
     }

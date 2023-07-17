@@ -19,6 +19,7 @@ class MappingCallback
     public function __construct(
         public readonly string $callback,
         public readonly int $priority = 0,
+        public readonly bool $isValueNotFoundCallback = false,
         public readonly array $options = [],
     ) {
     }
