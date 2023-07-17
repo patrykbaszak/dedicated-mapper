@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace PBaszak\MessengerMapperBundle\Expression;
+namespace PBaszak\MessengerMapperBundle\Expression\Assets;
 
 class InitialExpression
 {

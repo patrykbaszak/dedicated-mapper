@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace PBaszak\MessengerMapperBundle\Contract;
 
-use PBaszak\MessengerMapperBundle\Expression\Function_;
+use PBaszak\MessengerMapperBundle\Expression\Assets\Functions;
 
 interface FunctionInterface
 {
-    public function getFunction(): Function_;
+    public function getFunction(): Functions;
 }
