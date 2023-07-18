@@ -21,8 +21,9 @@ class Getter
     public const CALLBACKS_EXPRESSION = '{{callbacks}}';
     public const VALUE_NOT_FOUND_EXPRESSIONS = '{{valueNotFoundCallbacks}}';
 
-    public readonly bool $isVarVariableUsed;
+    public bool $isVarVariableUsed;
 
+    /** @param string[] $expressions */
     public function __construct(
         private array $expressions,
     ) {
@@ -34,11 +35,11 @@ class Getter
     }
 
     public function getExpression(
-        $isSimpleObject,
-        $throwExceptionOnMissingRequiredValue,
-        $hasDefaultValue,
-        $hasCallbacks,
-        $hasValueNotFoundCallbacks,
+        bool $isSimpleObject,
+        bool $throwExceptionOnMissingRequiredValue,
+        bool $hasDefaultValue,
+        bool $hasCallbacks,
+        bool $hasValueNotFoundCallbacks,
     ): string {
         $key = implode('', array_map(fn ($statement) => (int) $statement, func_get_args()));
 

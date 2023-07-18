@@ -131,6 +131,7 @@ class Property
         return $attributes[0]->newInstance();
     }
 
+    /** @return MappingCallback[] */
     public function getPropertyMappingCallbackAttributes(): array
     {
         return array_filter(

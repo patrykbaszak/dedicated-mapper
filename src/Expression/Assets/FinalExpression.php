@@ -6,15 +6,13 @@ namespace PBaszak\MessengerMapperBundle\Expression\Assets;
 
 class FinalExpression
 {
-    public const VARIABLE_NAME = '{{variableName}}';
-
     public function __construct(
         public string $expression
     ) {
     }
 
-    public function toString(string $variableName): string
+    public function toString(): string
     {
-        return str_replace(self::VARIABLE_NAME, $variableName, $this->expression);
+        return $this->expression;
     }
 }

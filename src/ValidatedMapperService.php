@@ -6,9 +6,9 @@ namespace PBaszak\MessengerMapperBundle;
 
 use PBaszak\MessengerMapperBundle\Contract\FunctionInterface;
 use PBaszak\MessengerMapperBundle\Contract\GetterInterface;
-use PBaszak\MessengerMapperBundle\Contract\LoopInterface;
 use PBaszak\MessengerMapperBundle\Contract\MapperServiceInterface;
 use PBaszak\MessengerMapperBundle\Contract\SetterInterface;
+use PBaszak\MessengerMapperBundle\Expression\Builder\AbstractBuilder;
 use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Exception\ValidationFailedException;
@@ -30,22 +30,17 @@ class ValidatedMapperService extends MapperService implements MapperServiceInter
 
     /**
      * @throws ValidationFailedException
-     *
-     * @warning This method will throw ValidationFailedException if any validation error occurs.
-     * If You change `throwException` flag into `false`, all properties without default value will
-     * be optional and will not be validated if they are not present in input data.
      */
     public function map(
         mixed $data,
         string $blueprint,
-        GetterInterface $getterBuilder,
-        SetterInterface $setterBuilder,
+        GetterInterface&AbstractBuilder $getterBuilder,
+        SetterInterface&AbstractBuilder $setterBuilder,
         FunctionInterface $functionBuilder = null,
-        LoopInterface $loopBuilder = null,
-        bool $throwException = true,
+        bool $throwExceptionOnMissingProperty = false,
         bool $isCollection = false,
         array $modificators = [],
-        string $group = null
+        array $groups = null
     ): mixed {
         $output = parent::map(...func_get_args());
 

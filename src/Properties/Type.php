@@ -16,6 +16,7 @@ trait Type
 
     protected Types $types;
 
+    /** @return class-string */
     public function getClassType(): string
     {
         foreach ($this->getTypes()->types as $type) {

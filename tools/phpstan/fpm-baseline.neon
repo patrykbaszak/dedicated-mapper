@@ -1,71 +1,11 @@
 parameters:
 	ignoreErrors:
 		-
-			message: "#^Call to an undefined method PBaszak\\\\MessengerMapperBundle\\\\Contract\\\\GetterInterface\\|PBaszak\\\\MessengerMapperBundle\\\\Contract\\\\SetterInterface\\:\\:createGetter\\(\\)\\.$#"
+			message: "#^Property PBaszak\\\\MessengerMapperBundle\\\\Expression\\\\Assets\\\\Expression\\:\\:\\$sourceProperty is never read, only written\\.$#"
 			count: 1
-			path: ../../src/Expression/Builder/SecondBlueprintExpressionBuilderDecorator.php
+			path: ../../src/Expression/Assets/Expression.php
 
 		-
-			message: "#^Call to an undefined method PBaszak\\\\MessengerMapperBundle\\\\Contract\\\\GetterInterface\\|PBaszak\\\\MessengerMapperBundle\\\\Contract\\\\SetterInterface\\:\\:createSetter\\(\\)\\.$#"
+			message: "#^Call to function is_subclass_of\\(\\) with ReflectionAttribute\\<object\\> and 'PBaszak\\\\\\\\MessengerMapperBundle\\\\\\\\Attribute\\\\\\\\MappingCallback' will always evaluate to false\\.$#"
 			count: 1
-			path: ../../src/Expression/Builder/SecondBlueprintExpressionBuilderDecorator.php
-
-		-
-			message: "#^Call to an undefined method PBaszak\\\\MessengerMapperBundle\\\\Contract\\\\GetterInterface\\|PBaszak\\\\MessengerMapperBundle\\\\Contract\\\\SetterInterface\\:\\:createSimpleObjectGetter\\(\\)\\.$#"
-			count: 1
-			path: ../../src/Expression/Builder/SecondBlueprintExpressionBuilderDecorator.php
-
-		-
-			message: "#^Call to an undefined method PBaszak\\\\MessengerMapperBundle\\\\Contract\\\\GetterInterface\\|PBaszak\\\\MessengerMapperBundle\\\\Contract\\\\SetterInterface\\:\\:createSimpleObjectSetter\\(\\)\\.$#"
-			count: 1
-			path: ../../src/Expression/Builder/SecondBlueprintExpressionBuilderDecorator.php
-
-		-
-			message: "#^Call to an undefined method PBaszak\\\\MessengerMapperBundle\\\\Contract\\\\GetterInterface\\|PBaszak\\\\MessengerMapperBundle\\\\Contract\\\\SetterInterface\\:\\:getGetterInitialExpression\\(\\)\\.$#"
-			count: 1
-			path: ../../src/Expression/Builder/SecondBlueprintExpressionBuilderDecorator.php
-
-		-
-			message: "#^Call to an undefined method PBaszak\\\\MessengerMapperBundle\\\\Contract\\\\GetterInterface\\|PBaszak\\\\MessengerMapperBundle\\\\Contract\\\\SetterInterface\\:\\:getIssetStatement\\(\\)\\.$#"
-			count: 1
-			path: ../../src/Expression/Builder/SecondBlueprintExpressionBuilderDecorator.php
-
-		-
-			message: "#^Call to an undefined method PBaszak\\\\MessengerMapperBundle\\\\Contract\\\\GetterInterface\\|PBaszak\\\\MessengerMapperBundle\\\\Contract\\\\SetterInterface\\:\\:getOutputType\\(\\)\\.$#"
-			count: 1
-			path: ../../src/Expression/Builder/SecondBlueprintExpressionBuilderDecorator.php
-
-		-
-			message: "#^Call to an undefined method PBaszak\\\\MessengerMapperBundle\\\\Contract\\\\GetterInterface\\|PBaszak\\\\MessengerMapperBundle\\\\Contract\\\\SetterInterface\\:\\:getPropertyName\\(\\)\\.$#"
-			count: 1
-			path: ../../src/Expression/Builder/SecondBlueprintExpressionBuilderDecorator.php
-
-		-
-			message: "#^Call to an undefined method PBaszak\\\\MessengerMapperBundle\\\\Contract\\\\GetterInterface\\|PBaszak\\\\MessengerMapperBundle\\\\Contract\\\\SetterInterface\\:\\:getSetterInitialExpression\\(\\)\\.$#"
-			count: 1
-			path: ../../src/Expression/Builder/SecondBlueprintExpressionBuilderDecorator.php
-
-		-
-			message: "#^Call to an undefined method PBaszak\\\\MessengerMapperBundle\\\\Contract\\\\GetterInterface\\|PBaszak\\\\MessengerMapperBundle\\\\Contract\\\\SetterInterface\\:\\:getSourceType\\(\\)\\.$#"
-			count: 1
-			path: ../../src/Expression/Builder/SecondBlueprintExpressionBuilderDecorator.php
-
-		-
-			message: "#^Parameter \\#2 \\$blueprint of method PBaszak\\\\MessengerMapperBundle\\\\Expression\\\\Builder\\\\SecondBlueprintExpressionBuilderDecorator\\:\\:matchBlueprints\\(\\) expects PBaszak\\\\MessengerMapperBundle\\\\Properties\\\\Blueprint, class\\-string\\|PBaszak\\\\MessengerMapperBundle\\\\Properties\\\\Blueprint given\\.$#"
-			count: 1
-			path: ../../src/Expression/Builder/SecondBlueprintExpressionBuilderDecorator.php
-
-		-
-			message: "#^Property PBaszak\\\\MessengerMapperBundle\\\\Expression\\\\Modificator\\\\Symfony\\\\SymfonySerializer\\:\\:\\$getterBuilder is never read, only written\\.$#"
-			count: 1
-			path: ../../src/Expression/Modificator/Symfony/SymfonySerializer.php
-
-		-
-			message: "#^Property PBaszak\\\\MessengerMapperBundle\\\\Expression\\\\Modificator\\\\Symfony\\\\SymfonySerializer\\:\\:\\$setterBuilder is never read, only written\\.$#"
-			count: 1
-			path: ../../src/Expression/Modificator/Symfony/SymfonySerializer.php
-
-		-
-			message: "#^Property PBaszak\\\\MessengerMapperBundle\\\\Expression\\\\Modificator\\\\Symfony\\\\SymfonyValidator\\:\\:\\$setterBuilder is never read, only written\\.$#"
-			count: 1
-			path: ../../src/Expression/Modificator/Symfony/SymfonyValidator.php
+			path: ../../src/Properties/Property.php

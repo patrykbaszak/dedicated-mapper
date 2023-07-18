@@ -17,6 +17,7 @@ class Functions
     public const PATH_TYPE = '{{pathType}}';
     public const PATH_NAME = '{{pathName}}';
 
+    /** @param string[] $functions */
     public function __construct(
         private array $functions = [],
     ) {
@@ -28,10 +29,10 @@ class Functions
     }
 
     public function getFunction(
-        $hasPath,
-        $hasUseStatements,
-        $hasInitialExpression,
-        $hasFinalExpression,
+        bool $hasPath,
+        bool $hasUseStatements,
+        bool $hasInitialExpression,
+        bool $hasFinalExpression,
     ): string {
         $key = implode('', array_map(fn ($statement) => (int) $statement, func_get_args()));
 

@@ -32,13 +32,19 @@ class Expression
     public function __construct(
         private Getter $getter,
         private Setter $setter,
+        private ?FunctionExpression $function = null,
         private array $modificators = [],
         private array $callbacks = [],
+        private bool $isCollection = false,
         private bool $throwExceptionOnMissingRequiredValue = false,
         private string $source = 'data',
         private string $target = 'output',
         private string $var = 'var',
+        private ?string $functionVar = null
     ) {
+        if (!empty($this->function) && null === $this->functionVar) {
+            throw new \LogicException('Function variable name must be provided when function is set.');
+        }
     }
 
     public function build(Property $source, Property $target): self
@@ -70,11 +76,16 @@ class Expression
         );
 
         /** Setter */
+        $hasFunction = !empty($this->function);
+        $isPathUsed = (bool) $this->function?->pathVariable;
         $isVarVariableUsed = $this->getter->isVarVariableUsed;
         $simpleObjectAttr = $isSimpleObject ? $target->getPropertySimpleObjectAttribute() : null;
         $hasSimpleObjectDeconstructor = (bool) $simpleObjectAttr?->deconstructor;
 
         $this->setterExpression = $this->setter->getExpression(
+            $this->isCollection,
+            $hasFunction,
+            $isPathUsed,
             $isSimpleObject,
             $hasSimpleObjectDeconstructor,
             $isVarVariableUsed,
@@ -101,6 +112,8 @@ class Expression
                     Setter::GETTER_EXPRESSION,
                     Setter::TARGET_VARIABLE,
                     Setter::SIMPLE_OBJECT_DECONSTRUCTOR,
+                    Setter::FUNCTION_DECLARATION,
+                    Setter::FUNCTION_VARIABLE,
                 ],
                 [
                     $this->source,
@@ -112,7 +125,9 @@ class Expression
                     $this->var,
                     $this->getter->getSimpleGetter(),
                     $this->target,
-                    $simpleObjectAttr?->deconstructor,
+                    $simpleObjectAttr?->getDeconstructorExpression(),
+                    $this->function?->toString(),
+                    $this->functionVar,
                 ],
                 $expr
             );

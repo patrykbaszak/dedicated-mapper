@@ -6,12 +6,12 @@ namespace PBaszak\MessengerMapperBundle;
 
 use PBaszak\MessengerMapperBundle\Contract\FunctionInterface;
 use PBaszak\MessengerMapperBundle\Contract\GetterInterface;
-use PBaszak\MessengerMapperBundle\Contract\LoopInterface;
 use PBaszak\MessengerMapperBundle\Contract\MapperServiceInterface;
+use PBaszak\MessengerMapperBundle\Contract\ModificatorInterface;
 use PBaszak\MessengerMapperBundle\Contract\SetterInterface;
-use PBaszak\MessengerMapperBundle\Expression\Builder\DefaultExpressionBuilder;
+use PBaszak\MessengerMapperBundle\Expression\Builder\AbstractBuilder;
+use PBaszak\MessengerMapperBundle\Expression\Builder\FunctionExpressionBuilder;
 use PBaszak\MessengerMapperBundle\Expression\ExpressionBuilder;
-use PBaszak\MessengerMapperBundle\Expression\Modificator\ModificatorInterface;
 use PBaszak\MessengerMapperBundle\Properties\Blueprint;
 
 class MapperService implements MapperServiceInterface
@@ -31,14 +31,13 @@ class MapperService implements MapperServiceInterface
     public function map(
         mixed $data,
         string $blueprint,
-        GetterInterface $getterBuilder,
-        SetterInterface $setterBuilder,
+        GetterInterface&AbstractBuilder $getterBuilder,
+        SetterInterface&AbstractBuilder $setterBuilder,
         FunctionInterface $functionBuilder = null,
-        LoopInterface $loopBuilder = null,
-        bool $throwException = false,
+        bool $throwExceptionOnMissingProperty = false,
         bool $isCollection = false,
         array $modificators = [],
-        string $group = null
+        array $groups = null
     ): mixed {
         $mapperId = hash(in_array('xxh3', hash_algos()) ? 'xxh3' : 'crc32', var_export(array_slice(func_get_args(), 1), true));
         $function = self::$mappers[$mapperId] ??= $this->getFunction(
@@ -47,11 +46,10 @@ class MapperService implements MapperServiceInterface
             $getterBuilder,
             $setterBuilder,
             $functionBuilder,
-            $loopBuilder,
-            $throwException,
+            $throwExceptionOnMissingProperty,
             $isCollection,
             $modificators,
-            $group
+            $groups
         );
 
         return $function($data);
@@ -60,18 +58,18 @@ class MapperService implements MapperServiceInterface
     /**
      * @param class-string           $blueprint
      * @param ModificatorInterface[] $modificators
+     * @param array<string>|null     $groups
      */
     private function getFunction(
         string $mapperId,
         string $blueprint,
-        GetterInterface $getterBuilder,
-        SetterInterface $setterBuilder,
+        GetterInterface&AbstractBuilder $getterBuilder,
+        SetterInterface&AbstractBuilder $setterBuilder,
         FunctionInterface $functionBuilder = null,
-        LoopInterface $loopBuilder = null,
         bool $throwException = false,
         bool $isCollection = false,
         array $modificators = [],
-        string $group = null
+        array $groups = null
     ): callable {
         if ($function = @include $fileName = $this->directory.$mapperId.'.php') {
             return $function;
@@ -83,16 +81,15 @@ class MapperService implements MapperServiceInterface
             $blueprint,
             $getterBuilder,
             $setterBuilder,
-            $functionBuilder ?? new DefaultExpressionBuilder(),
-            $loopBuilder ?? new DefaultExpressionBuilder(),
-            $group,
+            $functionBuilder ?? new FunctionExpressionBuilder(),
+            $groups,
         );
 
         $mapper = sprintf(
             "<?php\n\ndeclare(strict_types=1);\n\n%s",
             $expressionBuilder
                 ->applyModificators($modificators)
-                ->createExpression($throwException)
+                ->build($throwException)
                 ->getMapper()
                 ->toString()
         );
@@ -104,6 +101,8 @@ class MapperService implements MapperServiceInterface
         if (!file_put_contents($fileName, $mapper)) {
             throw new \RuntimeException('Unable to create mapper file.');
         }
+
+        @shell_exec("vendor/bin/php-cs-fixer fix $fileName --rules=@Symfony --using-cache=no --quiet");
 
         return include $fileName;
     }

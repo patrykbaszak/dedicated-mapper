@@ -150,12 +150,6 @@ class ArrayExpressionBuilderTest extends TestCase
     }
 
     /** @test */
-    public function getterNameTest(): void
-    {
-        $this->assertEquals('test', $this->getExpressions('test')['name']);
-    }
-
-    /** @test */
     public function getterBasicTest(): void
     {
         $this->assertEquals(

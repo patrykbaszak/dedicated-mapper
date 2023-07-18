@@ -26,7 +26,6 @@ class MessengerMapperExtension extends Extension implements PrependExtensionInte
     public function prepend(ContainerBuilder $container): void
     {
         $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
-        $loader->load('packages/messenger_cache.yaml');
         $loader->load('services.yaml');
     }
 }

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace PBaszak\MessengerMapperBundle\Tests\Func\Expression;
 
-use ArrayObject;
 use PBaszak\MessengerMapperBundle\Expression\Assets\Expression;
 use PBaszak\MessengerMapperBundle\Expression\Builder\ArrayExpressionBuilder;
 use PBaszak\MessengerMapperBundle\Properties\Blueprint;
@@ -32,8 +31,8 @@ class ExpressionTest extends KernelTestCase
     {
         $property = $this->blueprint->getProperty('test2');
         $expression = (new Expression(
-            (new ArrayExpressionBuilder)->getGetter($property),
-            (new ArrayExpressionBuilder)->getSetter($property),
+            (new ArrayExpressionBuilder())->getGetter($property),
+            (new ArrayExpressionBuilder())->getSetter($property),
         ))->build($property, $property)->toString();
 
         $output = null;
@@ -48,8 +47,8 @@ class ExpressionTest extends KernelTestCase
     {
         $property = $this->blueprint->getProperty('test');
         $expression = (new Expression(
-            (new ArrayExpressionBuilder)->getGetter($property),
-            (new ArrayExpressionBuilder)->getSetter($property),
+            (new ArrayExpressionBuilder())->getGetter($property),
+            (new ArrayExpressionBuilder())->getSetter($property),
         ))->build($property, $property)->toString();
 
         $output = null;
@@ -57,7 +56,7 @@ class ExpressionTest extends KernelTestCase
         eval($expression);
 
         self::assertNotSame($data, $output);
-        self::assertInstanceOf(ArrayObject::class, $output['test']);
+        self::assertInstanceOf(\ArrayObject::class, $output['test']);
         self::assertSame($data['test'], $output['test']->getArrayCopy());
     }
 }

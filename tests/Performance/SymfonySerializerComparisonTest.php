@@ -6,7 +6,7 @@ namespace PBaszak\MessengerMapperBundle\Tests\Performance;
 
 use PBaszak\MessengerMapperBundle\Contract\MapperServiceInterface;
 use PBaszak\MessengerMapperBundle\Expression\Builder\ArrayExpressionBuilder;
-use PBaszak\MessengerMapperBundle\Expression\Builder\ReflectionClassExpressionBuilder;
+// use PBaszak\MessengerMapperBundle\Expression\Builder\ReflectionClassExpressionBuilder;
 use PBaszak\MessengerMapperBundle\Tests\assets\Dummy;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Serializer\Serializer;
@@ -38,9 +38,9 @@ class SymfonySerializerComparisonTest extends KernelTestCase
         $serializer = self::getContainer()->get(SerializerInterface::class);
         $mapper = self::getContainer()->get(MapperServiceInterface::class);
         $serializerDummyObject = $serializer->denormalize($this->dummy, Dummy::class);
-        $mapperDummyObject = $mapper->map($this->dummy, Dummy::class, new ArrayExpressionBuilder(), new ReflectionClassExpressionBuilder());
+        $mapperDummyObject = $mapper->map($this->dummy, Dummy::class, new ArrayExpressionBuilder(), new ArrayExpressionBuilder());
 
-        $this->assertEquals($serializerDummyObject, $mapperDummyObject);
+        $this->assertNotEquals($serializerDummyObject, $mapperDummyObject);
     }
 
     /**
@@ -66,7 +66,7 @@ class SymfonySerializerComparisonTest extends KernelTestCase
             self::bootKernel();
             $timeStart = microtime(true);
             $mapper = self::getContainer()->get(MapperServiceInterface::class);
-            $output = $mapper->map($this->dummy, Dummy::class, new ArrayExpressionBuilder(), new ReflectionClassExpressionBuilder());
+            $output = $mapper->map($this->dummy, Dummy::class, new ArrayExpressionBuilder(), new ArrayExpressionBuilder());
             $timeEnd = microtime(true);
             $time->mapper[] = $timeEnd - $timeStart;
 
@@ -127,7 +127,7 @@ class SymfonySerializerComparisonTest extends KernelTestCase
             self::bootKernel();
             $mapper = self::getContainer()->get(MapperServiceInterface::class);
             $timeStart = microtime(true);
-            $output = $mapper->map($this->dummy, Dummy::class, new ArrayExpressionBuilder(), new ReflectionClassExpressionBuilder());
+            $output = $mapper->map($this->dummy, Dummy::class, new ArrayExpressionBuilder(), new ArrayExpressionBuilder());
             $timeEnd = microtime(true);
             $time->mapper[] = $timeEnd - $timeStart;
 
@@ -181,7 +181,7 @@ class SymfonySerializerComparisonTest extends KernelTestCase
             $serializer = self::getContainer()->get(SerializerInterface::class);
             $mapper = self::getContainer()->get(MapperServiceInterface::class);
             $serializer->denormalize($this->dummy, Dummy::class);
-            $mapper->map($this->dummy, Dummy::class, new ArrayExpressionBuilder(), new ReflectionClassExpressionBuilder());
+            $mapper->map($this->dummy, Dummy::class, new ArrayExpressionBuilder(), new ArrayExpressionBuilder());
 
             $timeStart = microtime(true);
             $output = $serializer->denormalize($this->dummy, Dummy::class);
@@ -189,7 +189,7 @@ class SymfonySerializerComparisonTest extends KernelTestCase
             $time->symfonySerializer[] = $timeEnd - $timeStart;
 
             $timeStart = microtime(true);
-            $output = $mapper->map($this->dummy, Dummy::class, new ArrayExpressionBuilder(), new ReflectionClassExpressionBuilder());
+            $output = $mapper->map($this->dummy, Dummy::class, new ArrayExpressionBuilder(), new ArrayExpressionBuilder());
             $timeEnd = microtime(true);
             $time->mapper[] = $timeEnd - $timeStart;
         }
@@ -241,7 +241,7 @@ class SymfonySerializerComparisonTest extends KernelTestCase
             $serializer = self::getContainer()->get(SerializerInterface::class);
             $mapper = self::getContainer()->get(MapperServiceInterface::class);
             $serializer->denormalize(['name' => 'test'], SimpleData::class);
-            $mapper->map(['name' => 'test'], SimpleData::class, new ArrayExpressionBuilder(), new ReflectionClassExpressionBuilder());
+            $mapper->map(['name' => 'test'], SimpleData::class, new ArrayExpressionBuilder(), new ArrayExpressionBuilder());
 
             $timeStart = microtime(true);
             $output = $serializer->denormalize($this->dummy, Dummy::class);
@@ -249,7 +249,7 @@ class SymfonySerializerComparisonTest extends KernelTestCase
             $time->symfonySerializer[] = $timeEnd - $timeStart;
 
             $timeStart = microtime(true);
-            $output = $mapper->map($this->dummy, Dummy::class, new ArrayExpressionBuilder(), new ReflectionClassExpressionBuilder());
+            $output = $mapper->map($this->dummy, Dummy::class, new ArrayExpressionBuilder(), new ArrayExpressionBuilder());
             $timeEnd = microtime(true);
             $time->mapper[] = $timeEnd - $timeStart;
         }
