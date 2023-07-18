@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace PBaszak\MessengerMapperBundle\Attribute;
+namespace PBaszak\DedicatedMapperBundle\Attribute;
 
 #[\Attribute(\Attribute::TARGET_PROPERTY | \Attribute::IS_REPEATABLE)]
 class MappingCallback

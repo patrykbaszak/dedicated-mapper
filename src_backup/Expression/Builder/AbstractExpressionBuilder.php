@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace PBaszak\MessengerMapperBundle\Expression\Builder;
+namespace PBaszak\DedicatedMapperBundle\Expression\Builder;
 
-use PBaszak\MessengerMapperBundle\Attribute\MappingCallback;
-use PBaszak\MessengerMapperBundle\Attribute\SimpleObject;
-use PBaszak\MessengerMapperBundle\Expression\InitialExpression;
-use PBaszak\MessengerMapperBundle\Expression\Setter;
-use PBaszak\MessengerMapperBundle\Properties\Blueprint;
-use PBaszak\MessengerMapperBundle\Properties\Property;
+use PBaszak\DedicatedMapperBundle\Attribute\MappingCallback;
+use PBaszak\DedicatedMapperBundle\Attribute\SimpleObject;
+use PBaszak\DedicatedMapperBundle\Expression\InitialExpression;
+use PBaszak\DedicatedMapperBundle\Expression\Setter;
+use PBaszak\DedicatedMapperBundle\Properties\Blueprint;
+use PBaszak\DedicatedMapperBundle\Properties\Property;
 
 abstract class AbstractExpressionBuilder
 {

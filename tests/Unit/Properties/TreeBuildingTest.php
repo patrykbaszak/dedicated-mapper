@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace PBaszak\MessengerMapperBundle\Tests\Unit\Properties;
+namespace PBaszak\DedicatedMapperBundle\Tests\Unit\Properties;
 
-use PBaszak\MessengerMapperBundle\Properties\Blueprint;
-use PBaszak\MessengerMapperBundle\Properties\Property;
-use PBaszak\MessengerMapperBundle\Tests\assets\Dummy;
+use PBaszak\DedicatedMapperBundle\Properties\Blueprint;
+use PBaszak\DedicatedMapperBundle\Properties\Property;
+use PBaszak\DedicatedMapperBundle\Tests\assets\Dummy;
 use PHPUnit\Framework\TestCase;
 
 /** @group unit */

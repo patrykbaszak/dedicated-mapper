@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace PBaszak\MessengerMapperBundle\Contract;
+namespace PBaszak\DedicatedMapperBundle\Contract;
 
-use PBaszak\MessengerMapperBundle\Expression\Assets\Functions;
+use PBaszak\DedicatedMapperBundle\Expression\Assets\Functions;
 
 interface FunctionInterface
 {

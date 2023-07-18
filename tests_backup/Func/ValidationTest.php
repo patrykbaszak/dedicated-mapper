@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace PBaszak\MessengerMapperBundle\Tests\Func;
+namespace PBaszak\DedicatedMapperBundle\Tests\Func;
 
-use PBaszak\MessengerMapperBundle\Expression\Builder\ArrayExpressionBuilder;
-use PBaszak\MessengerMapperBundle\Expression\Builder\ReflectionClassExpressionBuilder;
-use PBaszak\MessengerMapperBundle\Expression\Modificator\Symfony\SymfonyValidator;
-use PBaszak\MessengerMapperBundle\Tests\assets\Dummy;
-use PBaszak\MessengerMapperBundle\ValidatedMapperService;
+use PBaszak\DedicatedMapperBundle\Expression\Builder\ArrayExpressionBuilder;
+use PBaszak\DedicatedMapperBundle\Expression\Builder\ReflectionClassExpressionBuilder;
+use PBaszak\DedicatedMapperBundle\Expression\Modificator\Symfony\SymfonyValidator;
+use PBaszak\DedicatedMapperBundle\Tests\assets\Dummy;
+use PBaszak\DedicatedMapperBundle\ValidatedMapperService;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 /** @group func */

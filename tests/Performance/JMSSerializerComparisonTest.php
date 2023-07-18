@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace PBaszak\MessengerMapperBundle\Tests\Performance;
+namespace PBaszak\DedicatedMapperBundle\Tests\Performance;
 
 use JMS\Serializer\ArrayTransformerInterface;
 use JMS\Serializer\Serializer;
-use PBaszak\MessengerMapperBundle\Contract\MapperServiceInterface;
-use PBaszak\MessengerMapperBundle\Expression\Builder\ArrayExpressionBuilder;
-use PBaszak\MessengerMapperBundle\Expression\Builder\ReflectionClassExpressionBuilder;
-use PBaszak\MessengerMapperBundle\Tests\assets\Dummy;
+use PBaszak\DedicatedMapperBundle\Contract\MapperServiceInterface;
+use PBaszak\DedicatedMapperBundle\Expression\Builder\ArrayExpressionBuilder;
+use PBaszak\DedicatedMapperBundle\Expression\Builder\ReflectionClassExpressionBuilder;
+use PBaszak\DedicatedMapperBundle\Tests\assets\Dummy;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class SimpleDataForJMSSerializer

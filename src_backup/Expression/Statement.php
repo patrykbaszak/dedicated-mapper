@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace PBaszak\MessengerMapperBundle\Expression;
+namespace PBaszak\DedicatedMapperBundle\Expression;
 
 /**
  * @example <code>

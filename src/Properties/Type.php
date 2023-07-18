@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace PBaszak\MessengerMapperBundle\Properties;
+namespace PBaszak\DedicatedMapperBundle\Properties;
 
 use phpDocumentor\Reflection\DocBlock\Tags\Param;
 use phpDocumentor\Reflection\DocBlock\Tags\Var_;

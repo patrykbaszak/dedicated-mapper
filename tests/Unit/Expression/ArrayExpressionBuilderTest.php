@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace PBaszak\MessengerMapperBundle\Tests\Unit\Expression;
+namespace PBaszak\DedicatedMapperBundle\Tests\Unit\Expression;
 
-use PBaszak\MessengerMapperBundle\Expression\Assets\Expression;
-use PBaszak\MessengerMapperBundle\Expression\Assets\Getter;
-use PBaszak\MessengerMapperBundle\Expression\Assets\Setter;
-use PBaszak\MessengerMapperBundle\Expression\Builder\ArrayExpressionBuilder;
-use PBaszak\MessengerMapperBundle\Properties\Blueprint;
+use PBaszak\DedicatedMapperBundle\Expression\Assets\Expression;
+use PBaszak\DedicatedMapperBundle\Expression\Assets\Getter;
+use PBaszak\DedicatedMapperBundle\Expression\Assets\Setter;
+use PBaszak\DedicatedMapperBundle\Expression\Builder\ArrayExpressionBuilder;
+use PBaszak\DedicatedMapperBundle\Properties\Blueprint;
 use PHPUnit\Framework\TestCase;
 
 class ArrayExpressionBuilderTestedClass

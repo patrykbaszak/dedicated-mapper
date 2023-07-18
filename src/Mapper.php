@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace PBaszak\MessengerMapperBundle;
+namespace PBaszak\DedicatedMapperBundle;
 
 class Mapper implements \Stringable
 {

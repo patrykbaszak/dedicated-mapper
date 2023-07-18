@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace PBaszak\MessengerMapperBundle\DependencyInjection;
+namespace PBaszak\DedicatedMapperBundle\DependencyInjection;
 
-use PBaszak\MessengerMapperBundle\MessengerMapperBundle;
+use PBaszak\DedicatedMapperBundle\DedicatedMapperBundle;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\Extension;
 use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 
-class MessengerMapperExtension extends Extension implements PrependExtensionInterface
+class DedicatedMapperExtension extends Extension implements PrependExtensionInterface
 {
     public function load(array $configs, ContainerBuilder $container): void
     {
@@ -20,7 +20,7 @@ class MessengerMapperExtension extends Extension implements PrependExtensionInte
 
     public function getAlias(): string
     {
-        return MessengerMapperBundle::ALIAS;
+        return DedicatedMapperBundle::ALIAS;
     }
 
     public function prepend(ContainerBuilder $container): void

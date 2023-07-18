@@ -1,6 +1,6 @@
 <?php
 
-namespace PBaszak\MessengerMapperBundle\Tests\assets;
+namespace PBaszak\DedicatedMapperBundle\Tests\assets;
 
 use JMS\Serializer\Annotation\Type;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -22,7 +22,7 @@ class EmbeddedDTO
     public int $pageSize;
     public int $total;
     /** @var ItemDTO[] */
-    #[Type("array<PBaszak\MessengerMapperBundle\Tests\assets\ItemDTO>")]
+    #[Type("array<PBaszak\DedicatedMapperBundle\Tests\assets\ItemDTO>")]
     public array $items;
 }
 

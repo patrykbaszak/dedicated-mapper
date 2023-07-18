@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace PBaszak\MessengerMapperBundle;
+namespace PBaszak\DedicatedMapperBundle;
 
 use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
@@ -12,12 +12,12 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
  *
  * @author Patryk Baszak <patryk.baszak@gmail.com>
  */
-class MessengerMapperBundle extends Bundle
+class DedicatedMapperBundle extends Bundle
 {
-    public const ALIAS = 'messenger_mapper';
+    public const ALIAS = 'dedicated_mapper';
 
     public function getContainerExtension(): ExtensionInterface
     {
-        return $this->extension ??= new DependencyInjection\MessengerMapperExtension();
+        return $this->extension ??= new DependencyInjection\DedicatedMapperExtension();
     }
 }

@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace PBaszak\MessengerMapperBundle\Expression;
+namespace PBaszak\DedicatedMapperBundle\Expression;
 
-use PBaszak\MessengerMapperBundle\Attribute\TargetProperty;
-use PBaszak\MessengerMapperBundle\Contract\FunctionInterface;
-use PBaszak\MessengerMapperBundle\Contract\GetterInterface;
-use PBaszak\MessengerMapperBundle\Contract\ModificatorInterface;
-use PBaszak\MessengerMapperBundle\Contract\SetterInterface;
-use PBaszak\MessengerMapperBundle\Expression\Assets\Expression;
-use PBaszak\MessengerMapperBundle\Expression\Assets\FunctionExpression;
-use PBaszak\MessengerMapperBundle\Expression\Builder\AbstractBuilder;
-use PBaszak\MessengerMapperBundle\Mapper;
-use PBaszak\MessengerMapperBundle\Properties\Blueprint;
-use PBaszak\MessengerMapperBundle\Properties\Property;
+use PBaszak\DedicatedMapperBundle\Attribute\TargetProperty;
+use PBaszak\DedicatedMapperBundle\Contract\FunctionInterface;
+use PBaszak\DedicatedMapperBundle\Contract\GetterInterface;
+use PBaszak\DedicatedMapperBundle\Contract\ModificatorInterface;
+use PBaszak\DedicatedMapperBundle\Contract\SetterInterface;
+use PBaszak\DedicatedMapperBundle\Expression\Assets\Expression;
+use PBaszak\DedicatedMapperBundle\Expression\Assets\FunctionExpression;
+use PBaszak\DedicatedMapperBundle\Expression\Builder\AbstractBuilder;
+use PBaszak\DedicatedMapperBundle\Mapper;
+use PBaszak\DedicatedMapperBundle\Properties\Blueprint;
+use PBaszak\DedicatedMapperBundle\Properties\Property;
 use Symfony\Component\Uid\Uuid;
 
 class ExpressionBuilder

@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace PBaszak\MessengerMapperBundle\Expression\Modificator\Symfony;
+namespace PBaszak\DedicatedMapperBundle\Expression\Modificator\Symfony;
 
-use PBaszak\MessengerMapperBundle\Contract\GetterInterface;
-use PBaszak\MessengerMapperBundle\Contract\SetterInterface;
-use PBaszak\MessengerMapperBundle\Expression\Modificator\ModificatorInterface;
-use PBaszak\MessengerMapperBundle\Properties\Blueprint;
+use PBaszak\DedicatedMapperBundle\Contract\GetterInterface;
+use PBaszak\DedicatedMapperBundle\Contract\SetterInterface;
+use PBaszak\DedicatedMapperBundle\Expression\Modificator\ModificatorInterface;
+use PBaszak\DedicatedMapperBundle\Properties\Blueprint;
 
 class SymfonySerializer implements ModificatorInterface
 {

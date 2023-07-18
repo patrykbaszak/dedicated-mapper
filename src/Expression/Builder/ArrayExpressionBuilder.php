@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace PBaszak\MessengerMapperBundle\Expression\Builder;
+namespace PBaszak\DedicatedMapperBundle\Expression\Builder;
 
-use PBaszak\MessengerMapperBundle\Contract\GetterInterface;
-use PBaszak\MessengerMapperBundle\Contract\SetterInterface;
-use PBaszak\MessengerMapperBundle\Expression\Assets\Getter;
-use PBaszak\MessengerMapperBundle\Expression\Assets\InitialExpression;
-use PBaszak\MessengerMapperBundle\Expression\Assets\Setter;
-use PBaszak\MessengerMapperBundle\Properties\Blueprint;
-use PBaszak\MessengerMapperBundle\Properties\Property;
+use PBaszak\DedicatedMapperBundle\Contract\GetterInterface;
+use PBaszak\DedicatedMapperBundle\Contract\SetterInterface;
+use PBaszak\DedicatedMapperBundle\Expression\Assets\Getter;
+use PBaszak\DedicatedMapperBundle\Expression\Assets\InitialExpression;
+use PBaszak\DedicatedMapperBundle\Expression\Assets\Setter;
+use PBaszak\DedicatedMapperBundle\Properties\Blueprint;
+use PBaszak\DedicatedMapperBundle\Properties\Property;
 
 class ArrayExpressionBuilder extends AbstractBuilder implements SetterInterface, GetterInterface
 {
@@ -29,6 +29,13 @@ class ArrayExpressionBuilder extends AbstractBuilder implements SetterInterface,
         return 'array';
     }
 
+    /**
+     *  0 => isSimpleObject
+     *  1 => throwExceptionOnMissingRequiredValue
+     *  2 => hasDefaultValue
+     *  3 => hasCallbacks
+     *  4 => hasValueNotFoundCallbacks
+     */
     public function getGetter(Property $property): Getter
     {
         $name = $property->options['name'] ?? $property->originName;

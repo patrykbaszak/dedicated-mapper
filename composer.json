@@ -1,5 +1,5 @@
 {
-    "name": "pbaszak/cached-mapper-bundle",
+    "name": "pbaszak/dedicated-mapper-bundle",
     "type": "symfony-bundle",
     "require": {
         "php": ">=8.0",
@@ -34,12 +34,12 @@
     "license": "MIT",
     "autoload": {
         "psr-4": {
-            "PBaszak\\MessengerMapperBundle\\": "src/"
+            "PBaszak\\DedicatedMapperBundle\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "PBaszak\\MessengerMapperBundle\\Tests\\": "tests/"
+            "PBaszak\\DedicatedMapperBundle\\Tests\\": "tests/"
         }
     },
     "authors": [

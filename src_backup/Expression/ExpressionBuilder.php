@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace PBaszak\MessengerMapperBundle\Expression;
+namespace PBaszak\DedicatedMapperBundle\Expression;
 
-use PBaszak\MessengerMapperBundle\Contract\FunctionInterface;
-use PBaszak\MessengerMapperBundle\Contract\GetterInterface;
-use PBaszak\MessengerMapperBundle\Contract\LoopInterface;
-use PBaszak\MessengerMapperBundle\Contract\SetterInterface;
-use PBaszak\MessengerMapperBundle\Expression\Builder\SecondBlueprintExpressionBuilderDecorator;
-use PBaszak\MessengerMapperBundle\Expression\Modificator\ModificatorInterface;
-use PBaszak\MessengerMapperBundle\Mapper;
-use PBaszak\MessengerMapperBundle\Properties\Blueprint;
-use PBaszak\MessengerMapperBundle\Properties\Property;
+use PBaszak\DedicatedMapperBundle\Contract\FunctionInterface;
+use PBaszak\DedicatedMapperBundle\Contract\GetterInterface;
+use PBaszak\DedicatedMapperBundle\Contract\LoopInterface;
+use PBaszak\DedicatedMapperBundle\Contract\SetterInterface;
+use PBaszak\DedicatedMapperBundle\Expression\Builder\SecondBlueprintExpressionBuilderDecorator;
+use PBaszak\DedicatedMapperBundle\Expression\Modificator\ModificatorInterface;
+use PBaszak\DedicatedMapperBundle\Mapper;
+use PBaszak\DedicatedMapperBundle\Properties\Blueprint;
+use PBaszak\DedicatedMapperBundle\Properties\Property;
 use Symfony\Component\Uid\Uuid;
 
 class ExpressionBuilder

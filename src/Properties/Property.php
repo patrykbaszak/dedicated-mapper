@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace PBaszak\MessengerMapperBundle\Properties;
+namespace PBaszak\DedicatedMapperBundle\Properties;
 
-use PBaszak\MessengerMapperBundle\Attribute\MappingCallback;
-use PBaszak\MessengerMapperBundle\Attribute\SimpleObject;
+use PBaszak\DedicatedMapperBundle\Attribute\MappingCallback;
+use PBaszak\DedicatedMapperBundle\Attribute\SimpleObject;
 
 class Property
 {

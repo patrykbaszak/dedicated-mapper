@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace PBaszak\MessengerMapperBundle\Expression\Assets;
+namespace PBaszak\DedicatedMapperBundle\Expression\Assets;
 
-use PBaszak\MessengerMapperBundle\Attribute\MappingCallback;
-use PBaszak\MessengerMapperBundle\Contract\ModificatorInterface;
-use PBaszak\MessengerMapperBundle\Properties\Property;
+use PBaszak\DedicatedMapperBundle\Attribute\MappingCallback;
+use PBaszak\DedicatedMapperBundle\Contract\ModificatorInterface;
+use PBaszak\DedicatedMapperBundle\Properties\Property;
 
 class Expression
 {

@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace PBaszak\MessengerMapperBundle\Expression\Builder;
+namespace PBaszak\DedicatedMapperBundle\Expression\Builder;
 
-use PBaszak\MessengerMapperBundle\Attribute\TargetProperty;
-use PBaszak\MessengerMapperBundle\Contract\GetterInterface;
-use PBaszak\MessengerMapperBundle\Contract\SetterInterface;
-use PBaszak\MessengerMapperBundle\Expression\Getter;
-use PBaszak\MessengerMapperBundle\Expression\InitialExpression;
-use PBaszak\MessengerMapperBundle\Expression\Modificator\ModificatorInterface;
-use PBaszak\MessengerMapperBundle\Expression\Setter;
-use PBaszak\MessengerMapperBundle\Expression\Statement;
-use PBaszak\MessengerMapperBundle\Properties\Blueprint;
-use PBaszak\MessengerMapperBundle\Properties\Property;
+use PBaszak\DedicatedMapperBundle\Attribute\TargetProperty;
+use PBaszak\DedicatedMapperBundle\Contract\GetterInterface;
+use PBaszak\DedicatedMapperBundle\Contract\SetterInterface;
+use PBaszak\DedicatedMapperBundle\Expression\Getter;
+use PBaszak\DedicatedMapperBundle\Expression\InitialExpression;
+use PBaszak\DedicatedMapperBundle\Expression\Modificator\ModificatorInterface;
+use PBaszak\DedicatedMapperBundle\Expression\Setter;
+use PBaszak\DedicatedMapperBundle\Expression\Statement;
+use PBaszak\DedicatedMapperBundle\Properties\Blueprint;
+use PBaszak\DedicatedMapperBundle\Properties\Property;
 use Symfony\Component\Uid\Uuid;
 
 class SecondBlueprintExpressionBuilderDecorator implements SetterInterface, GetterInterface

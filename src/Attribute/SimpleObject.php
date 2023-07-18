@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace PBaszak\MessengerMapperBundle\Attribute;
+namespace PBaszak\DedicatedMapperBundle\Attribute;
 
-use PBaszak\MessengerMapperBundle\Expression\Assets\Setter;
+use PBaszak\DedicatedMapperBundle\Expression\Assets\Setter;
 
 /**
  * Part of the mapping process.

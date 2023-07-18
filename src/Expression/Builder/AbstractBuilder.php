@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace PBaszak\MessengerMapperBundle\Expression\Builder;
+namespace PBaszak\DedicatedMapperBundle\Expression\Builder;
 
-use PBaszak\MessengerMapperBundle\Expression\Assets\FinalExpression;
-use PBaszak\MessengerMapperBundle\Expression\Assets\InitialExpression;
-use PBaszak\MessengerMapperBundle\Properties\Blueprint;
+use PBaszak\DedicatedMapperBundle\Expression\Assets\FinalExpression;
+use PBaszak\DedicatedMapperBundle\Expression\Assets\InitialExpression;
+use PBaszak\DedicatedMapperBundle\Properties\Blueprint;
 
 abstract class AbstractBuilder
 {

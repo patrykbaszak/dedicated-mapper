@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace PBaszak\MessengerMapperBundle\Expression\Assets;
+namespace PBaszak\DedicatedMapperBundle\Expression\Assets;
 
 class Setter
 {

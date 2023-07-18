@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace PBaszak\MessengerMapperBundle\Contract;
+namespace PBaszak\DedicatedMapperBundle\Contract;
 
-use PBaszak\MessengerMapperBundle\Expression\Assets\Expression;
-use PBaszak\MessengerMapperBundle\Expression\Assets\FunctionExpression;
-use PBaszak\MessengerMapperBundle\Properties\Blueprint;
-use PBaszak\MessengerMapperBundle\Properties\Property;
+use PBaszak\DedicatedMapperBundle\Expression\Assets\Expression;
+use PBaszak\DedicatedMapperBundle\Expression\Assets\FunctionExpression;
+use PBaszak\DedicatedMapperBundle\Properties\Blueprint;
+use PBaszak\DedicatedMapperBundle\Properties\Property;
 
 interface ModificatorInterface
 {

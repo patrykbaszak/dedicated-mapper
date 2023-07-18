@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace PBaszak\MessengerMapperBundle\Contract;
+namespace PBaszak\DedicatedMapperBundle\Contract;
 
-use PBaszak\MessengerMapperBundle\Expression\Assets\FinalExpression;
-use PBaszak\MessengerMapperBundle\Expression\Assets\InitialExpression;
-use PBaszak\MessengerMapperBundle\Expression\Assets\Setter;
-use PBaszak\MessengerMapperBundle\Properties\Blueprint;
-use PBaszak\MessengerMapperBundle\Properties\Property;
+use PBaszak\DedicatedMapperBundle\Expression\Assets\FinalExpression;
+use PBaszak\DedicatedMapperBundle\Expression\Assets\InitialExpression;
+use PBaszak\DedicatedMapperBundle\Expression\Assets\Setter;
+use PBaszak\DedicatedMapperBundle\Properties\Blueprint;
+use PBaszak\DedicatedMapperBundle\Properties\Property;
 
 interface SetterInterface
 {

@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace PBaszak\MessengerMapperBundle\Expression;
+namespace PBaszak\DedicatedMapperBundle\Expression;
 
-use PBaszak\MessengerMapperBundle\Expression\Builder\AnonymousObjectExpressionBuilder;
-use PBaszak\MessengerMapperBundle\Expression\Builder\ArrayExpressionBuilder;
-use PBaszak\MessengerMapperBundle\Expression\Builder\DefaultExpressionBuilder;
-use PBaszak\MessengerMapperBundle\Properties\Blueprint;
-use PBaszak\MessengerMapperBundle\Tests\assets\Dummy;
+use PBaszak\DedicatedMapperBundle\Expression\Builder\AnonymousObjectExpressionBuilder;
+use PBaszak\DedicatedMapperBundle\Expression\Builder\ArrayExpressionBuilder;
+use PBaszak\DedicatedMapperBundle\Expression\Builder\DefaultExpressionBuilder;
+use PBaszak\DedicatedMapperBundle\Properties\Blueprint;
+use PBaszak\DedicatedMapperBundle\Tests\assets\Dummy;
 use PHPUnit\Framework\TestCase;
 
 /** @group unit */
