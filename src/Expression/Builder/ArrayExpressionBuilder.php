@@ -34,7 +34,7 @@ class ArrayExpressionBuilder extends AbstractBuilder implements SetterInterface,
      *  1 => throwExceptionOnMissingRequiredValue
      *  2 => hasDefaultValue
      *  3 => hasCallbacks
-     *  4 => hasValueNotFoundCallbacks
+     *  4 => hasValueNotFoundCallbacks.
      */
     public function getGetter(Property $property): Getter
     {
@@ -72,13 +72,19 @@ class ArrayExpressionBuilder extends AbstractBuilder implements SetterInterface,
                 '00111' => "\${{var}} = \${{source}}['{$name}'] ?? {{defaultValue}};\n"
                     .'{{callbacks}}'
                     .'{{setter}}',
-                '01000' => "\${{source}}['{$name}']",
+                '01000' => "if (!array_key_exists('{$name}', \${{source}})) {\n"
+                    ."throw new \Error('Missing required value: \"{$name}\"');\n"
+                    ."}\n"
+                    .'{{setter}}',
                 '01001' => "if (array_key_exists('{$name}', \${{source}})) {\n"
                     .'{{setter}}'
                     ."} else {\n"
                     .'{{valueNotFoundCallbacks}}'
                     ."}\n",
-                '01010' => "\${{var}} = \${{source}}['{$name}'];\n"
+                '01010' => "if (!array_key_exists('{$name}', \${{source}})) {\n"
+                    ."throw new \Error('Missing required value: \"{$name}\"');\n"
+                    ."}\n"
+                    ."\${{var}} = \${{source}}['{$name}'];\n"
                     .'{{callbacks}}'
                     .'{{setter}}',
                 '01011' => "if (array_key_exists('{$name}', \${{source}})) {\n"

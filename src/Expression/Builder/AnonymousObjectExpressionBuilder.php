@@ -34,7 +34,7 @@ class AnonymousObjectExpressionBuilder extends AbstractBuilder implements Getter
      *  1 => throwExceptionOnMissingRequiredValue
      *  2 => hasDefaultValue
      *  3 => hasCallbacks
-     *  4 => hasValueNotFoundCallbacks
+     *  4 => hasValueNotFoundCallbacks.
      */
     public function getGetter(Property $property): Getter
     {
@@ -45,148 +45,154 @@ class AnonymousObjectExpressionBuilder extends AbstractBuilder implements Getter
             [
                 'basic' => "\${{source}}->{$name}",
                 '00000' => "if (property_exists(\${{source}}, '{$name}')) {\n"
-                    . '{{setter}}'
-                    . "}\n",
+                    .'{{setter}}'
+                    ."}\n",
                 '00001' => "if (property_exists(\${{source}}, '{$name}')) {\n"
-                    . '{{setter}}'
-                    . "} else {\n"
-                    . '{{valueNotFoundCallbacks}}'
-                    . "}\n",
+                    .'{{setter}}'
+                    ."} else {\n"
+                    .'{{valueNotFoundCallbacks}}'
+                    ."}\n",
                 '00010' => "if (property_exists(\${{source}}, '{$name}')) {\n"
-                    . "\${{var}} = \${{source}}->{$name};\n"
-                    . '{{callbacks}}'
-                    . '{{setter}}'
-                    . "}\n",
+                    ."\${{var}} = \${{source}}->{$name};\n"
+                    .'{{callbacks}}'
+                    .'{{setter}}'
+                    ."}\n",
                 '00011' => "if (property_exists(\${{source}}, '{$name}')) {\n"
-                    . "\${{var}} = \${{source}}->{$name};\n"
-                    . '{{callbacks}}'
-                    . '{{setter}}'
-                    . "} else {\n"
-                    . '{{valueNotFoundCallbacks}}'
-                    . "}\n",
+                    ."\${{var}} = \${{source}}->{$name};\n"
+                    .'{{callbacks}}'
+                    .'{{setter}}'
+                    ."} else {\n"
+                    .'{{valueNotFoundCallbacks}}'
+                    ."}\n",
                 '00100' => "\${{source}}->{$name} ?? {{defaultValue}}",
                 '00101' => "\${{source}}->{$name} ?? {{defaultValue}}",
                 '00110' => "\${{var}} = \${{source}}->{$name} ?? {{defaultValue}};\n"
-                    . '{{callbacks}}'
-                    . '{{setter}}',
+                    .'{{callbacks}}'
+                    .'{{setter}}',
                 '00111' => "\${{var}} = \${{source}}->{$name} ?? {{defaultValue}};\n"
-                    . '{{callbacks}}'
-                    . '{{setter}}',
-                '01000' => "\${{source}}->{$name}",
+                    .'{{callbacks}}'
+                    .'{{setter}}',
+                '01000' => "if (!property_exists(\${{source}}, '{$name}')) {\n"
+                    ."throw new \Error('Missing required value: \"{$name}\"');\n"
+                    ."}\n"
+                    .'{{setter}}',
                 '01001' => "if (property_exists(\${{source}}, '{$name}')) {\n"
-                    . '{{setter}}'
-                    . "} else {\n"
-                    . '{{valueNotFoundCallbacks}}'
-                    . "}\n",
-                '01010' => "\${{var}} = \${{source}}->{$name};\n"
-                    . '{{callbacks}}'
-                    . '{{setter}}',
+                    .'{{setter}}'
+                    ."} else {\n"
+                    .'{{valueNotFoundCallbacks}}'
+                    ."}\n",
+                '01010' => "if (!property_exists(\${{source}}, '{$name}')) {\n"
+                    ."throw new \Error('Missing required value: \"{$name}\"');\n"
+                    ."}\n"
+                    ."\${{var}} = \${{source}}->{$name};\n"
+                    .'{{callbacks}}'
+                    .'{{setter}}',
                 '01011' => "if (property_exists(\${{source}}, '{$name}')) {\n"
-                    . "\${{var}} = \${{source}}->{$name};\n"
-                    . '{{callbacks}}'
-                    . '{{setter}}'
-                    . "} else {\n"
-                    . '{{valueNotFoundCallbacks}}'
-                    . "}\n",
+                    ."\${{var}} = \${{source}}->{$name};\n"
+                    .'{{callbacks}}'
+                    .'{{setter}}'
+                    ."} else {\n"
+                    .'{{valueNotFoundCallbacks}}'
+                    ."}\n",
                 '01100' => "\${{source}}->{$name} ?? {{defaultValue}}",
                 '01101' => "\${{source}}->{$name} ?? {{defaultValue}}",
                 '01110' => "\${{var}} = \${{source}}->{$name} ?? {{defaultValue}};\n"
-                    . '{{callbacks}}'
-                    . '{{setter}}',
+                    .'{{callbacks}}'
+                    .'{{setter}}',
                 '01111' => "\${{var}} = \${{source}}->{$name} ?? {{defaultValue}};\n"
-                    . '{{callbacks}}'
-                    . '{{setter}}',
+                    .'{{callbacks}}'
+                    .'{{setter}}',
                 '10000' => "if (property_exists(\${{source}}, '{$name}')) {\n"
-                    . "\${{var}} = {{simpleObject}};\n"
-                    . '{{setter}}'
-                    . "}\n",
+                    ."\${{var}} = {{simpleObject}};\n"
+                    .'{{setter}}'
+                    ."}\n",
                 '10001' => "if (property_exists(\${{source}}, '{$name}')) {\n"
-                    . "\${{var}} = {{simpleObject}};\n"
-                    . '{{setter}}'
-                    . "} else {\n"
-                    . '{{valueNotFoundCallbacks}}'
-                    . "}\n",
+                    ."\${{var}} = {{simpleObject}};\n"
+                    .'{{setter}}'
+                    ."} else {\n"
+                    .'{{valueNotFoundCallbacks}}'
+                    ."}\n",
                 '10010' => "if (property_exists(\${{source}}, '{$name}')) {\n"
-                    . "\${{var}} = {{simpleObject}};\n"
-                    . '{{callbacks}}'
-                    . '{{setter}}'
-                    . "}\n",
+                    ."\${{var}} = {{simpleObject}};\n"
+                    .'{{callbacks}}'
+                    .'{{setter}}'
+                    ."}\n",
                 '10011' => "if (property_exists(\${{source}}, '{$name}')) {\n"
-                    . "\${{var}} = {{simpleObject}};\n"
-                    . '{{callbacks}}'
-                    . '{{setter}}'
-                    . "} else {\n"
-                    . '{{valueNotFoundCallbacks}}'
-                    . "}\n",
+                    ."\${{var}} = {{simpleObject}};\n"
+                    .'{{callbacks}}'
+                    .'{{setter}}'
+                    ."} else {\n"
+                    .'{{valueNotFoundCallbacks}}'
+                    ."}\n",
                 '10100' => "if (property_exists(\${{source}}, '{$name}')) {\n"
-                    . "\${{var}} = {{simpleObject}};\n"
-                    . "} else {\n"
-                    . "\${{var}} = {{defaultValue}};\n"
-                    . "}\n"
-                    . '{{setter}}',
+                    ."\${{var}} = {{simpleObject}};\n"
+                    ."} else {\n"
+                    ."\${{var}} = {{defaultValue}};\n"
+                    ."}\n"
+                    .'{{setter}}',
                 '10101' => "if (property_exists(\${{source}}, '{$name}')) {\n"
-                    . "\${{var}} = {{simpleObject}};\n"
-                    . "} else {\n"
-                    . "\${{var}} = {{defaultValue}};\n"
-                    . "}\n"
-                    . '{{setter}}',
+                    ."\${{var}} = {{simpleObject}};\n"
+                    ."} else {\n"
+                    ."\${{var}} = {{defaultValue}};\n"
+                    ."}\n"
+                    .'{{setter}}',
                 '10110' => "if (property_exists(\${{source}}, '{$name}')) {\n"
-                    . "\${{var}} = {{simpleObject}};\n"
-                    . "} else {\n"
-                    . "\${{var}} = {{defaultValue}};\n"
-                    . "}\n"
-                    . '{{callbacks}}'
-                    . '{{setter}}',
+                    ."\${{var}} = {{simpleObject}};\n"
+                    ."} else {\n"
+                    ."\${{var}} = {{defaultValue}};\n"
+                    ."}\n"
+                    .'{{callbacks}}'
+                    .'{{setter}}',
                 '10111' => "if (property_exists(\${{source}}, '{$name}')) {\n"
-                    . "\${{var}} = {{simpleObject}};\n"
-                    . "} else {\n"
-                    . "\${{var}} = {{defaultValue}};\n"
-                    . "}\n"
-                    . '{{callbacks}}'
-                    . '{{setter}}',
+                    ."\${{var}} = {{simpleObject}};\n"
+                    ."} else {\n"
+                    ."\${{var}} = {{defaultValue}};\n"
+                    ."}\n"
+                    .'{{callbacks}}'
+                    .'{{setter}}',
                 '11000' => '{{simpleObject}}',
                 '11001' => "if (property_exists(\${{source}}, '{$name}')) {\n"
-                    . "\${{var}} = {{simpleObject}};\n"
-                    . '{{setter}}'
-                    . "} else {\n"
-                    . '{{valueNotFoundCallbacks}}'
-                    . "}\n",
+                    ."\${{var}} = {{simpleObject}};\n"
+                    .'{{setter}}'
+                    ."} else {\n"
+                    .'{{valueNotFoundCallbacks}}'
+                    ."}\n",
                 '11010' => "\${{var}} = {{simpleObject}};\n"
-                    . '{{callbacks}}'
-                    . '{{setter}}',
+                    .'{{callbacks}}'
+                    .'{{setter}}',
                 '11011' => "if (property_exists(\${{source}}, '{$name}')) {\n"
-                    . "\${{var}} = {{simpleObject}};\n"
-                    . '{{callbacks}}'
-                    . '{{setter}}'
-                    . "} else {\n"
-                    . '{{valueNotFoundCallbacks}}'
-                    . "}\n",
+                    ."\${{var}} = {{simpleObject}};\n"
+                    .'{{callbacks}}'
+                    .'{{setter}}'
+                    ."} else {\n"
+                    .'{{valueNotFoundCallbacks}}'
+                    ."}\n",
                 '11100' => "if (property_exists(\${{source}}, '{$name}')) {\n"
-                    . "\${{var}} = {{simpleObject}};\n"
-                    . "} else {\n"
-                    . "\${{var}} = {{defaultValue}};\n"
-                    . "}\n"
-                    . '{{setter}}',
+                    ."\${{var}} = {{simpleObject}};\n"
+                    ."} else {\n"
+                    ."\${{var}} = {{defaultValue}};\n"
+                    ."}\n"
+                    .'{{setter}}',
                 '11101' => "if (property_exists(\${{source}}, '{$name}')) {\n"
-                    . "\${{var}} = {{simpleObject}};\n"
-                    . "} else {\n"
-                    . "\${{var}} = {{defaultValue}};\n"
-                    . "}\n"
-                    . '{{setter}}',
+                    ."\${{var}} = {{simpleObject}};\n"
+                    ."} else {\n"
+                    ."\${{var}} = {{defaultValue}};\n"
+                    ."}\n"
+                    .'{{setter}}',
                 '11110' => "if (property_exists(\${{source}}, '{$name}')) {\n"
-                    . "\${{var}} = {{simpleObject}};\n"
-                    . "} else {\n"
-                    . "\${{var}} = {{defaultValue}};\n"
-                    . "}\n"
-                    . '{{callbacks}}'
-                    . '{{setter}}',
+                    ."\${{var}} = {{simpleObject}};\n"
+                    ."} else {\n"
+                    ."\${{var}} = {{defaultValue}};\n"
+                    ."}\n"
+                    .'{{callbacks}}'
+                    .'{{setter}}',
                 '11111' => "if (property_exists(\${{source}}, '{$name}')) {\n"
-                    . "\${{var}} = {{simpleObject}};\n"
-                    . "} else {\n"
-                    . "\${{var}} = {{defaultValue}};\n"
-                    . "}\n"
-                    . '{{callbacks}}'
-                    . '{{setter}}',
+                    ."\${{var}} = {{simpleObject}};\n"
+                    ."} else {\n"
+                    ."\${{var}} = {{defaultValue}};\n"
+                    ."}\n"
+                    .'{{callbacks}}'
+                    .'{{setter}}',
             ]
         );
     }

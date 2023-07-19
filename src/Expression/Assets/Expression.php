@@ -58,6 +58,7 @@ class Expression
         }
 
         /* Callbacks */
+        $target->callbacks = array_merge($target->callbacks, $this->callbacks);
         $this->callbacksExpression = array_filter(array_map(fn (MappingCallback $callback) => $callback->isValueNotFoundCallback ? null : $callback->callback, $target->getSortedCallbacks()));
         $this->valueNotFoundExpressions = array_filter(array_map(fn (MappingCallback $callback) => $callback->isValueNotFoundCallback ? $callback->callback : null, $target->getSortedCallbacks()));
 
@@ -98,7 +99,13 @@ class Expression
     {
         $isSimpleObject = Property::SIMPLE_OBJECT === $this->targetProperty->getPropertyType();
         $simpleObjectAttr = $isSimpleObject ? $this->targetProperty->getPropertySimpleObjectAttribute() : null;
-        $expr = $this->getterExpression;
+        $hasSetterPlaceholder = false !== strpos($this->getterExpression, '{{setter}}');
+        $expr = $hasSetterPlaceholder ? $this->getterExpression : $this->setterExpression;
+
+        if (!$hasSetterPlaceholder) {
+            $expr = str_replace('{{getter}}', $this->getterExpression, $expr);
+        }
+
         do {
             $expr = str_replace(
                 [
