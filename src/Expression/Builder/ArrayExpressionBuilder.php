@@ -197,6 +197,14 @@ class ArrayExpressionBuilder extends AbstractBuilder implements SetterInterface,
         );
     }
 
+    /**
+     * 0 => isCollection
+     * 1 => hasFunction
+     * 2 => hasPathUsed
+     * 3 => isSimpleObject
+     * 4 => hasSimpleObjectDeconstructor
+     * 5 => isVarVariableUsed
+     */
     public function getSetter(Property $property): Setter
     {
         $name = $property->options['name'] ?? $property->originName;

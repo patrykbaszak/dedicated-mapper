@@ -27,6 +27,9 @@ class Property
     public const SIMPLE_OBJECT = 2; // 0010 example: new DateTime())
     public const COLLECTION = 4; // 0100 example: array<App\Example>
     public const SIMPLE_OBJECT_COLLECTION = 6; // 0110 example: new ArrayObject(array<App\Example>)
+    public const SIMPLE_OBJECTS_SIMPLE_OBJECT_COLLECTION = 7; // 0111 example: new ArrayObject(array<DateTime>)
+    public const SIMPLE_OBJECTS_COLLECTION = 13; // 1101 example: array<DateTime>
+
 
     /**
      * Specific property for any options you need to store and use.

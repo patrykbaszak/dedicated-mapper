@@ -39,8 +39,8 @@ class ExpressionBuilder
         protected FunctionInterface $functionBuilder,
         protected ?array $groups = null,
     ) {
-        $this->source = $getterBuilder->getBlueprint($blueprint->isCollection) ?? $blueprint;
-        $this->target = $setterBuilder->getBlueprint($blueprint->isCollection) ?? $blueprint;
+        $this->source = $getterBuilder->getBlueprint($blueprint->isCollection) ?? clone $blueprint;
+        $this->target = $setterBuilder->getBlueprint($blueprint->isCollection) ?? clone $blueprint;
     }
 
     /**

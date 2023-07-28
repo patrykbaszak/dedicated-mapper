@@ -134,6 +134,31 @@ class AnonymousObjectGetterExpressionBuilderTest extends TestCase
         $this->assertEquals($data->$propertyName, $output->$propertyName);
     }
 
+    protected function assertIsOutputNotAsigned(string $key): void
+    {
+        $key = $this->explodeKey($key);
+        
+        if ($key[1]) {
+            throw new \LogicException('Cannot test not asigned output on property with throw exception on missing required value.');
+        }
+        if ($key[2]) {
+            throw new \LogicException('Cannot test not asigned output on property with default value.');
+        }
+        if ($key[4]) {
+            throw new \LogicException('Cannot test not asigned output on property with not found callback.');
+        }
+
+        $data = (object) [];
+        $expression = $this->getExpression(...$key);
+        eval($expression);
+
+        if (isset($output)) {
+            $this->assertEmpty((array) $output);
+        } else {
+            $this->assertFalse(isset($output));
+        }
+    }
+
     protected function assertIsSimpleObject(string $key): void
     {
         $key = $this->explodeKey($key);
@@ -285,8 +310,9 @@ class AnonymousObjectGetterExpressionBuilderTest extends TestCase
     public function testGetter00010(): void
     {
         $key = '00010';
-        $this->assertIsOutputAsigned($key);
         $this->assertHasCallback($key);
+        $this->assertIsOutputNotAsigned($key);
+        $this->assertIsOutputAsigned($key);
     }
 
     /** @test */
@@ -405,6 +431,7 @@ class AnonymousObjectGetterExpressionBuilderTest extends TestCase
     {
         $key = '10000';
         $this->assertIsOutputAsigned($key);
+        $this->assertIsOutputNotAsigned($key);
         $this->assertIsSimpleObject($key);
     }
 
@@ -422,6 +449,7 @@ class AnonymousObjectGetterExpressionBuilderTest extends TestCase
     {
         $key = '10010';
         $this->assertIsOutputAsigned($key);
+        $this->assertIsOutputNotAsigned($key);
         $this->assertIsSimpleObject($key);
         $this->assertHasCallback($key);
     }
