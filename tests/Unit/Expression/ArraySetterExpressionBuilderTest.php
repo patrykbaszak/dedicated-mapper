@@ -392,14 +392,14 @@ class ArraySetterExpressionBuilderTest extends TestCase
     }
 
     /** @test */
-    public function testGetter000000(): void
+    public function testSetter000000(): void
     {
         $key = '000000';
         $this->assertIsOutputAsigned($key);
     }
 
     /** @test */
-    public function testGetter000001(): void
+    public function testSetter000001(): void
     {
         $key = '000001';
         $this->assertIsOutputAsigned($key);
@@ -407,14 +407,14 @@ class ArraySetterExpressionBuilderTest extends TestCase
     }
 
     /** @test */
-    public function testGetter000010(): void
+    public function testSetter000010(): void
     {
         $key = '000010';
         $this->assertIsOutputAsigned($key);
     }
 
     /** @test */
-    public function testGetter000011(): void
+    public function testSetter000011(): void
     {
         $key = '000011';
         $this->assertIsOutputAsigned($key);
@@ -422,7 +422,7 @@ class ArraySetterExpressionBuilderTest extends TestCase
     }
 
     /** @test */
-    public function testGetter000100(): void
+    public function testSetter000100(): void
     {
         $key = '000100';
         $this->assertIsOutputAsigned($key);
@@ -430,7 +430,7 @@ class ArraySetterExpressionBuilderTest extends TestCase
     }
 
     /** @test */
-    public function testGetter000101(): void
+    public function testSetter000101(): void
     {
         $key = '000101';
         $this->assertIsOutputAsigned($key);
@@ -439,7 +439,7 @@ class ArraySetterExpressionBuilderTest extends TestCase
     }
 
     /** @test */
-    public function testGetter000110(): void
+    public function testSetter000110(): void
     {
         $key = '000110';
         $this->assertIsOutputAsigned($key);
@@ -448,7 +448,7 @@ class ArraySetterExpressionBuilderTest extends TestCase
     }
 
     /** @test */
-    public function testGetter000111(): void
+    public function testSetter000111(): void
     {
         $key = '000111';
         $this->assertIsOutputAsigned($key);
@@ -458,7 +458,7 @@ class ArraySetterExpressionBuilderTest extends TestCase
     }
 
     /** @test */
-    public function testGetter001000(): void
+    public function testSetter001000(): void
     {
         $key = '001000';
         $this->assertIsOutputAsigned($key);
@@ -466,7 +466,7 @@ class ArraySetterExpressionBuilderTest extends TestCase
     }
 
     /** @test */
-    public function testGetter001001(): void
+    public function testSetter001001(): void
     {
         $key = '001001';
         $this->assertIsOutputAsigned($key);
@@ -475,7 +475,7 @@ class ArraySetterExpressionBuilderTest extends TestCase
     }
 
     /** @test */
-    public function testGetter001010(): void
+    public function testSetter001010(): void
     {
         $key = '001010';
         $this->assertIsOutputAsigned($key);
@@ -483,7 +483,7 @@ class ArraySetterExpressionBuilderTest extends TestCase
     }
 
     /** @test */
-    public function testGetter001011(): void
+    public function testSetter001011(): void
     {
         $key = '001011';
         $this->assertIsOutputAsigned($key);
@@ -492,7 +492,7 @@ class ArraySetterExpressionBuilderTest extends TestCase
     }
 
     /** @test */
-    public function testGetter001100(): void
+    public function testSetter001100(): void
     {
         $key = '001100';
         $this->assertIsOutputAsigned($key);
@@ -501,7 +501,7 @@ class ArraySetterExpressionBuilderTest extends TestCase
     }
 
     /** @test */
-    public function testGetter001101(): void
+    public function testSetter001101(): void
     {
         $key = '001101';
         $this->assertIsOutputAsigned($key);
@@ -511,7 +511,7 @@ class ArraySetterExpressionBuilderTest extends TestCase
     }
 
     /** @test */
-    public function testGetter001110(): void
+    public function testSetter001110(): void
     {
         $key = '001110';
         $this->assertIsOutputAsigned($key);
@@ -521,7 +521,7 @@ class ArraySetterExpressionBuilderTest extends TestCase
     }
 
     /** @test */
-    public function testGetter001111(): void
+    public function testSetter001111(): void
     {
         $key = '001111';
         $this->assertIsOutputAsigned($key);
@@ -532,7 +532,7 @@ class ArraySetterExpressionBuilderTest extends TestCase
     }
 
     /** @test */
-    public function testGetter010000(): void
+    public function testSetter010000(): void
     {
         $key = '010000';
         $this->assertIsOutputAsigned($key);
@@ -540,7 +540,7 @@ class ArraySetterExpressionBuilderTest extends TestCase
     }
 
     /** @test */
-    public function testGetter010001(): void
+    public function testSetter010001(): void
     {
         $key = '010001';
         $this->assertIsOutputAsigned($key);
@@ -549,7 +549,7 @@ class ArraySetterExpressionBuilderTest extends TestCase
     }
 
     /** @test */
-    public function testGetter011000(): void
+    public function testSetter011000(): void
     {
         $key = '011000';
         $this->assertIsOutputAsigned($key);
@@ -558,7 +558,7 @@ class ArraySetterExpressionBuilderTest extends TestCase
     }
 
     /** @test */
-    public function testGetter011001(): void
+    public function testSetter011001(): void
     {
         $key = '011001';
         $this->assertIsOutputAsigned($key);
@@ -568,7 +568,7 @@ class ArraySetterExpressionBuilderTest extends TestCase
     }
 
     /** @test */
-    public function testGetter100000(): void
+    public function testSetter100000(): void
     {
         $key = '100000';
         $this->assertIsOutputAsigned($key);
@@ -576,7 +576,7 @@ class ArraySetterExpressionBuilderTest extends TestCase
     }
 
     /** @test */
-    public function testGetter100001(): void
+    public function testSetter100001(): void
     {
         $key = '100001';
         $this->assertIsOutputAsigned($key);
@@ -585,7 +585,7 @@ class ArraySetterExpressionBuilderTest extends TestCase
     }
 
     /** @test */
-    public function testGetter100010(): void
+    public function testSetter100010(): void
     {
         $key = '100010';
         $this->assertIsOutputAsigned($key);
@@ -594,7 +594,7 @@ class ArraySetterExpressionBuilderTest extends TestCase
     }
 
     /** @test */
-    public function testGetter100011(): void
+    public function testSetter100011(): void
     {
         $key = '100011';
         $this->assertIsOutputAsigned($key);
@@ -604,7 +604,7 @@ class ArraySetterExpressionBuilderTest extends TestCase
     }
 
     /** @test */
-    public function testGetter100100(): void
+    public function testSetter100100(): void
     {
         $key = '100100';
         $this->assertIsOutputAsigned($key);
@@ -613,7 +613,7 @@ class ArraySetterExpressionBuilderTest extends TestCase
     }
 
     /** @test */
-    public function testGetter100101(): void
+    public function testSetter100101(): void
     {
         $key = '100101';
         $this->assertIsOutputAsigned($key);
@@ -623,7 +623,7 @@ class ArraySetterExpressionBuilderTest extends TestCase
     }
 
     /** @test */
-    public function testGetter100110(): void
+    public function testSetter100110(): void
     {
         $key = '100110';
         $this->assertIsOutputAsigned($key);
@@ -633,7 +633,7 @@ class ArraySetterExpressionBuilderTest extends TestCase
     }
 
     /** @test */
-    public function testGetter100111(): void
+    public function testSetter100111(): void
     {
         $key = '100111';
         $this->assertIsOutputAsigned($key);
@@ -644,7 +644,7 @@ class ArraySetterExpressionBuilderTest extends TestCase
     }
 
     /** @test */
-    public function testGetter101000(): void
+    public function testSetter101000(): void
     {
         $key = '101000';
         $this->assertIsOutputAsigned($key);
@@ -653,7 +653,7 @@ class ArraySetterExpressionBuilderTest extends TestCase
     }
 
     /** @test */
-    public function testGetter101001(): void
+    public function testSetter101001(): void
     {
         $key = '101001';
         $this->assertIsOutputAsigned($key);
@@ -663,7 +663,7 @@ class ArraySetterExpressionBuilderTest extends TestCase
     }
 
     /** @test */
-    public function testGetter101010(): void
+    public function testSetter101010(): void
     {
         $key = '101010';
         $this->assertIsOutputAsigned($key);
@@ -673,7 +673,7 @@ class ArraySetterExpressionBuilderTest extends TestCase
     }
 
     /** @test */
-    public function testGetter101011(): void
+    public function testSetter101011(): void
     {
         $key = '101011';
         $this->assertIsOutputAsigned($key);
@@ -684,7 +684,7 @@ class ArraySetterExpressionBuilderTest extends TestCase
     }
 
     /** @test */
-    public function testGetter101100(): void
+    public function testSetter101100(): void
     {
         $key = '101100';
         $this->assertIsOutputAsigned($key);
@@ -694,7 +694,7 @@ class ArraySetterExpressionBuilderTest extends TestCase
     }
 
     /** @test */
-    public function testGetter101101(): void
+    public function testSetter101101(): void
     {
         $key = '101101';
         $this->assertIsOutputAsigned($key);
@@ -705,7 +705,7 @@ class ArraySetterExpressionBuilderTest extends TestCase
     }
 
     /** @test */
-    public function testGetter101110(): void
+    public function testSetter101110(): void
     {
         $key = '101110';
         $this->assertIsOutputAsigned($key);
@@ -716,7 +716,7 @@ class ArraySetterExpressionBuilderTest extends TestCase
     }
 
     /** @test */
-    public function testGetter101111(): void
+    public function testSetter101111(): void
     {
         $key = '101111';
         $this->assertIsOutputAsigned($key);
@@ -728,7 +728,7 @@ class ArraySetterExpressionBuilderTest extends TestCase
     }
 
     /** @test */
-    public function testGetter110000(): void
+    public function testSetter110000(): void
     {
         $key = '110000';
         $this->assertIsOutputAsigned($key);
@@ -737,7 +737,7 @@ class ArraySetterExpressionBuilderTest extends TestCase
     }
 
     /** @test */
-    public function testGetter110001(): void
+    public function testSetter110001(): void
     {
         $key = '110001';
         $this->assertIsOutputAsigned($key);
@@ -747,7 +747,7 @@ class ArraySetterExpressionBuilderTest extends TestCase
     }
 
     /** @test */
-    public function testGetter111000(): void
+    public function testSetter111000(): void
     {
         $key = '111000';
         $this->assertIsOutputAsigned($key);
@@ -757,7 +757,7 @@ class ArraySetterExpressionBuilderTest extends TestCase
     }
 
     /** @test */
-    public function testGetter111001(): void
+    public function testSetter111001(): void
     {
         $key = '111001';
         $this->assertIsOutputAsigned($key);
