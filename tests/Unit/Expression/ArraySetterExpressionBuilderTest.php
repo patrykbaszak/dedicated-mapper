@@ -7,9 +7,16 @@ namespace PBaszak\DedicatedMapperBundle\Tests\Unit\Expression;
 use ArrayObject;
 use DateTime;
 use LogicException;
+use PBaszak\DedicatedMapperBundle\Attribute\MappingCallback;
 use PBaszak\DedicatedMapperBundle\Attribute\SimpleObject;
+use PBaszak\DedicatedMapperBundle\Expression\Assets\Expression;
+use PBaszak\DedicatedMapperBundle\Expression\Assets\FunctionExpression;
 use PBaszak\DedicatedMapperBundle\Expression\Builder\ArrayExpressionBuilder;
+use PBaszak\DedicatedMapperBundle\Expression\Builder\FunctionExpressionBuilder;
+use PBaszak\DedicatedMapperBundle\Expression\ExpressionBuilder;
+use PBaszak\DedicatedMapperBundle\Properties\Blueprint;
 use PHPUnit\Framework\TestCase;
+use ReflectionClass;
 
 class ArraySetterExpressionTester
 {
@@ -18,13 +25,15 @@ class ArraySetterExpressionTester
 
     #[SimpleObject(deconstructor: 'format', deconstructorArguments: ['Y-m-d'])]
     public ?DateTime $test3 = null;
+
+    public DateTime $test4;
 }
 
 class NestedArraySetterExpressionTester
 {
     public string $test;
     public bool $test2;
-    public ArraySetterExpressionTester $test3;
+    public ArraySetterExpressionTester $test0;
 
     /** @var ArraySetterExpressionTester[] */
     public ?ArrayObject $test4 = null;
@@ -50,8 +59,74 @@ class ArraySetterExpressionBuilderTest extends TestCase
         bool $isSimpleObject,
         bool $hasSimpleObjectDeconstructor,
         bool $isVarVariableUsed,
+        string $class,
+        string $property
     ): string {
-        return '';
+        if ($hasFunction && $isSimpleObject) {
+            throw new LogicException('Function cannot be used with simple object.');
+        }
+        
+        if ($isCollection && (!$hasFunction && !$isSimpleObject)) {
+            throw new LogicException('Collection can be used only with function or simple object.');
+        }
+
+        if ($hasFunction && !in_array($property, ['test0', 'test4'])) {
+            throw new LogicException('Property must be test0 or test4.');
+        }
+
+        if ($isSimpleObject && !in_array($property, ['test3', 'test4'])) {
+            throw new LogicException('Property must be test3 or test4.');
+        }
+
+        if ($hasSimpleObjectDeconstructor && !in_array($property, ['test3'])) {
+            throw new LogicException('Property must be test3.');
+        }
+
+        $blueprint = Blueprint::create($class, $isCollection, null);
+        $sourceProperty = $blueprint->getProperty($property);
+        $targetProperty = clone $sourceProperty;
+
+        $expressionBuilder = (new ExpressionBuilder(
+            $blueprint,
+            new ArrayExpressionBuilder(),
+            new ArrayExpressionBuilder(),
+            new FunctionExpressionBuilder()
+        ))->build(false);
+        $reflection = new ReflectionClass($expressionBuilder);
+
+        if ($isVarVariableUsed) {
+            $callbacks = array_merge($callbacks ?? [], [new MappingCallback("\n")]);
+        }
+
+        if ($hasPathUsed) {
+            $initialExpression = "\$path = 'root';\n";
+        }
+
+        $function = $hasFunction ? $reflection->getMethod('newFunctionExpression')->invokeArgs(
+            $expressionBuilder,
+            [
+                $sourceProperty->blueprint,
+                $sourceProperty->blueprint,
+                $targetProperty->blueprint
+            ]
+        ) : null;
+        if ($function) {
+            if ($hasPathUsed) {
+                $function->pathVariable = 'path';
+            }
+        }
+
+        return ($initialExpression ?? '') . $reflection->getMethod('newPropertyExpression')->invokeArgs(
+            $expressionBuilder,
+            [
+                $sourceProperty,
+                $targetProperty,
+                $function,
+                $hasFunction ? 'function' : null,
+                $isCollection,
+                $callbacks ?? [],
+            ]
+        )->toString();
     }
 
     /** @return bool[] */
@@ -63,6 +138,40 @@ class ArraySetterExpressionBuilderTest extends TestCase
     protected function assertIsOutputAsigned(string $key): void
     {
         $key = $this->explodeKey($key);
+
+        if (!$key[0] && !$key[1] && !$key[3] && !$key[4]) {
+            $class = ArraySetterExpressionTester::class;
+            $property = 'test';
+            $data = [
+                $property => 'test'
+            ];
+        } elseif (!$key[1] && ($key[3] || $key[4])) {
+            $class = ArraySetterExpressionTester::class;
+            $property = 'test3';
+            $data = [
+                $property => '2021-01-01'
+            ];
+        } elseif ($key[1]) {
+            $class = NestedArraySetterExpressionTester::class;
+            $property = 'test0';
+            $data = [
+                $property => [
+                    'test' => 'test',
+                    'test2' => true,
+                    'test3' => '2021-01-01',
+                ]
+            ];
+        }
+
+        $args = array_merge($key, [$class, $property]);
+        $expression = $this->getExpression(...$args);
+        eval($expression);
+
+        if (!isset($output)) {
+            throw new LogicException('Output is not set.');
+        }
+
+        $this->assertEquals($data[$property], $output[$property]);
     }
 
     protected function assertIsAsignedCollection(string $key): void
@@ -89,65 +198,136 @@ class ArraySetterExpressionBuilderTest extends TestCase
             throw new LogicException('Function is not used.');
         }
 
+        $class = NestedArraySetterExpressionTester::class;
+        $property = 'test0';
         $data = [
-            'test' => 'test',
-            'test2' => true,
-        ];
-    }
-
-    protected function assertIsAsignedPath(string $key): void
-    {
-        $key = $this->explodeKey($key);
-
-        $data = [
-            'test' => 'test',
-            'test2' => true,
-            'test3' => [
+            $property => [
                 'test' => 'test',
                 'test2' => true,
+                'test3' => '2021-01-01',
             ]
         ];
-    }
-
-    protected function assertIsAsignedSimpleObject(string $key): void
-    {
-        $key = $this->explodeKey($key);
-
-        if (!$key[3]) {
-            throw new LogicException('Simple object is not used.');
-        }
-
-        $data = [
-            'test' => 'test',
-            'test2' => true,
-            'test4' => [
-                [
-                    'test' => 'test',
-                    'test2' => true,
-                    'test3' => '2021-01-01 15:30:00',
-                ],
-                [
-                    'test' => 'test2',
-                    'test2' => false,
-                    'test3' => '2021-01-01 15:30:00',
-                ]
-            ]
-        ];
-
-
-        $expression = $this->getExpression(...$key);
+        $args = array_merge($key, [$class, $property]);
+        $expression = $this->getExpression(...$args);
         eval($expression);
 
         if (!isset($output)) {
             throw new LogicException('Output is not set.');
         }
 
-        $this->assertInstanceOf(ArrayObject::class, $output['test4']);
+        $this->assertTrue(isset($function));
+        $this->assertTrue(isset($output[$property]));
+    }
+
+    protected function assertIsAsignedPath(string $key): void
+    {
+        $key = $this->explodeKey($key);
+
+        if (!$key[2]) {
+            throw new LogicException('Path is not used.');
+        }
+
+        if (!$key[0] && !$key[1]) {
+            $class = ArraySetterExpressionTester::class;
+            if ($key[3] || $key[4]) {
+                $property = 'test3';
+                $data = [
+                    $property => '2021-01-01'
+                ];
+            } else {
+                $property = 'test';
+                $data = [
+                    $property => 'test',
+                ];
+            }
+        } elseif ($key[1]) {
+            $class = NestedArraySetterExpressionTester::class;
+            $property = 'test0';
+            $data = [
+                $property => [
+                    'test' => 'test',
+                    'test2' => true,
+                    'test3' => '2021-01-01',
+                ]
+            ];
+        }
+
+        $args = array_merge($key, [$class, $property]);
+        $expression = $this->getExpression(...$args);
+        eval($expression);
+
+        $this->assertTrue(isset($path));
+    }
+
+    protected function assertIsAsignedSimpleObject(string $key): void
+    {
+        $key = $this->explodeKey($key);
+
+        if ($key[1]) {
+            throw new LogicException('Function cannot be used for simple object.');
+        }
+
+        if (!$key[3]) {
+            throw new LogicException('Simple object is not used.');
+        }
+
+        if ($key[0] && !$key[4]) {
+            $class = NestedArraySetterExpressionTester::class;
+            $property = 'test4';
+            $data = [
+                $property => [
+                    [
+                        'test' => 'test',
+                        'test2' => true,
+                        'test3' => '2021-01-01 15:30:00',
+                    ],
+                    [
+                        'test' => 'test2',
+                        'test2' => false,
+                        'test3' => '2021-01-01 15:30:00',
+                    ]
+                ]
+            ];
+            $instanceOf = ArrayObject::class;
+        } elseif (!$key[0] && !$key[4]) {
+            $class = ArraySetterExpressionTester::class;
+            $property = 'test4';
+            $data = [
+                $property => '2021-01-01 15:30:00'
+            ];
+            $instanceOf = DateTime::class;
+        } elseif ($key[4]) {
+            $class = ArraySetterExpressionTester::class;
+            $property = 'test3';
+            $data = [
+                $property => '2021-01-01'
+            ];
+            $instanceOf = 'string';
+        }
+
+        $args = array_merge($key, [$class, $property]);
+        $expression = $this->getExpression(...$args);
+        eval($expression);
+
+        if (!isset($output)) {
+            throw new LogicException('Output is not set.');
+        }
+
+        if ($instanceOf !== 'string') {
+            $this->assertInstanceOf($instanceOf, $output[$property]);
+        } else {
+            $this->assertTrue(is_string($output[$property]));
+            $this->assertEquals($data[$property], $output[$property]);
+        }
     }
 
     protected function assertIsAsignedSimpleObjectDeconstructor(string $key): void
     {
         $key = $this->explodeKey($key);
+
+        if ($key[1]) {
+            throw new LogicException('Function cannot be used for simple object.');
+        }
 
         if (!$key[3]) {
             throw new LogicException('Simple object is not used.');
@@ -158,12 +338,11 @@ class ArraySetterExpressionBuilderTest extends TestCase
         }
 
         $data = [
-            'test' => 'test',
-            'test2' => true,
             'test3' => '2021-01-01 15:30:00',
         ];
 
-        $expression = $this->getExpression(...$key);
+        $args = array_merge($key, [ArraySetterExpressionTester::class, 'test3']);
+        $expression = $this->getExpression(...$args);
         eval($expression);
 
         if (!isset($output)) {
@@ -181,16 +360,32 @@ class ArraySetterExpressionBuilderTest extends TestCase
             throw new LogicException('Var variable is not used.');
         }
 
-        $data = [
-            'test' => 'test',
-            'test2' => true,
-            'test3' => [
-                'test' => 'test',
-                'test2' => true,
-            ]
-        ];
+        if ($key[1]) {
+            $class = NestedArraySetterExpressionTester::class;
+            $property = 'test0';
+            $data = [
+                $property => [
+                    'test' => 'test',
+                    'test2' => true,
+                    'test3' => '2021-01-01',
+                ]
+            ];
+        } else if ($key[3] || $key[4]) {
+            $class = ArraySetterExpressionTester::class;
+            $property = 'test3';
+            $data = [
+                $property => '2021-01-01'
+            ];
+        } else {
+            $class = ArraySetterExpressionTester::class;
+            $property = 'test';
+            $data = [
+                $property => 'test',
+            ];
+        }
 
-        $expression = $this->getExpression(...$key);
+        $args = array_merge($key, [$class, $property]);
+        $expression = $this->getExpression(...$args);
         eval($expression);
 
         $this->assertTrue(isset($var));
@@ -208,7 +403,7 @@ class ArraySetterExpressionBuilderTest extends TestCase
     {
         $key = '000001';
         $this->assertIsOutputAsigned($key);
-        $this->assertIsAsignedCollection($key);
+        $this->assertIsAssignedVarVariable($key);
     }
 
     /** @test */
@@ -216,7 +411,6 @@ class ArraySetterExpressionBuilderTest extends TestCase
     {
         $key = '000010';
         $this->assertIsOutputAsigned($key);
-        $this->assertIsAsignedFunction($key);
     }
 
     /** @test */
@@ -224,8 +418,7 @@ class ArraySetterExpressionBuilderTest extends TestCase
     {
         $key = '000011';
         $this->assertIsOutputAsigned($key);
-        $this->assertIsAsignedCollection($key);
-        $this->assertIsAsignedFunction($key);
+        $this->assertIsAssignedVarVariable($key);
     }
 
     /** @test */
@@ -233,7 +426,7 @@ class ArraySetterExpressionBuilderTest extends TestCase
     {
         $key = '000100';
         $this->assertIsOutputAsigned($key);
-        $this->assertIsAsignedPath($key);
+        $this->assertIsAsignedSimpleObject($key);
     }
 
     /** @test */
@@ -241,8 +434,8 @@ class ArraySetterExpressionBuilderTest extends TestCase
     {
         $key = '000101';
         $this->assertIsOutputAsigned($key);
-        $this->assertIsAsignedCollection($key);
-        $this->assertIsAsignedPath($key);
+        $this->assertIsAsignedSimpleObject($key);
+        $this->assertIsAssignedVarVariable($key);
     }
 
     /** @test */
@@ -250,8 +443,8 @@ class ArraySetterExpressionBuilderTest extends TestCase
     {
         $key = '000110';
         $this->assertIsOutputAsigned($key);
-        $this->assertIsAsignedFunction($key);
-        $this->assertIsAsignedPath($key);
+        $this->assertIsAsignedSimpleObject($key);
+        $this->assertIsAsignedSimpleObjectDeconstructor($key);
     }
 
     /** @test */
@@ -259,9 +452,9 @@ class ArraySetterExpressionBuilderTest extends TestCase
     {
         $key = '000111';
         $this->assertIsOutputAsigned($key);
-        $this->assertIsAsignedCollection($key);
-        $this->assertIsAsignedFunction($key);
-        $this->assertIsAsignedPath($key);
+        $this->assertIsAsignedSimpleObject($key);
+        $this->assertIsAsignedSimpleObjectDeconstructor($key);
+        $this->assertIsAssignedVarVariable($key);
     }
 
     /** @test */
@@ -269,7 +462,7 @@ class ArraySetterExpressionBuilderTest extends TestCase
     {
         $key = '001000';
         $this->assertIsOutputAsigned($key);
-        $this->assertIsAsignedSimpleObject($key);
+        $this->assertIsAsignedPath($key);
     }
 
     /** @test */
@@ -277,8 +470,8 @@ class ArraySetterExpressionBuilderTest extends TestCase
     {
         $key = '001001';
         $this->assertIsOutputAsigned($key);
-        $this->assertIsAsignedCollection($key);
-        $this->assertIsAsignedSimpleObject($key);
+        $this->assertIsAsignedPath($key);
+        $this->assertIsAssignedVarVariable($key);
     }
 
     /** @test */
@@ -286,8 +479,7 @@ class ArraySetterExpressionBuilderTest extends TestCase
     {
         $key = '001010';
         $this->assertIsOutputAsigned($key);
-        $this->assertIsAsignedFunction($key);
-        $this->assertIsAsignedSimpleObject($key);
+        $this->assertIsAsignedPath($key);
     }
 
     /** @test */
@@ -295,9 +487,8 @@ class ArraySetterExpressionBuilderTest extends TestCase
     {
         $key = '001011';
         $this->assertIsOutputAsigned($key);
-        $this->assertIsAsignedCollection($key);
-        $this->assertIsAsignedFunction($key);
-        $this->assertIsAsignedSimpleObject($key);
+        $this->assertIsAsignedPath($key);
+        $this->assertIsAssignedVarVariable($key);
     }
 
     /** @test */
@@ -314,9 +505,9 @@ class ArraySetterExpressionBuilderTest extends TestCase
     {
         $key = '001101';
         $this->assertIsOutputAsigned($key);
-        $this->assertIsAsignedCollection($key);
         $this->assertIsAsignedPath($key);
         $this->assertIsAsignedSimpleObject($key);
+        $this->assertIsAssignedVarVariable($key);
     }
 
     /** @test */
@@ -324,9 +515,9 @@ class ArraySetterExpressionBuilderTest extends TestCase
     {
         $key = '001110';
         $this->assertIsOutputAsigned($key);
-        $this->assertIsAsignedFunction($key);
         $this->assertIsAsignedPath($key);
         $this->assertIsAsignedSimpleObject($key);
+        $this->assertIsAsignedSimpleObjectDeconstructor($key);
     }
 
     /** @test */
@@ -334,10 +525,10 @@ class ArraySetterExpressionBuilderTest extends TestCase
     {
         $key = '001111';
         $this->assertIsOutputAsigned($key);
-        $this->assertIsAsignedCollection($key);
-        $this->assertIsAsignedFunction($key);
         $this->assertIsAsignedPath($key);
         $this->assertIsAsignedSimpleObject($key);
+        $this->assertIsAsignedSimpleObjectDeconstructor($key);
+        $this->assertIsAssignedVarVariable($key);
     }
 
     /** @test */
@@ -345,7 +536,7 @@ class ArraySetterExpressionBuilderTest extends TestCase
     {
         $key = '010000';
         $this->assertIsOutputAsigned($key);
-        $this->assertIsAsignedSimpleObjectDeconstructor($key);
+        $this->assertIsAsignedFunction($key);
     }
 
     /** @test */
@@ -353,67 +544,8 @@ class ArraySetterExpressionBuilderTest extends TestCase
     {
         $key = '010001';
         $this->assertIsOutputAsigned($key);
-        $this->assertIsAsignedCollection($key);
-        $this->assertIsAsignedSimpleObjectDeconstructor($key);
-    }
-
-    /** @test */
-    public function testGetter010010(): void
-    {
-        $key = '010010';
-        $this->assertIsOutputAsigned($key);
         $this->assertIsAsignedFunction($key);
-        $this->assertIsAsignedSimpleObjectDeconstructor($key);
-    }
-
-    /** @test */
-    public function testGetter010011(): void
-    {
-        $key = '010011';
-        $this->assertIsOutputAsigned($key);
-        $this->assertIsAsignedCollection($key);
-        $this->assertIsAsignedFunction($key);
-        $this->assertIsAsignedSimpleObjectDeconstructor($key);
-    }
-
-    /** @test */
-    public function testGetter010100(): void
-    {
-        $key = '010100';
-        $this->assertIsOutputAsigned($key);
-        $this->assertIsAsignedPath($key);
-        $this->assertIsAsignedSimpleObjectDeconstructor($key);
-    }
-
-    /** @test */
-    public function testGetter010101(): void
-    {
-        $key = '010101';
-        $this->assertIsOutputAsigned($key);
-        $this->assertIsAsignedCollection($key);
-        $this->assertIsAsignedPath($key);
-        $this->assertIsAsignedSimpleObjectDeconstructor($key);
-    }
-
-    /** @test */
-    public function testGetter010110(): void
-    {
-        $key = '010110';
-        $this->assertIsOutputAsigned($key);
-        $this->assertIsAsignedFunction($key);
-        $this->assertIsAsignedPath($key);
-        $this->assertIsAsignedSimpleObjectDeconstructor($key);
-    }
-
-    /** @test */
-    public function testGetter010111(): void
-    {
-        $key = '010111';
-        $this->assertIsOutputAsigned($key);
-        $this->assertIsAsignedCollection($key);
-        $this->assertIsAsignedFunction($key);
-        $this->assertIsAsignedPath($key);
-        $this->assertIsAsignedSimpleObjectDeconstructor($key);
+        $this->assertIsAssignedVarVariable($key);
     }
 
     /** @test */
@@ -421,8 +553,8 @@ class ArraySetterExpressionBuilderTest extends TestCase
     {
         $key = '011000';
         $this->assertIsOutputAsigned($key);
-        $this->assertIsAsignedSimpleObject($key);
-        $this->assertIsAsignedSimpleObjectDeconstructor($key);
+        $this->assertIsAsignedFunction($key);
+        $this->assertIsAsignedPath($key);
     }
 
     /** @test */
@@ -430,74 +562,9 @@ class ArraySetterExpressionBuilderTest extends TestCase
     {
         $key = '011001';
         $this->assertIsOutputAsigned($key);
-        $this->assertIsAsignedCollection($key);
-        $this->assertIsAsignedSimpleObject($key);
-        $this->assertIsAsignedSimpleObjectDeconstructor($key);
-    }
-
-    /** @test */
-    public function testGetter011010(): void
-    {
-        $key = '011010';
-        $this->assertIsOutputAsigned($key);
-        $this->assertIsAsignedFunction($key);
-        $this->assertIsAsignedSimpleObject($key);
-        $this->assertIsAsignedSimpleObjectDeconstructor($key);
-    }
-
-    /** @test */
-    public function testGetter011011(): void
-    {
-        $key = '011011';
-        $this->assertIsOutputAsigned($key);
-        $this->assertIsAsignedCollection($key);
-        $this->assertIsAsignedFunction($key);
-        $this->assertIsAsignedSimpleObject($key);
-        $this->assertIsAsignedSimpleObjectDeconstructor($key);
-    }
-
-    /** @test */
-    public function testGetter011100(): void
-    {
-        $key = '011100';
-        $this->assertIsOutputAsigned($key);
-        $this->assertIsAsignedPath($key);
-        $this->assertIsAsignedSimpleObject($key);
-        $this->assertIsAsignedSimpleObjectDeconstructor($key);
-    }
-
-    /** @test */
-    public function testGetter011101(): void
-    {
-        $key = '011101';
-        $this->assertIsOutputAsigned($key);
-        $this->assertIsAsignedCollection($key);
-        $this->assertIsAsignedPath($key);
-        $this->assertIsAsignedSimpleObject($key);
-        $this->assertIsAsignedSimpleObjectDeconstructor($key);
-    }
-
-    /** @test */
-    public function testGetter011110(): void
-    {
-        $key = '011110';
-        $this->assertIsOutputAsigned($key);
         $this->assertIsAsignedFunction($key);
         $this->assertIsAsignedPath($key);
-        $this->assertIsAsignedSimpleObject($key);
-        $this->assertIsAsignedSimpleObjectDeconstructor($key);
-    }
-
-    /** @test */
-    public function testGetter011111(): void
-    {
-        $key = '011111';
-        $this->assertIsOutputAsigned($key);
-        $this->assertIsAsignedCollection($key);
-        $this->assertIsAsignedFunction($key);
-        $this->assertIsAsignedPath($key);
-        $this->assertIsAsignedSimpleObject($key);
-        $this->assertIsAsignedSimpleObjectDeconstructor($key);
+        $this->assertIsAssignedVarVariable($key);
     }
 
     /** @test */
@@ -505,7 +572,7 @@ class ArraySetterExpressionBuilderTest extends TestCase
     {
         $key = '100000';
         $this->assertIsOutputAsigned($key);
-        $this->assertIsAssignedVarVariable($key);
+        $this->assertIsAsignedCollection($key);
     }
 
     /** @test */
@@ -522,8 +589,8 @@ class ArraySetterExpressionBuilderTest extends TestCase
     {
         $key = '100010';
         $this->assertIsOutputAsigned($key);
-        $this->assertIsAsignedFunction($key);
-        $this->assertIsAssignedVarVariable($key);
+        $this->assertIsAsignedCollection($key);
+        $this->assertIsAsignedSimpleObjectDeconstructor($key);
     }
 
     /** @test */
@@ -532,7 +599,7 @@ class ArraySetterExpressionBuilderTest extends TestCase
         $key = '100011';
         $this->assertIsOutputAsigned($key);
         $this->assertIsAsignedCollection($key);
-        $this->assertIsAsignedFunction($key);
+        $this->assertIsAsignedSimpleObjectDeconstructor($key);
         $this->assertIsAssignedVarVariable($key);
     }
 
@@ -541,8 +608,8 @@ class ArraySetterExpressionBuilderTest extends TestCase
     {
         $key = '100100';
         $this->assertIsOutputAsigned($key);
-        $this->assertIsAsignedPath($key);
-        $this->assertIsAssignedVarVariable($key);
+        $this->assertIsAsignedCollection($key);
+        $this->assertIsAsignedSimpleObject($key);
     }
 
     /** @test */
@@ -551,7 +618,7 @@ class ArraySetterExpressionBuilderTest extends TestCase
         $key = '100101';
         $this->assertIsOutputAsigned($key);
         $this->assertIsAsignedCollection($key);
-        $this->assertIsAsignedPath($key);
+        $this->assertIsAsignedSimpleObject($key);
         $this->assertIsAssignedVarVariable($key);
     }
 
@@ -560,9 +627,9 @@ class ArraySetterExpressionBuilderTest extends TestCase
     {
         $key = '100110';
         $this->assertIsOutputAsigned($key);
-        $this->assertIsAsignedFunction($key);
-        $this->assertIsAsignedPath($key);
-        $this->assertIsAssignedVarVariable($key);
+        $this->assertIsAsignedCollection($key);
+        $this->assertIsAsignedSimpleObject($key);
+        $this->assertIsAsignedSimpleObjectDeconstructor($key);
     }
 
     /** @test */
@@ -571,8 +638,8 @@ class ArraySetterExpressionBuilderTest extends TestCase
         $key = '100111';
         $this->assertIsOutputAsigned($key);
         $this->assertIsAsignedCollection($key);
-        $this->assertIsAsignedFunction($key);
-        $this->assertIsAsignedPath($key);
+        $this->assertIsAsignedSimpleObject($key);
+        $this->assertIsAsignedSimpleObjectDeconstructor($key);
         $this->assertIsAssignedVarVariable($key);
     }
 
@@ -581,8 +648,8 @@ class ArraySetterExpressionBuilderTest extends TestCase
     {
         $key = '101000';
         $this->assertIsOutputAsigned($key);
-        $this->assertIsAsignedSimpleObject($key);
-        $this->assertIsAssignedVarVariable($key);
+        $this->assertIsAsignedCollection($key);
+        $this->assertIsAsignedPath($key);
     }
 
     /** @test */
@@ -591,7 +658,7 @@ class ArraySetterExpressionBuilderTest extends TestCase
         $key = '101001';
         $this->assertIsOutputAsigned($key);
         $this->assertIsAsignedCollection($key);
-        $this->assertIsAsignedSimpleObject($key);
+        $this->assertIsAsignedPath($key);
         $this->assertIsAssignedVarVariable($key);
     }
 
@@ -600,9 +667,9 @@ class ArraySetterExpressionBuilderTest extends TestCase
     {
         $key = '101010';
         $this->assertIsOutputAsigned($key);
-        $this->assertIsAsignedFunction($key);
-        $this->assertIsAsignedSimpleObject($key);
-        $this->assertIsAssignedVarVariable($key);
+        $this->assertIsAsignedCollection($key);
+        $this->assertIsAsignedPath($key);
+        $this->assertIsAsignedSimpleObjectDeconstructor($key);
     }
 
     /** @test */
@@ -611,8 +678,8 @@ class ArraySetterExpressionBuilderTest extends TestCase
         $key = '101011';
         $this->assertIsOutputAsigned($key);
         $this->assertIsAsignedCollection($key);
-        $this->assertIsAsignedFunction($key);
-        $this->assertIsAsignedSimpleObject($key);
+        $this->assertIsAsignedPath($key);
+        $this->assertIsAsignedSimpleObjectDeconstructor($key);
         $this->assertIsAssignedVarVariable($key);
     }
 
@@ -621,9 +688,9 @@ class ArraySetterExpressionBuilderTest extends TestCase
     {
         $key = '101100';
         $this->assertIsOutputAsigned($key);
+        $this->assertIsAsignedCollection($key);
         $this->assertIsAsignedPath($key);
         $this->assertIsAsignedSimpleObject($key);
-        $this->assertIsAssignedVarVariable($key);
     }
 
     /** @test */
@@ -642,10 +709,10 @@ class ArraySetterExpressionBuilderTest extends TestCase
     {
         $key = '101110';
         $this->assertIsOutputAsigned($key);
-        $this->assertIsAsignedFunction($key);
+        $this->assertIsAsignedCollection($key);
         $this->assertIsAsignedPath($key);
         $this->assertIsAsignedSimpleObject($key);
-        $this->assertIsAssignedVarVariable($key);
+        $this->assertIsAsignedSimpleObjectDeconstructor($key);
     }
 
     /** @test */
@@ -654,9 +721,9 @@ class ArraySetterExpressionBuilderTest extends TestCase
         $key = '101111';
         $this->assertIsOutputAsigned($key);
         $this->assertIsAsignedCollection($key);
-        $this->assertIsAsignedFunction($key);
         $this->assertIsAsignedPath($key);
         $this->assertIsAsignedSimpleObject($key);
+        $this->assertIsAsignedSimpleObjectDeconstructor($key);
         $this->assertIsAssignedVarVariable($key);
     }
 
@@ -665,8 +732,8 @@ class ArraySetterExpressionBuilderTest extends TestCase
     {
         $key = '110000';
         $this->assertIsOutputAsigned($key);
-        $this->assertIsAsignedSimpleObjectDeconstructor($key);
-        $this->assertIsAssignedVarVariable($key);
+        $this->assertIsAsignedCollection($key);
+        $this->assertIsAsignedFunction($key);
     }
 
     /** @test */
@@ -675,72 +742,7 @@ class ArraySetterExpressionBuilderTest extends TestCase
         $key = '110001';
         $this->assertIsOutputAsigned($key);
         $this->assertIsAsignedCollection($key);
-        $this->assertIsAsignedSimpleObjectDeconstructor($key);
-        $this->assertIsAssignedVarVariable($key);
-    }
-
-    /** @test */
-    public function testGetter110010(): void
-    {
-        $key = '110010';
-        $this->assertIsOutputAsigned($key);
         $this->assertIsAsignedFunction($key);
-        $this->assertIsAsignedSimpleObjectDeconstructor($key);
-        $this->assertIsAssignedVarVariable($key);
-    }
-
-    /** @test */
-    public function testGetter110011(): void
-    {
-        $key = '110011';
-        $this->assertIsOutputAsigned($key);
-        $this->assertIsAsignedCollection($key);
-        $this->assertIsAsignedFunction($key);
-        $this->assertIsAsignedSimpleObjectDeconstructor($key);
-        $this->assertIsAssignedVarVariable($key);
-    }
-
-    /** @test */
-    public function testGetter110100(): void
-    {
-        $key = '110100';
-        $this->assertIsOutputAsigned($key);
-        $this->assertIsAsignedPath($key);
-        $this->assertIsAsignedSimpleObjectDeconstructor($key);
-        $this->assertIsAssignedVarVariable($key);
-    }
-
-    /** @test */
-    public function testGetter110101(): void
-    {
-        $key = '110101';
-        $this->assertIsOutputAsigned($key);
-        $this->assertIsAsignedCollection($key);
-        $this->assertIsAsignedPath($key);
-        $this->assertIsAsignedSimpleObjectDeconstructor($key);
-        $this->assertIsAssignedVarVariable($key);
-    }
-
-    /** @test */
-    public function testGetter110110(): void
-    {
-        $key = '110110';
-        $this->assertIsOutputAsigned($key);
-        $this->assertIsAsignedFunction($key);
-        $this->assertIsAsignedPath($key);
-        $this->assertIsAsignedSimpleObjectDeconstructor($key);
-        $this->assertIsAssignedVarVariable($key);
-    }
-
-    /** @test */
-    public function testGetter110111(): void
-    {
-        $key = '110111';
-        $this->assertIsOutputAsigned($key);
-        $this->assertIsAsignedCollection($key);
-        $this->assertIsAsignedFunction($key);
-        $this->assertIsAsignedPath($key);
-        $this->assertIsAsignedSimpleObjectDeconstructor($key);
         $this->assertIsAssignedVarVariable($key);
     }
 
@@ -749,9 +751,9 @@ class ArraySetterExpressionBuilderTest extends TestCase
     {
         $key = '111000';
         $this->assertIsOutputAsigned($key);
-        $this->assertIsAsignedSimpleObject($key);
-        $this->assertIsAsignedSimpleObjectDeconstructor($key);
-        $this->assertIsAssignedVarVariable($key);
+        $this->assertIsAsignedCollection($key);
+        $this->assertIsAsignedFunction($key);
+        $this->assertIsAsignedPath($key);
     }
 
     /** @test */
@@ -760,79 +762,8 @@ class ArraySetterExpressionBuilderTest extends TestCase
         $key = '111001';
         $this->assertIsOutputAsigned($key);
         $this->assertIsAsignedCollection($key);
-        $this->assertIsAsignedSimpleObject($key);
-        $this->assertIsAsignedSimpleObjectDeconstructor($key);
-        $this->assertIsAssignedVarVariable($key);
-    }
-
-    /** @test */
-    public function testGetter111010(): void
-    {
-        $key = '111010';
-        $this->assertIsOutputAsigned($key);
-        $this->assertIsAsignedFunction($key);
-        $this->assertIsAsignedSimpleObject($key);
-        $this->assertIsAsignedSimpleObjectDeconstructor($key);
-        $this->assertIsAssignedVarVariable($key);
-    }
-
-    /** @test */
-    public function testGetter111011(): void
-    {
-        $key = '111011';
-        $this->assertIsOutputAsigned($key);
-        $this->assertIsAsignedCollection($key);
-        $this->assertIsAsignedFunction($key);
-        $this->assertIsAsignedSimpleObject($key);
-        $this->assertIsAsignedSimpleObjectDeconstructor($key);
-        $this->assertIsAssignedVarVariable($key);
-    }
-
-    /** @test */
-    public function testGetter111100(): void
-    {
-        $key = '111100';
-        $this->assertIsOutputAsigned($key);
-        $this->assertIsAsignedPath($key);
-        $this->assertIsAsignedSimpleObject($key);
-        $this->assertIsAsignedSimpleObjectDeconstructor($key);
-        $this->assertIsAssignedVarVariable($key);
-    }
-
-    /** @test */
-    public function testGetter111101(): void
-    {
-        $key = '111101';
-        $this->assertIsOutputAsigned($key);
-        $this->assertIsAsignedCollection($key);
-        $this->assertIsAsignedPath($key);
-        $this->assertIsAsignedSimpleObject($key);
-        $this->assertIsAsignedSimpleObjectDeconstructor($key);
-        $this->assertIsAssignedVarVariable($key);
-    }
-
-    /** @test */
-    public function testGetter111110(): void
-    {
-        $key = '111110';
-        $this->assertIsOutputAsigned($key);
         $this->assertIsAsignedFunction($key);
         $this->assertIsAsignedPath($key);
-        $this->assertIsAsignedSimpleObject($key);
-        $this->assertIsAsignedSimpleObjectDeconstructor($key);
-        $this->assertIsAssignedVarVariable($key);
-    }
-
-    /** @test */
-    public function testGetter111111(): void
-    {
-        $key = '111111';
-        $this->assertIsOutputAsigned($key);
-        $this->assertIsAsignedCollection($key);
-        $this->assertIsAsignedFunction($key);
-        $this->assertIsAsignedPath($key);
-        $this->assertIsAsignedSimpleObject($key);
-        $this->assertIsAsignedSimpleObjectDeconstructor($key);
         $this->assertIsAssignedVarVariable($key);
     }
 }

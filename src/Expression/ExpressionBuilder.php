@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PBaszak\DedicatedMapperBundle\Expression;
 
+use PBaszak\DedicatedMapperBundle\Attribute\MappingCallback;
 use PBaszak\DedicatedMapperBundle\Attribute\TargetProperty;
 use PBaszak\DedicatedMapperBundle\Contract\FunctionInterface;
 use PBaszak\DedicatedMapperBundle\Contract\GetterInterface;
@@ -81,14 +82,21 @@ class ExpressionBuilder
         return $this->mapper;
     }
 
-    protected function newPropertyExpression(Property $source, Property $target, FunctionExpression $function = null, string $functionVar = null, bool $isCollection = false): Expression
-    {
+    /** @param MappingCallback[] $callbacks */
+    protected function newPropertyExpression(
+        Property $source, 
+        Property $target, 
+        FunctionExpression $function = null, 
+        string $functionVar = null, 
+        bool $isCollection = false, 
+        array $callbacks = []
+    ): Expression {
         $expression = new Expression(
             $this->getterBuilder->getGetter($source),
             $this->setterBuilder->getSetter($target),
             $function,
             $this->modificators,
-            [], // this Expression Builder does not include own callbacks
+            $callbacks, // this Expression Builder does not include own callbacks
             $isCollection,
             $this->throwExceptionOnMissingProperty,
             functionVar: $functionVar,
