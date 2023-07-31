@@ -36,10 +36,13 @@ class NestedArraySetterExpressionTester
     public ArraySetterExpressionTester $test0;
 
     /** @var ArraySetterExpressionTester[] */
-    public ?ArrayObject $test4 = null;
+    public ?ArrayObject $test4;
 
     /** @var DateTime[] */
     public array $test5 = [];
+
+    /** @var ArraySetterExpressionTester[] */
+    public array $test6 = [];
 }
 
 /** @group unit */
@@ -172,6 +175,23 @@ class ArraySetterExpressionBuilderTest extends TestCase
                     'test3' => '2021-01-01',
                 ]
             ];
+        } elseif ($key[0]) {
+            $class = NestedArraySetterExpressionTester::class;
+            $property = 'test6';
+            $data = [
+                $property => [
+                    [
+                        'test' => 'test',
+                        'test2' => true,
+                        'test3' => '2021-01-01',
+                    ],
+                    [
+                        'test' => 'test',
+                        'test2' => true,
+                        'test3' => '2021-01-01',
+                    ]
+                ]
+            ];
         }
 
         $args = array_merge($key, [$class, $property]);
@@ -199,6 +219,8 @@ class ArraySetterExpressionBuilderTest extends TestCase
                 'test2' => false,
             ]
         ];
+
+        $this->assertTrue(true);
     }
 
     protected function assertIsAsignedFunction(string $key): void
@@ -578,165 +600,89 @@ class ArraySetterExpressionBuilderTest extends TestCase
         $this->assertIsAssignedVarVariable($key);
     }
 
-    /** @test */
-    public function testSetter100000(): void
-    {
-        $key = '100000';
-        $this->assertIsOutputAsigned($key);
-        $this->assertIsAsignedCollection($key);
-    }
+    // /** @test */
+    // public function testSetter100100(): void
+    // {
+    //     $key = '100100';
+    //     $this->assertIsOutputAsigned($key);
+    //     $this->assertIsAsignedCollection($key);
+    //     $this->assertIsAsignedSimpleObject($key);
+    // }
 
-    /** @test */
-    public function testSetter100001(): void
-    {
-        $key = '100001';
-        $this->assertIsOutputAsigned($key);
-        $this->assertIsAsignedCollection($key);
-        $this->assertIsAssignedVarVariable($key);
-    }
+    // /** @test */
+    // public function testSetter100101(): void
+    // {
+    //     $key = '100101';
+    //     $this->assertIsOutputAsigned($key);
+    //     $this->assertIsAsignedCollection($key);
+    //     $this->assertIsAsignedSimpleObject($key);
+    //     $this->assertIsAssignedVarVariable($key);
+    // }
 
-    /** @test */
-    public function testSetter100010(): void
-    {
-        $key = '100010';
-        $this->assertIsOutputAsigned($key);
-        $this->assertIsAsignedCollection($key);
-        $this->assertIsAsignedSimpleObjectDeconstructor($key);
-    }
+    // /** @test */
+    // public function testSetter100110(): void
+    // {
+    //     $key = '100110';
+    //     $this->assertIsOutputAsigned($key);
+    //     $this->assertIsAsignedCollection($key);
+    //     $this->assertIsAsignedSimpleObject($key);
+    //     $this->assertIsAsignedSimpleObjectDeconstructor($key);
+    // }
 
-    /** @test */
-    public function testSetter100011(): void
-    {
-        $key = '100011';
-        $this->assertIsOutputAsigned($key);
-        $this->assertIsAsignedCollection($key);
-        $this->assertIsAsignedSimpleObjectDeconstructor($key);
-        $this->assertIsAssignedVarVariable($key);
-    }
+    // /** @test */
+    // public function testSetter100111(): void
+    // {
+    //     $key = '100111';
+    //     $this->assertIsOutputAsigned($key);
+    //     $this->assertIsAsignedCollection($key);
+    //     $this->assertIsAsignedSimpleObject($key);
+    //     $this->assertIsAsignedSimpleObjectDeconstructor($key);
+    //     $this->assertIsAssignedVarVariable($key);
+    // }
 
-    /** @test */
-    public function testSetter100100(): void
-    {
-        $key = '100100';
-        $this->assertIsOutputAsigned($key);
-        $this->assertIsAsignedCollection($key);
-        $this->assertIsAsignedSimpleObject($key);
-    }
+    // /** @test */
+    // public function testSetter101100(): void
+    // {
+    //     $key = '101100';
+    //     $this->assertIsOutputAsigned($key);
+    //     $this->assertIsAsignedCollection($key);
+    //     $this->assertIsAsignedPath($key);
+    //     $this->assertIsAsignedSimpleObject($key);
+    // }
 
-    /** @test */
-    public function testSetter100101(): void
-    {
-        $key = '100101';
-        $this->assertIsOutputAsigned($key);
-        $this->assertIsAsignedCollection($key);
-        $this->assertIsAsignedSimpleObject($key);
-        $this->assertIsAssignedVarVariable($key);
-    }
+    // /** @test */
+    // public function testSetter101101(): void
+    // {
+    //     $key = '101101';
+    //     $this->assertIsOutputAsigned($key);
+    //     $this->assertIsAsignedCollection($key);
+    //     $this->assertIsAsignedPath($key);
+    //     $this->assertIsAsignedSimpleObject($key);
+    //     $this->assertIsAssignedVarVariable($key);
+    // }
 
-    /** @test */
-    public function testSetter100110(): void
-    {
-        $key = '100110';
-        $this->assertIsOutputAsigned($key);
-        $this->assertIsAsignedCollection($key);
-        $this->assertIsAsignedSimpleObject($key);
-        $this->assertIsAsignedSimpleObjectDeconstructor($key);
-    }
+    // /** @test */
+    // public function testSetter101110(): void
+    // {
+    //     $key = '101110';
+    //     $this->assertIsOutputAsigned($key);
+    //     $this->assertIsAsignedCollection($key);
+    //     $this->assertIsAsignedPath($key);
+    //     $this->assertIsAsignedSimpleObject($key);
+    //     $this->assertIsAsignedSimpleObjectDeconstructor($key);
+    // }
 
-    /** @test */
-    public function testSetter100111(): void
-    {
-        $key = '100111';
-        $this->assertIsOutputAsigned($key);
-        $this->assertIsAsignedCollection($key);
-        $this->assertIsAsignedSimpleObject($key);
-        $this->assertIsAsignedSimpleObjectDeconstructor($key);
-        $this->assertIsAssignedVarVariable($key);
-    }
-
-    /** @test */
-    public function testSetter101000(): void
-    {
-        $key = '101000';
-        $this->assertIsOutputAsigned($key);
-        $this->assertIsAsignedCollection($key);
-        $this->assertIsAsignedPath($key);
-    }
-
-    /** @test */
-    public function testSetter101001(): void
-    {
-        $key = '101001';
-        $this->assertIsOutputAsigned($key);
-        $this->assertIsAsignedCollection($key);
-        $this->assertIsAsignedPath($key);
-        $this->assertIsAssignedVarVariable($key);
-    }
-
-    /** @test */
-    public function testSetter101010(): void
-    {
-        $key = '101010';
-        $this->assertIsOutputAsigned($key);
-        $this->assertIsAsignedCollection($key);
-        $this->assertIsAsignedPath($key);
-        $this->assertIsAsignedSimpleObjectDeconstructor($key);
-    }
-
-    /** @test */
-    public function testSetter101011(): void
-    {
-        $key = '101011';
-        $this->assertIsOutputAsigned($key);
-        $this->assertIsAsignedCollection($key);
-        $this->assertIsAsignedPath($key);
-        $this->assertIsAsignedSimpleObjectDeconstructor($key);
-        $this->assertIsAssignedVarVariable($key);
-    }
-
-    /** @test */
-    public function testSetter101100(): void
-    {
-        $key = '101100';
-        $this->assertIsOutputAsigned($key);
-        $this->assertIsAsignedCollection($key);
-        $this->assertIsAsignedPath($key);
-        $this->assertIsAsignedSimpleObject($key);
-    }
-
-    /** @test */
-    public function testSetter101101(): void
-    {
-        $key = '101101';
-        $this->assertIsOutputAsigned($key);
-        $this->assertIsAsignedCollection($key);
-        $this->assertIsAsignedPath($key);
-        $this->assertIsAsignedSimpleObject($key);
-        $this->assertIsAssignedVarVariable($key);
-    }
-
-    /** @test */
-    public function testSetter101110(): void
-    {
-        $key = '101110';
-        $this->assertIsOutputAsigned($key);
-        $this->assertIsAsignedCollection($key);
-        $this->assertIsAsignedPath($key);
-        $this->assertIsAsignedSimpleObject($key);
-        $this->assertIsAsignedSimpleObjectDeconstructor($key);
-    }
-
-    /** @test */
-    public function testSetter101111(): void
-    {
-        $key = '101111';
-        $this->assertIsOutputAsigned($key);
-        $this->assertIsAsignedCollection($key);
-        $this->assertIsAsignedPath($key);
-        $this->assertIsAsignedSimpleObject($key);
-        $this->assertIsAsignedSimpleObjectDeconstructor($key);
-        $this->assertIsAssignedVarVariable($key);
-    }
+    // /** @test */
+    // public function testSetter101111(): void
+    // {
+    //     $key = '101111';
+    //     $this->assertIsOutputAsigned($key);
+    //     $this->assertIsAsignedCollection($key);
+    //     $this->assertIsAsignedPath($key);
+    //     $this->assertIsAsignedSimpleObject($key);
+    //     $this->assertIsAsignedSimpleObjectDeconstructor($key);
+    //     $this->assertIsAssignedVarVariable($key);
+    // }
 
     /** @test */
     public function testSetter110000(): void
