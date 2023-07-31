@@ -65,7 +65,7 @@ class ArraySetterExpressionBuilderTest extends TestCase
         if ($hasFunction && $isSimpleObject) {
             throw new LogicException('Function cannot be used with simple object.');
         }
-        
+
         if ($isCollection && (!$hasFunction && !$isSimpleObject)) {
             throw new LogicException('Collection can be used only with function or simple object.');
         }
@@ -91,8 +91,18 @@ class ArraySetterExpressionBuilderTest extends TestCase
             new ArrayExpressionBuilder(),
             new ArrayExpressionBuilder(),
             new FunctionExpressionBuilder()
-        ))->build(false);
+        ));
+        FunctionExpression::$createdExpressions = [];
         $reflection = new ReflectionClass($expressionBuilder);
+        $reflection->getProperty('throwExceptionOnMissingProperty')->setValue($expressionBuilder, false);
+        $reflection->getMethod('matchBlueprints')->invokeArgs(
+            $expressionBuilder,
+            [
+                $reflection->getProperty('blueprint')->getValue($expressionBuilder),
+                $reflection->getProperty('source')->getValue($expressionBuilder),
+                $reflection->getProperty('target')->getValue($expressionBuilder),
+            ]
+        );
 
         if ($isVarVariableUsed) {
             $callbacks = array_merge($callbacks ?? [], [new MappingCallback("\n")]);
@@ -110,6 +120,7 @@ class ArraySetterExpressionBuilderTest extends TestCase
                 $targetProperty->blueprint
             ]
         ) : null;
+
         if ($function) {
             if ($hasPathUsed) {
                 $function->pathVariable = 'path';

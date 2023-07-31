@@ -78,6 +78,19 @@ class FunctionExpression
             !empty($this->finalExpressions),
         );
 
+        $args = [
+            $this->sourceType,
+            $this->source,
+            $this->targetType,
+            $this->target,
+            implode("\n", array_map(fn (InitialExpression $expression) => $expression->toString(), $this->initialExpressions)),
+            implode("\n", array_map(fn (Expression $expression) => $expression->toString(), $this->expressions)),
+            implode("\n", array_map(fn (FinalExpression $expression) => $expression->toString(), $this->finalExpressions)),
+            $this->useStatements,
+            $this->pathVariableType,
+            $this->pathVariable,
+        ];
+
         do {
             $expr = str_replace(
                 [
@@ -92,22 +105,28 @@ class FunctionExpression
                     Functions::PATH_TYPE,
                     Functions::PATH_NAME,
                 ],
-                [
-                    $this->sourceType,
-                    $this->source,
-                    $this->targetType,
-                    $this->target,
-                    implode("\n", array_map(fn (InitialExpression $expression) => $expression->toString(), $this->initialExpressions)),
-                    implode("\n", array_map(fn (Expression $expression) => $expression->toString(), $this->expressions)),
-                    implode("\n", array_map(fn (FinalExpression $expression) => $expression->toString(), $this->finalExpressions)),
-                    $this->useStatements,
-                    $this->pathVariableType,
-                    $this->pathVariable,
-                ],
+                $args,
                 $expr
             );
         } while (false !== strpos($expr, '{{'));
 
+        if (in_array($expr, self::$createdExpressions, true)) {
+            $counts = 0;
+            foreach (self::$createdExpressions as $createdExpression) {
+                if ($createdExpression === $expr) {
+                    ++$counts;
+                }
+            }
+
+            if ($counts > 3) {
+                throw new \LogicException('Expression creation loop detected.');
+            }
+        }
+        self::$createdExpressions[] = $expr;
+
         return $expr;
     }
+
+    /** @var string[] */
+    public static array $createdExpressions = [];
 }

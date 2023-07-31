@@ -106,6 +106,22 @@ class Expression
             $expr = str_replace('{{getter}}', $this->getterExpression, $expr);
         }
 
+        $args = [
+            $this->source,
+            $this->setterExpression,
+            var_export($this->targetProperty->getDefaultValue(), true),
+            $simpleObjectAttr?->getConstructorExpression($this->targetProperty->getClassType()),
+            implode("\n", $this->callbacksExpression),
+            implode("\n", $this->valueNotFoundExpressions),
+            $this->var,
+            $this->getter->getSimpleGetter(),
+            $this->target,
+            $simpleObjectAttr?->getDeconstructorExpression(),
+            $this->function?->toString(),
+            $this->functionVar,
+            $this->function?->pathVariable,
+        ];
+
         do {
             $expr = str_replace(
                 [
@@ -121,21 +137,9 @@ class Expression
                     Setter::SIMPLE_OBJECT_DECONSTRUCTOR,
                     Setter::FUNCTION_DECLARATION,
                     Setter::FUNCTION_VARIABLE,
+                    Functions::PATH_NAME,
                 ],
-                [
-                    $this->source,
-                    $this->setterExpression,
-                    var_export($this->targetProperty->getDefaultValue(), true),
-                    $simpleObjectAttr?->getConstructorExpression($this->targetProperty->getClassType()),
-                    implode("\n", $this->callbacksExpression),
-                    implode("\n", $this->valueNotFoundExpressions),
-                    $this->var,
-                    $this->getter->getSimpleGetter(),
-                    $this->target,
-                    $simpleObjectAttr?->getDeconstructorExpression(),
-                    $this->function?->toString(),
-                    $this->functionVar,
-                ],
+                $args,
                 $expr
             );
         } while (false !== strpos($expr, '{{'));

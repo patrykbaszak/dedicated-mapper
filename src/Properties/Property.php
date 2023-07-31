@@ -69,13 +69,26 @@ class Property
 
         /* If collection */
         if (!empty($innerTypes)) {
+
+            /* If collection of different types */
             if (count($innerTypes) > 1) {
                 throw new \Exception('Multiple inner types are not supported yet.');
             }
+
+            /* If collection of simple types */
             if (!class_exists($innerTypes[0], false)) {
                 throw new \Exception('Inner type must be a class.');
             }
-            $property->blueprint = Blueprint::create($innerTypes[0], true, $property);
+
+            /* If collection of simple objects */
+            if (
+                (!array_key_exists($innerTypes[0], self::NATIVE_SIMPLE_OBJECTS)
+                    && !array_key_exists(ltrim($innerTypes[0], '\\'), self::NATIVE_SIMPLE_OBJECTS)
+                ) && empty($reflection->getAttributes(SimpleObject::class))
+            ) {
+                /* Blueprint is only for functions, not for simple objects */
+                $property->blueprint = Blueprint::create($innerTypes[0], true, $property);
+            }
         }
 
         /* If class */
@@ -84,6 +97,7 @@ class Property
                 if (
                     class_exists($type, false)
                     && !array_key_exists($type, self::NATIVE_SIMPLE_OBJECTS)
+                    && !array_key_exists(ltrim($type, '\\'), self::NATIVE_SIMPLE_OBJECTS)
                     && empty($reflection->getAttributes(SimpleObject::class))
                 ) {
                     $property->blueprint ??= Blueprint::create($type, false, $property);
