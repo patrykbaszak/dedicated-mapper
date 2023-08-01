@@ -137,7 +137,7 @@ class AnonymousObjectGetterExpressionBuilderTest extends TestCase
     protected function assertIsOutputNotAsigned(string $key): void
     {
         $key = $this->explodeKey($key);
-        
+
         if ($key[1]) {
             throw new \LogicException('Cannot test not asigned output on property with throw exception on missing required value.');
         }

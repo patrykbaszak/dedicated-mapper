@@ -59,7 +59,7 @@
         "code:fix": "vendor/bin/php-cs-fixer fix",
         "code:analyse": "vendor/bin/phpstan analyse src -c tools/phpstan/fpm-config.neon",
         "code:analyse:b": "vendor/bin/phpstan analyse src -c tools/phpstan/fpm-config.neon --generate-baseline tools/phpstan/fpm-baseline.neon --allow-empty-baseline",
-        "phpunit": "vendor/bin/phpunit",
+        "phpunit": "vendor/bin/phpunit --colors=always",
         "test:unit": "@phpunit --group unit tests",
         "test:func": "@phpunit --group func tests",
         "test:integration": "@phpunit --group integration tests",

@@ -30,7 +30,6 @@ class Property
     public const SIMPLE_OBJECTS_SIMPLE_OBJECT_COLLECTION = 7; // 0111 example: new ArrayObject(array<DateTime>)
     public const SIMPLE_OBJECTS_COLLECTION = 13; // 1101 example: array<DateTime>
 
-
     /**
      * Specific property for any options you need to store and use.
      *
@@ -69,7 +68,6 @@ class Property
 
         /* If collection */
         if (!empty($innerTypes)) {
-
             /* If collection of different types */
             if (count($innerTypes) > 1) {
                 throw new \Exception('Multiple inner types are not supported yet.');
@@ -111,6 +109,7 @@ class Property
     public function getPropertyType(): int
     {
         $types = $this->getTypes()->types;
+        $innerTypes = $this->getTypes()->innerTypes;
         if ($this->blueprint && $this->blueprint->isCollection) {
             foreach ($types as $type) {
                 if (class_exists($type, false)) {
@@ -127,7 +126,23 @@ class Property
 
         foreach ($types as $type) {
             if (class_exists($type, false)) {
+                if (!empty($innerTypes)) {
+                    foreach ($innerTypes as $innerType) {
+                        if (class_exists($innerType, false)) {
+                            return self::SIMPLE_OBJECTS_SIMPLE_OBJECT_COLLECTION;
+                        }
+                    }
+                }
+
                 return self::SIMPLE_OBJECT;
+            }
+        }
+
+        if (!empty($innerTypes)) {
+            foreach ($innerTypes as $innerType) {
+                if (class_exists($innerType, false)) {
+                    return self::SIMPLE_OBJECTS_COLLECTION;
+                }
             }
         }
 

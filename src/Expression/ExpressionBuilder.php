@@ -84,11 +84,11 @@ class ExpressionBuilder
 
     /** @param MappingCallback[] $callbacks */
     protected function newPropertyExpression(
-        Property $source, 
-        Property $target, 
-        FunctionExpression $function = null, 
-        string $functionVar = null, 
-        bool $isCollection = false, 
+        Property $source,
+        Property $target,
+        FunctionExpression $function = null,
+        string $functionVar = null,
+        bool $isCollection = false,
         array $callbacks = []
     ): Expression {
         $expression = new Expression(

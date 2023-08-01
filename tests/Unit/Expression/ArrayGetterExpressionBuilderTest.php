@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace PBaszak\DedicatedMapperBundle\Tests\Unit\Expression;
 
-use LogicException;
 use PBaszak\DedicatedMapperBundle\Attribute\MappingCallback;
 use PBaszak\DedicatedMapperBundle\Expression\Assets\Expression;
 use PBaszak\DedicatedMapperBundle\Expression\Builder\ArrayExpressionBuilder;
@@ -138,15 +137,15 @@ class ArrayGetterExpressionBuilderTest extends TestCase
     protected function assertIsOutputNotAsigned(string $key): void
     {
         $key = $this->explodeKey($key);
-        
+
         if ($key[1]) {
-            throw new LogicException('Cannot test not asigned output on property with throw exception on missing required value.');
+            throw new \LogicException('Cannot test not asigned output on property with throw exception on missing required value.');
         }
         if ($key[2]) {
-            throw new LogicException('Cannot test not asigned output on property with default value.');
+            throw new \LogicException('Cannot test not asigned output on property with default value.');
         }
         if ($key[4]) {
-            throw new LogicException('Cannot test not asigned output on property with not found callback.');
+            throw new \LogicException('Cannot test not asigned output on property with not found callback.');
         }
 
         $data = [];

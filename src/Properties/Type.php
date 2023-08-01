@@ -9,6 +9,9 @@ use phpDocumentor\Reflection\DocBlock\Tags\Var_;
 use phpDocumentor\Reflection\DocBlockFactory;
 use phpDocumentor\Reflection\Type as PhpDocumentorReflectionType;
 use phpDocumentor\Reflection\Types\Array_;
+use phpDocumentor\Reflection\Types\Collection;
+use phpDocumentor\Reflection\Types\Compound;
+use phpDocumentor\Reflection\Types\Object_;
 
 trait Type
 {
@@ -158,6 +161,9 @@ class Types
         }
 
         if ($reflection instanceof \ReflectionNamedType) {
+            if ($reflection->allowsNull()) {
+                $this->addType('null');
+            }
             $this->addType($reflection->getName());
         }
 
@@ -175,7 +181,16 @@ class Types
             return;
         }
 
-        if ($reflection instanceof Array_) {
+        if ($reflection instanceof Compound) {
+            $types = $reflection->getIterator();
+            foreach ($types as $type) {
+                $this->processPhpDocumentorReflectionType($type, $classReflection);
+            }
+
+            return;
+        }
+
+        if ($reflection instanceof Array_ || $reflection instanceof Collection) {
             $itemType = $reflection->getValueType();
 
             $itemClass = $itemType->__toString();
@@ -208,6 +223,43 @@ class Types
                 if (class_exists($import, false)) {
                     $this->innerTypes[] = $import;
                     $this->addType((string) $reflection->getKeyType());
+
+                    return;
+                }
+            }
+        }
+
+        if ($reflection instanceof Object_) {
+            $class = $reflection->__toString();
+            if (class_exists($class, false)) {
+                $this->types[] = $class;
+                $this->addType((string) $class);
+
+                return;
+            }
+
+            if (class_exists($class = $classReflection->getNamespaceName().'\\'.ltrim($class, '\\'), false)) {
+                $this->types[] = $class;
+                $this->addType($class);
+
+                return;
+            }
+
+            $imports = array_filter(array_map(
+                fn (string $line) => str_starts_with($line, 'use') ?
+                (false !== strpos($line, ltrim($class, '\\')) ?
+                sscanf($line, 'use %s;') :
+                null
+                ) :
+                null,
+                file($classReflection->getFileName() ?: '') ?: []
+            ));
+
+            /** @var class-string[] $imports */
+            foreach ($imports as $import) {
+                if (class_exists($import, false)) {
+                    $this->types[] = $import;
+                    $this->addType($import);
 
                     return;
                 }
