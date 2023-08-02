@@ -10,7 +10,7 @@ use PBaszak\DedicatedMapperBundle\Expression\Assets\Setter;
  * Part of the mapping process.
  * Use is if You got class like DateTime or ArrayObject but Your own.
  */
-#[\Attribute(\Attribute::TARGET_PROPERTY)]
+#[\Attribute(\Attribute::TARGET_PROPERTY | \Attribute::TARGET_CLASS)]
 class SimpleObject
 {
     /**

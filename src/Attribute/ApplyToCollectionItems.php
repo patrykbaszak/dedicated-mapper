@@ -19,4 +19,21 @@ class ApplyToCollectionItems
         public readonly array $options = [],
     ) {
     }
+
+    /**
+     * @param class-string|null $attribute
+     *
+     * @return object[]
+     */
+    public function getAttributes(?string $attribute): array
+    {
+        if (null === $attribute) {
+            return $this->attributes;
+        }
+
+        return array_filter(
+            $this->attributes,
+            fn (object $attribute): bool => $attribute instanceof $attribute,
+        );
+    }
 }

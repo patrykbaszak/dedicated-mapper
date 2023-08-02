@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PBaszak\DedicatedMapperBundle\Properties;
 
+use PBaszak\DedicatedMapperBundle\Attribute\ApplyToCollectionItems;
 use PBaszak\DedicatedMapperBundle\Attribute\MappingCallback;
 use PBaszak\DedicatedMapperBundle\Attribute\SimpleObject;
 
@@ -74,18 +75,32 @@ class Property
             }
 
             /* If collection of simple types */
-            if (!class_exists($innerTypes[0], false)) {
+            foreach ($innerTypes as $innerType) {
+                if ($x = class_exists($innerType, false)) {
+                    break;
+                }
+            }
+            if (!$x) {
                 throw new \Exception('Inner type must be a class.');
+            }
+
+            if (!empty($applyToCollectionItems = $reflection->getAttributes(ApplyToCollectionItems::class))) {
+                $applyToCollectionItems = $applyToCollectionItems[0]->newInstance();
+                $property->options['applyToCollectionItems'] = $applyToCollectionItems;
+            } else {
+                $applyToCollectionItems = null;
             }
 
             /* If collection of simple objects */
             if (
-                (!array_key_exists($innerTypes[0], self::NATIVE_SIMPLE_OBJECTS)
-                    && !array_key_exists(ltrim($innerTypes[0], '\\'), self::NATIVE_SIMPLE_OBJECTS)
+                (!array_key_exists($innerType, self::NATIVE_SIMPLE_OBJECTS)
+                    && !array_key_exists(ltrim($innerType, '\\'), self::NATIVE_SIMPLE_OBJECTS)
                 ) && empty($reflection->getAttributes(SimpleObject::class))
+                && empty((new \ReflectionClass($innerType))->getAttributes(SimpleObject::class))
+                && empty($applyToCollectionItems?->getAttributes(SimpleObject::class))
             ) {
                 /* Blueprint is only for functions, not for simple objects */
-                $property->blueprint = Blueprint::create($innerTypes[0], true, $property);
+                $property->blueprint = Blueprint::create($innerType, true, $property);
             }
         }
 
@@ -97,6 +112,7 @@ class Property
                     && !array_key_exists($type, self::NATIVE_SIMPLE_OBJECTS)
                     && !array_key_exists(ltrim($type, '\\'), self::NATIVE_SIMPLE_OBJECTS)
                     && empty($reflection->getAttributes(SimpleObject::class))
+                    && empty((new \ReflectionClass($type))->getAttributes(SimpleObject::class))
                 ) {
                     $property->blueprint ??= Blueprint::create($type, false, $property);
                 }
