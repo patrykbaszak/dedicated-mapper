@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace PBaszak\DedicatedMapperBundle\Expression\Assets;
 
+use LogicException;
+use PBaszak\DedicatedMapperBundle\Attribute\InitialValueCallback;
 use PBaszak\DedicatedMapperBundle\Attribute\MappingCallback;
 use PBaszak\DedicatedMapperBundle\Contract\ModificatorInterface;
 use PBaszak\DedicatedMapperBundle\Properties\Property;
@@ -15,12 +17,17 @@ class Expression
     private Property $sourceProperty;
     private Property $targetProperty;
 
-    private string $getterExpression;
+    public string $getterExpression;
+    public string $setterExpression;
     /** @var string[] */
-    private array $callbacksExpression = [];
-    private string $setterExpression;
+    public array $callbacksExpression = [];
     /** @var string[] */
-    private array $valueNotFoundExpressions = [];
+    public array $collectionItemCallbacksExpression = [];
+    /** 
+     * There is no not found callbacks for collection items.
+     * @var string[] 
+     */
+    public array $valueNotFoundExpressions = [];
 
     /**
      * @param ModificatorInterface[] $modificators
@@ -30,17 +37,17 @@ class Expression
      *                                                                     If `true` then `if isset` will not be added to the code.
      */
     public function __construct(
-        private Getter $getter,
-        private Setter $setter,
-        private ?FunctionExpression $function = null,
-        private array $modificators = [],
-        private array $callbacks = [],
-        private bool $isCollection = false,
-        private bool $throwExceptionOnMissingRequiredValue = false,
-        private string $source = 'data',
-        private string $target = 'output',
-        private string $var = 'var',
-        private ?string $functionVar = null
+        public Getter $getter,
+        public Setter $setter,
+        public ?FunctionExpression $function = null,
+        public array $modificators = [],
+        public array $callbacks = [],
+        public array $collectionItemCallbacks = [],
+        public bool $throwExceptionOnMissingRequiredValue = false,
+        public string $source = 'data',
+        public string $target = 'output',
+        public string $var = 'var',
+        public ?string $functionVar = null
     ) {
         if (!empty($this->function) && null === $this->functionVar) {
             throw new \LogicException('Function variable name must be provided when function is set.');
@@ -59,17 +66,20 @@ class Expression
 
         /* Callbacks */
         $target->callbacks = array_merge($target->callbacks, $this->callbacks);
+        $target->collectionItemCallbacks = array_merge($target->collectionItemCallbacks, $this->collectionItemCallbacks);
         $this->callbacksExpression = array_filter(array_map(fn (MappingCallback $callback) => $callback->isValueNotFoundCallback ? null : $callback->callback, $target->getSortedCallbacks()));
+        $this->collectionItemCallbacksExpression = array_filter(array_map(fn (MappingCallback $callback) => $callback->isValueNotFoundCallback ? null : $callback->callback, $target->getSortedCallbacks(true)));
         $this->valueNotFoundExpressions = array_filter(array_map(fn (MappingCallback $callback) => $callback->isValueNotFoundCallback ? $callback->callback : null, $target->getSortedCallbacks()));
 
         /** Getter */
-        $isSimpleObject = Property::SIMPLE_OBJECT === $target->getPropertyType();
+        $hasDedicatedGetter = !empty($target->reflection->getAttributes(InitialValueCallback::class)) || in_array($target->getPropertyType(), [Property::SIMPLE_OBJECT, Property::SIMPLE_OBJECT_COLLECTION, Property::SIMPLE_OBJECTS_SIMPLE_OBJECT_COLLECTION]);
         $hasDefaultValue = $target->hasDefaultValue();
         $hasCallbacks = !empty($this->callbacks);
         $hasValueNotFoundCallbacks = !empty($this->valueNotFoundExpressions);
+        $hasCollectionItemCallbacks = !empty($this->collectionItemCallbacksExpression);
 
         $this->getterExpression = $this->getter->getExpression(
-            $isSimpleObject,
+            $hasDedicatedGetter,
             $this->throwExceptionOnMissingRequiredValue,
             $hasDefaultValue,
             $hasCallbacks,

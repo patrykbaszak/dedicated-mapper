@@ -23,7 +23,8 @@ class Setter
 
     /** @param string[] $expressions */
     public function __construct(
-        private array $expressions,
+        private array $expressionTemplates,
+        private array $expressions
     ) {
     }
 

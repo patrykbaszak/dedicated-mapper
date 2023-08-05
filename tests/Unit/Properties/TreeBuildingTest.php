@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PBaszak\DedicatedMapperBundle\Tests\Unit\Properties;
 
+use PBaszak\DedicatedMapperBundle\Expression\Builder\ArrayExpressionBuilder;
 use PBaszak\DedicatedMapperBundle\Properties\Blueprint;
 use PBaszak\DedicatedMapperBundle\Properties\Property;
 use PBaszak\DedicatedMapperBundle\Tests\assets\Dummy;
@@ -34,5 +35,16 @@ class TreeBuildingTest extends TestCase
         $this->assertInstanceOf(Blueprint::class, $items->blueprint);
         $this->assertCount(13, $items->blueprint->properties);
         $this->assertSame(true, $items->blueprint->isCollection);
+    }
+
+    /** @test */
+    public function test(): void
+    {
+        $blueprint = Blueprint::create(self::BLUEPRINT_CLASS, false);
+        $property = $blueprint->getProperty('id');
+        $getters = (new ArrayExpressionBuilder())->getGetter($property);
+        $setters = (new ArrayExpressionBuilder())->getSetter($property);
+
+        $this->assertTrue(true);
     }
 }

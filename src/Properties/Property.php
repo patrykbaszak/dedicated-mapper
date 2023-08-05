@@ -43,6 +43,11 @@ class Property
      */
     public array $callbacks = [];
 
+    /**
+     * @var MappingCallback[]
+     */
+    public array $collectionItemCallbacks = [];
+
     public ?Blueprint $blueprint = null;
 
     public function __construct(
@@ -180,8 +185,17 @@ class Property
     }
 
     /** @return MappingCallback[] */
-    public function getPropertyMappingCallbackAttributes(): array
+    public function getPropertyMappingCallbackAttributes(bool $collectionCallbacks = false): array
     {
+        if ($collectionCallbacks) {
+            return array_filter(
+                array_map(
+                    fn (\ReflectionAttribute $attr) => is_subclass_of($attr, MappingCallback::class) ? $attr->newInstance() : null,
+                    $this->options['applyToCollectionItems']?->getAttributes() ?? []
+                )
+            );
+        }
+
         return array_filter(
             array_map(
                 fn (\ReflectionAttribute $attr) => is_subclass_of($attr, MappingCallback::class) ? $attr->newInstance() : null,
@@ -193,21 +207,22 @@ class Property
     /**
      * @return array<MappingCallback>
      */
-    public function getSortedCallbacks(): array
+    public function getSortedCallbacks(bool $collectionCallbacks = false): array
     {
-        $this->sortCallbacksByPriority();
+        $this->sortCallbacksByPriority($collectionCallbacks);
 
-        return $this->callbacks;
+        return $collectionCallbacks ? $this->collectionItemCallbacks : $this->callbacks;
     }
 
     private function applyCallbacks(): void
     {
         $this->callbacks = $this->getPropertyMappingCallbackAttributes();
+        $this->collectionItemCallbacks = $this->getPropertyMappingCallbackAttributes(true);
     }
 
-    private function sortCallbacksByPriority(): void
+    private function sortCallbacksByPriority(bool $collectionCallbacks = false): void
     {
-        usort($this->callbacks, function (MappingCallback $a, MappingCallback $b) {
+        usort($collectionCallbacks ? $this->collectionItemCallbacks : $this->callbacks, function (MappingCallback $a, MappingCallback $b) {
             return $b->priority <=> $a->priority;
         });
     }

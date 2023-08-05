@@ -88,16 +88,15 @@ class ExpressionBuilder
         Property $target,
         FunctionExpression $function = null,
         string $functionVar = null,
-        bool $isCollection = false,
-        array $callbacks = []
+        array $callbacks = [] // it is required by tests, do not recommend to use it
     ): Expression {
         $expression = new Expression(
             $this->getterBuilder->getGetter($source),
             $this->setterBuilder->getSetter($target),
             $function,
             $this->modificators,
-            $callbacks, // this Expression Builder does not include own callbacks
-            $isCollection,
+            $callbacks,
+            [],
             $this->throwExceptionOnMissingProperty,
             functionVar: $functionVar,
         );
@@ -105,8 +104,11 @@ class ExpressionBuilder
         return $expression->build($source, $target);
     }
 
-    protected function newFunctionExpression(Blueprint $origin, Blueprint $source, Blueprint $target): FunctionExpression
-    {
+    protected function newFunctionExpression(
+        Blueprint $origin, 
+        Blueprint $source, 
+        Blueprint $target
+    ): FunctionExpression {
         $expression = new FunctionExpression(
             $this->functionBuilder->getFunction(),
             $this->modificators,
@@ -134,7 +136,7 @@ class ExpressionBuilder
                     ) : null,
                     $this->modificators,
                     [], // this Expression Builder does not include own callbacks
-                    in_array($property->getPropertyType(), [Property::COLLECTION, Property::SIMPLE_OBJECT_COLLECTION]),
+                    [], // this Expression Builder does not include own collection items callbacks
                     $this->throwExceptionOnMissingProperty,
                     functionVar: $property->blueprint ? $this->createUniqueVariableName($property->blueprint, 'func_') : null,
                 ))->build(

@@ -18,6 +18,32 @@ class ApplyToCollectionItems
         public readonly array $attributes,
         public readonly array $options = [],
     ) {
+        foreach ($attributes as $attribute) {
+            if (!is_object($attribute)) {
+                throw new \InvalidArgumentException(
+                    sprintf(
+                        'Attribute must be an object, %s given',
+                        gettype($attribute),
+                    ),
+                );
+            }
+            if ($attribute instanceof InitialValueCallback) {
+                throw new \InvalidArgumentException(
+                    sprintf(
+                        'Attribute %s is not allowed in collection items',
+                        InitialValueCallback::class,
+                    ),
+                );
+            }
+            if ($attribute instanceof TargetProperty) {
+                throw new \InvalidArgumentException(
+                    sprintf(
+                        'Attribute %s is not allowed in collection items',
+                        TargetProperty::class,
+                    ),
+                );
+            }
+        }
     }
 
     /**
