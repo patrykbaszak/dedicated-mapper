@@ -69,7 +69,7 @@ abstract class AbstractBuilder
      * 
      * {{callbacks}}
      * {{notFoundCallbacks}}
-     * 
+     * {{preAssignmentExpression}}
      * {{existsStatement}}
      */
     protected function getGetterExpressionTemplate(
@@ -79,6 +79,7 @@ abstract class AbstractBuilder
         bool $hasCallbacks,
         bool $hasNotFoundCallbacks,
         bool $isCollection,
+        bool $preAssignment,
     ): string {
         $hasVarAssignment = $hasDedicatedGetter || $hasCallbacks;
 
@@ -86,6 +87,8 @@ abstract class AbstractBuilder
             ? '{{notFoundCallbacks}}'
             : ($throwExceptionOnMissing ? "throw new \Exception('Missing property: `{{name}}`.');\n" : '');
         $hasMissingExpression = ('' !== $missingExpression) && !$hasDefaultValue;
+
+        $preAssignmentExpression = $preAssignment ? '{{preAssignmentExpression}}' : '';
 
         $varAssignmentExpression = !$hasVarAssignment
             ? ''
@@ -103,19 +106,21 @@ abstract class AbstractBuilder
 
         $callbacksExpression = $hasCallbacks ? '{{callbacks}}' : '';
 
-        $successExpression = $varAssignmentExpression . $callbacksExpression . $setterAssigmentExpression;
+        $successExpression = $preAssignmentExpression . $varAssignmentExpression . $callbacksExpression . $setterAssigmentExpression;
         $failureExpression = $missingExpression;
 
-        if (!$throwExceptionOnMissing && $hasMissingExpression) {
-            return "if ({{existsStatement}}) {\n{$successExpression}} else {\n{$failureExpression}}\n";
-        }
+        if (!$isCollection) {
+            if (!$throwExceptionOnMissing && $hasMissingExpression) {
+                return "if ({{existsStatement}}) {\n{$successExpression}} else {\n{$failureExpression}}\n";
+            }
 
-        if (!$throwExceptionOnMissing && !$hasMissingExpression) {
-            return "if ({{existsStatement}}) {\n{$successExpression}}\n";
-        }
+            if (!$throwExceptionOnMissing && !$hasMissingExpression) {
+                return "if ({{existsStatement}}) {\n{$successExpression}}\n";
+            }
 
-        if ($throwExceptionOnMissing && $hasMissingExpression) {
-            return "if (!{{existsStatement}}) {\n{$failureExpression}}\n{$successExpression}\n";
+            if ($throwExceptionOnMissing && $hasMissingExpression) {
+                return "if (!{{existsStatement}}) {\n{$failureExpression}}\n{$successExpression}\n";
+            }
         }
 
         return $successExpression;
@@ -147,7 +152,7 @@ abstract class AbstractBuilder
         if ($isCollection && $hasFunction) {
             return $functionDeclarationExpression . $collectionExpression;
         }
-        
+
         if ($isCollection && !$hasFunction) {
             return $collectionExpression;
         }
@@ -174,11 +179,10 @@ abstract class AbstractBuilder
         bool $hasVarUsed,
     ): string {
         $functionArguments = implode(', ', array_filter([
-            $hasVarUsed ? '{{getterAssignment:basic}}' : '{{getterAssignment:var}}',
-            $hasPathUsed ? (
-                $isCollection
-                    ? "\${{pathName}} . \".{{name}}.{\$index}\""
-                    : "\${{pathName}} . \".{{name}}\""
+            $hasVarUsed ? '{{getterAssignment:var}}' : ($isCollection ? '{{getterAssignment:item}}' : '{{getterAssignment:basic}}'),
+            $hasPathUsed ? ($isCollection
+                ? "\${{pathName}} . \".{{name}}.{\$index}\""
+                : "\${{pathName}} . \".{{name}}\""
             ) : null,
         ]));
 

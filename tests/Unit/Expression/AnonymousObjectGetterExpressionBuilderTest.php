@@ -81,7 +81,7 @@ class AnonymousObjectGetterExpressionBuilderTest extends TestCase
             null,
             [],
             $callbacks,
-            false,
+            [],
             $throwExceptionOnMissingRequiredValue,
             'data',
             'output',
@@ -196,7 +196,7 @@ class AnonymousObjectGetterExpressionBuilderTest extends TestCase
         $data = (object) [];
         $expression = $this->getExpression(...$key);
 
-        $this->expectException(\Error::class);
+        $this->expectException(\Exception::class);
         @eval($expression);
     }
 

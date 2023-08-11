@@ -132,7 +132,6 @@ class ArraySetterExpressionBuilderTest extends TestCase
                 $targetProperty,
                 $function,
                 $hasFunction ? 'function' : null,
-                $isCollection,
                 $callbacks ?? [],
             ]
         )->toString();

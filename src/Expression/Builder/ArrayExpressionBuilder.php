@@ -49,6 +49,7 @@ class ArrayExpressionBuilder extends AbstractBuilder implements SetterInterface,
      * {{dedicatedGetter}}
      * {{callbacks}}
      * {{notFoundCallbacks}}
+     * {{preAssignmentExpression}}
      */
     public function getGetter(Property $property): Getter
     {
@@ -57,14 +58,15 @@ class ArrayExpressionBuilder extends AbstractBuilder implements SetterInterface,
 
         $expressions = [];
         $expressionTemplates = [];
-        for ($i = 0; $i < 64; $i++) {
-            $key = str_pad(decbin($i), 6, '0', STR_PAD_LEFT);
+        for ($i = 0; $i < 128; $i++) {
+            $key = str_pad(decbin($i), 7, '0', STR_PAD_LEFT);
             $hasDedicatedGetter = $key[0] === '1';
             $throwExceptionOnMissingRequiredValue = $key[1] === '1';
             $hasDefaultValue = $key[2] === '1';
             $hasCallbacks = $key[3] === '1';
             $hasValueNotFoundCallbacks = $key[4] === '1';
             $isCollection = $key[5] === '1';
+            $preAssignmentExpression = $key[6] === '1';
 
             if ($hasDefaultValue) {
                 $throwExceptionOnMissingRequiredValue = true;
@@ -77,21 +79,22 @@ class ArrayExpressionBuilder extends AbstractBuilder implements SetterInterface,
                 $hasDefaultValue,
                 $hasCallbacks,
                 $hasValueNotFoundCallbacks,
-                $isCollection
+                $isCollection,
+                $preAssignmentExpression
             );
 
             $expressions[$key] = [
                 '{{getterAssignment:item}}' => "\$item",
                 '{{getterAssignment:var}}' => "\${{var}}",
-                '{{getterAssignment:basic}}' => "\${{source}}['{$name}']",
-                '{{getterAssignment:basic:default}}' => "\${{source}}['{$name}'] ?? {{defaultValue}}",
+                '{{getterAssignment:basic}}' => $preAssignmentExpression ? "\${{var}}" : "\${{source}}['{$name}']",
+                '{{getterAssignment:basic:default}}' => "{{getterAssignment:basic}} ?? {{defaultValue}}",
                 '{{existsStatement}}' => "array_key_exists('{$name}', \${{source}})",
-                '{{sourceIteratorAssignment}}' => "\${{source}}['{$name}']",
-                '{{varAssignment:basic}}' => "\${{var}} = \${{source}}['{$name}'];\n",
-                '{{varAssignment:basic:default}}' => "\${{var}} = \${{source}}['{$name}'] ?? {{defaultValue}};\n",
+                '{{sourceIteratorAssignment}}' => "{{getterAssignment:basic}}",
+                '{{varAssignment:basic}}' => $preAssignmentExpression ? "" : "\${{var}} = {{getterAssignment:basic}};\n",
+                '{{varAssignment:basic:default}}' => $preAssignmentExpression ? "\${{var}} ??= {{defaultValue}};\n" : "\${{var}} = {{getterAssignment:basic}} ?? {{defaultValue}};\n",
                 '{{varAssignnmet:item}}' => "\${{var}} = \$item;\n",
                 '{{varAssignment:dedicated}}' => "\${{var}} = {{dedicatedGetter}};\n",
-                '{{varAssignment:dedicated:default}}' => "if (array_key_exists('{$name}', \${{source}})) {\n"
+                '{{varAssignment:dedicated:default}}' => "if ({{existsStatement}}) {\n"
                     . "\t\${{var}} = {{dedicatedGetter}};\n"
                     . "} else {\n"
                     . "\t\${{var}} = {{defaultValue}};\n"
@@ -115,10 +118,12 @@ class ArrayExpressionBuilder extends AbstractBuilder implements SetterInterface,
      * Placeholders list:
      * {{getterExpression}}
      * {{getterAssignment:var}}
+     * {{deconstructorCall}}
      * {{getterAssignment:basic}}
      * {{getterAssignment:basic:default}}
      * {{sourceIteratorAssignment}}
      * 
+     * {{pathName}}
      * {{function}}
      * {{functionVariable}}
      * {{target}}
@@ -130,12 +135,13 @@ class ArrayExpressionBuilder extends AbstractBuilder implements SetterInterface,
 
         $expressionTemplates = [];
         $expressions = [];
-        for ($i = 0; $i < 16; $i++) {
-            $key = str_pad(decbin($i), 4, '0', STR_PAD_LEFT);
+        for ($i = 0; $i < 32; $i++) {
+            $key = str_pad(decbin($i), 5, '0', STR_PAD_LEFT);
             $isCollection = $key[0] === '1';
             $hasFunction = $key[1] === '1';
             $hasPathUsed = $key[2] === '1';
             $isVarVariableUsed = $key[3] === '1';
+            $hasDeconstructor = $key[4] === '1';
 
             $template = $this->getSetterExpressionTemplate(
                 $isCollection,
@@ -144,18 +150,18 @@ class ArrayExpressionBuilder extends AbstractBuilder implements SetterInterface,
 
             $expressions[$key] = [
                 '{{setterAssignment:var}}' => sprintf(
-                    $isCollection ? "\${{target}}['{$name}'][] = %s;\n" : "\${{target}}['{$name}'] = %s;\n",
-                    $hasFunction ? $this->getFunctionCallExpressionTemplate($isCollection, $hasPathUsed, $isVarVariableUsed) : "{{getterAssignment:var}}"
+                    $isCollection ? "\${{var}}[\$index] = %s;\n" : "\${{target}}['{$name}'] = %s;\n",
+                    $hasFunction ? $this->getFunctionCallExpressionTemplate($isCollection, $hasPathUsed, $isVarVariableUsed) : "{{getterAssignment:var}}" . ($hasDeconstructor ? "{{deconstructorCall}}" : "")
                 ),
                 '{{setterAssignment:basic}}' => sprintf(
-                    $isCollection ? "\${{target}}['{$name}'][] = %s;\n" : "\${{target}}['{$name}'] = %s;\n",
-                    $hasFunction ? $this->getFunctionCallExpressionTemplate($isCollection, $hasPathUsed, $isVarVariableUsed) : "{{getterAssignment:basic}}"
+                    $isCollection ? "\${{var}}[\$index] = %s;\n" : "\${{target}}['{$name}'] = %s;\n",
+                    $hasFunction ? $this->getFunctionCallExpressionTemplate($isCollection, $hasPathUsed, $isVarVariableUsed) : ($isCollection ? '{{getterAssignment:item}}' : '{{getterAssignment:basic}}') . ($hasDeconstructor ? "{{deconstructorCall}}" : "")
                 ),
                 '{{setterAssignment:basic:default}}' => sprintf(
-                    $isCollection ? "\${{target}}['{$name}'][] = %s;\n" : "\${{target}}['{$name}'] = %s;\n",
+                    $isCollection ? "\${{var}}[\$index] = %s;\n" : "\${{target}}['{$name}'] = %s;\n",
                     $hasFunction ? $this->getFunctionCallExpressionTemplate($isCollection, $hasPathUsed, $isVarVariableUsed) : "{{getterAssignment:basic:default}}"
                 ),
-                '{{targetIteratorInitialAssignment}}' => "\${{target}}['{$name}'] = [];\n",
+                '{{targetIteratorInitialAssignment}}' => "\${{var}} = [];\n",
                 '{{targetIteratorFinalAssignment}}' => "",
             ];
 

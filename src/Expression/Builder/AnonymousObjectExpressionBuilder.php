@@ -30,310 +30,147 @@ class AnonymousObjectExpressionBuilder extends AbstractBuilder implements Getter
     }
 
     /**
-     *  0 => isSimpleObject
-     *  1 => throwExceptionOnMissingRequiredValue
-     *  2 => hasDefaultValue
-     *  3 => hasCallbacks
-     *  4 => hasValueNotFoundCallbacks.
+     * 0 => hasDedicatedGetter
+     * 1 => throwExceptionOnMissingRequiredValue
+     * 2 => hasDefaultValue
+     * 3 => hasCallbacks
+     * 4 => hasValueNotFoundCallbacks
+     * 5 => isCollection
+     * 
+     * @return Getter<string>
+     * Placeholders list:
+     * {{setterAssignment:var}}
+     * {{setterAssignment:basic}}
+     * {{setterAssignment:basic:default}}
+     * 
+     * {{var}}
+     * {{source}}
+     * {{defaultValue}}
+     * {{dedicatedGetter}}
+     * {{callbacks}}
+     * {{notFoundCallbacks}}
      */
     public function getGetter(Property $property): Getter
     {
         $name = $property->options['name'] ?? $property->originName;
         $property->options['name'] = $name;
 
-        return new Getter(
-            [
-                'basic' => "\${{source}}->{$name}",
-                '00000' => "if (property_exists(\${{source}}, '{$name}')) {\n"
-                    .'{{setter}}'
-                    ."}\n",
-                '00001' => "if (property_exists(\${{source}}, '{$name}')) {\n"
-                    .'{{setter}}'
-                    ."} else {\n"
-                    .'{{valueNotFoundCallbacks}}'
-                    ."}\n",
-                '00010' => "if (property_exists(\${{source}}, '{$name}')) {\n"
-                    ."\${{var}} = \${{source}}->{$name};\n"
-                    .'{{callbacks}}'
-                    .'{{setter}}'
-                    ."}\n",
-                '00011' => "if (property_exists(\${{source}}, '{$name}')) {\n"
-                    ."\${{var}} = \${{source}}->{$name};\n"
-                    .'{{callbacks}}'
-                    .'{{setter}}'
-                    ."} else {\n"
-                    .'{{valueNotFoundCallbacks}}'
-                    ."}\n",
-                '00100' => "\${{source}}->{$name} ?? {{defaultValue}}",
-                '00101' => "\${{source}}->{$name} ?? {{defaultValue}}",
-                '00110' => "\${{var}} = \${{source}}->{$name} ?? {{defaultValue}};\n"
-                    .'{{callbacks}}'
-                    .'{{setter}}',
-                '00111' => "\${{var}} = \${{source}}->{$name} ?? {{defaultValue}};\n"
-                    .'{{callbacks}}'
-                    .'{{setter}}',
-                '01000' => "if (!property_exists(\${{source}}, '{$name}')) {\n"
-                    ."throw new \Error('Missing required value: \"{$name}\"');\n"
-                    ."}\n"
-                    .'{{setter}}',
-                '01001' => "if (property_exists(\${{source}}, '{$name}')) {\n"
-                    .'{{setter}}'
-                    ."} else {\n"
-                    .'{{valueNotFoundCallbacks}}'
-                    ."}\n",
-                '01010' => "if (!property_exists(\${{source}}, '{$name}')) {\n"
-                    ."throw new \Error('Missing required value: \"{$name}\"');\n"
-                    ."}\n"
-                    ."\${{var}} = \${{source}}->{$name};\n"
-                    .'{{callbacks}}'
-                    .'{{setter}}',
-                '01011' => "if (property_exists(\${{source}}, '{$name}')) {\n"
-                    ."\${{var}} = \${{source}}->{$name};\n"
-                    .'{{callbacks}}'
-                    .'{{setter}}'
-                    ."} else {\n"
-                    .'{{valueNotFoundCallbacks}}'
-                    ."}\n",
-                '01100' => "\${{source}}->{$name} ?? {{defaultValue}}",
-                '01101' => "\${{source}}->{$name} ?? {{defaultValue}}",
-                '01110' => "\${{var}} = \${{source}}->{$name} ?? {{defaultValue}};\n"
-                    .'{{callbacks}}'
-                    .'{{setter}}',
-                '01111' => "\${{var}} = \${{source}}->{$name} ?? {{defaultValue}};\n"
-                    .'{{callbacks}}'
-                    .'{{setter}}',
-                '10000' => "if (property_exists(\${{source}}, '{$name}')) {\n"
-                    ."\${{var}} = {{simpleObject}};\n"
-                    .'{{setter}}'
-                    ."}\n",
-                '10001' => "if (property_exists(\${{source}}, '{$name}')) {\n"
-                    ."\${{var}} = {{simpleObject}};\n"
-                    .'{{setter}}'
-                    ."} else {\n"
-                    .'{{valueNotFoundCallbacks}}'
-                    ."}\n",
-                '10010' => "if (property_exists(\${{source}}, '{$name}')) {\n"
-                    ."\${{var}} = {{simpleObject}};\n"
-                    .'{{callbacks}}'
-                    .'{{setter}}'
-                    ."}\n",
-                '10011' => "if (property_exists(\${{source}}, '{$name}')) {\n"
-                    ."\${{var}} = {{simpleObject}};\n"
-                    .'{{callbacks}}'
-                    .'{{setter}}'
-                    ."} else {\n"
-                    .'{{valueNotFoundCallbacks}}'
-                    ."}\n",
-                '10100' => "if (property_exists(\${{source}}, '{$name}')) {\n"
-                    ."\${{var}} = {{simpleObject}};\n"
-                    ."} else {\n"
-                    ."\${{var}} = {{defaultValue}};\n"
-                    ."}\n"
-                    .'{{setter}}',
-                '10101' => "if (property_exists(\${{source}}, '{$name}')) {\n"
-                    ."\${{var}} = {{simpleObject}};\n"
-                    ."} else {\n"
-                    ."\${{var}} = {{defaultValue}};\n"
-                    ."}\n"
-                    .'{{setter}}',
-                '10110' => "if (property_exists(\${{source}}, '{$name}')) {\n"
-                    ."\${{var}} = {{simpleObject}};\n"
-                    ."} else {\n"
-                    ."\${{var}} = {{defaultValue}};\n"
-                    ."}\n"
-                    .'{{callbacks}}'
-                    .'{{setter}}',
-                '10111' => "if (property_exists(\${{source}}, '{$name}')) {\n"
-                    ."\${{var}} = {{simpleObject}};\n"
-                    ."} else {\n"
-                    ."\${{var}} = {{defaultValue}};\n"
-                    ."}\n"
-                    .'{{callbacks}}'
-                    .'{{setter}}',
-                '11000' => '{{simpleObject}}',
-                '11001' => "if (property_exists(\${{source}}, '{$name}')) {\n"
-                    ."\${{var}} = {{simpleObject}};\n"
-                    .'{{setter}}'
-                    ."} else {\n"
-                    .'{{valueNotFoundCallbacks}}'
-                    ."}\n",
-                '11010' => "\${{var}} = {{simpleObject}};\n"
-                    .'{{callbacks}}'
-                    .'{{setter}}',
-                '11011' => "if (property_exists(\${{source}}, '{$name}')) {\n"
-                    ."\${{var}} = {{simpleObject}};\n"
-                    .'{{callbacks}}'
-                    .'{{setter}}'
-                    ."} else {\n"
-                    .'{{valueNotFoundCallbacks}}'
-                    ."}\n",
-                '11100' => "if (property_exists(\${{source}}, '{$name}')) {\n"
-                    ."\${{var}} = {{simpleObject}};\n"
-                    ."} else {\n"
-                    ."\${{var}} = {{defaultValue}};\n"
-                    ."}\n"
-                    .'{{setter}}',
-                '11101' => "if (property_exists(\${{source}}, '{$name}')) {\n"
-                    ."\${{var}} = {{simpleObject}};\n"
-                    ."} else {\n"
-                    ."\${{var}} = {{defaultValue}};\n"
-                    ."}\n"
-                    .'{{setter}}',
-                '11110' => "if (property_exists(\${{source}}, '{$name}')) {\n"
-                    ."\${{var}} = {{simpleObject}};\n"
-                    ."} else {\n"
-                    ."\${{var}} = {{defaultValue}};\n"
-                    ."}\n"
-                    .'{{callbacks}}'
-                    .'{{setter}}',
-                '11111' => "if (property_exists(\${{source}}, '{$name}')) {\n"
-                    ."\${{var}} = {{simpleObject}};\n"
-                    ."} else {\n"
-                    ."\${{var}} = {{defaultValue}};\n"
-                    ."}\n"
-                    .'{{callbacks}}'
-                    .'{{setter}}',
-            ]
-        );
+        $expressions = [];
+        $expressionTemplates = [];
+        for ($i = 0; $i < 128; $i++) {
+            $key = str_pad(decbin($i), 7, '0', STR_PAD_LEFT);
+            $hasDedicatedGetter = $key[0] === '1';
+            $throwExceptionOnMissingRequiredValue = $key[1] === '1';
+            $hasDefaultValue = $key[2] === '1';
+            $hasCallbacks = $key[3] === '1';
+            $hasValueNotFoundCallbacks = $key[4] === '1';
+            $isCollection = $key[5] === '1';
+            $preAssignmentExpression = $key[6] === '1';
+
+            if ($hasDefaultValue) {
+                $throwExceptionOnMissingRequiredValue = true;
+                $hasValueNotFoundCallbacks = false;
+            }
+
+            $template = $this->getGetterExpressionTemplate(
+                $throwExceptionOnMissingRequiredValue,
+                $hasDedicatedGetter,
+                $hasDefaultValue,
+                $hasCallbacks,
+                $hasValueNotFoundCallbacks,
+                $isCollection,
+                $preAssignmentExpression
+            );
+
+            $expressions[$key] = [
+                '{{getterAssignment:item}}' => "\$item",
+                '{{getterAssignment:var}}' => "\${{var}}",
+                '{{getterAssignment:basic}}' => $preAssignmentExpression ? "\${{var}}" : "\${{source}}->{$name}",
+                '{{getterAssignment:basic:default}}' => "{{getterAssignment:basic}} ?? {{defaultValue}}",
+                '{{existsStatement}}' => "property_exists(\${{source}}, '{$name}')",
+                '{{sourceIteratorAssignment}}' => "{{getterAssignment:basic}}",
+                '{{varAssignment:basic}}' => $preAssignmentExpression ? "" : "\${{var}} = {{getterAssignment:basic}};\n",
+                '{{varAssignment:basic:default}}' => $preAssignmentExpression ? "\${{var}} ??= {{defaultValue}};\n" : "\${{var}} = {{getterAssignment:basic}} ?? {{defaultValue}};\n",
+                '{{varAssignnmet:item}}' => "\${{var}} = \$item;\n",
+                '{{varAssignment:dedicated}}' => "\${{var}} = {{dedicatedGetter}};\n",
+                '{{varAssignment:dedicated:default}}' => "if ({{existsStatement}}) {\n"
+                    . "\t\${{var}} = {{dedicatedGetter}};\n"
+                    . "} else {\n"
+                    . "\t\${{var}} = {{defaultValue}};\n"
+                    . "}\n",
+            ];
+
+            $vars = array_merge($expressions[$key], ['{{name}}' => $name]);
+            $expressionTemplates[$key] = str_replace(array_keys($vars), array_values($vars), $template);
+        }
+
+        return new Getter($expressionTemplates, $expressions);
     }
 
+    /**
+     * 0 => isCollection
+     * 1 => hasFunction
+     * 2 => hasPathUsed
+     * 3 => isVarVariableUsed
+     * 
+     * @return Setter<string>
+     * Placeholders list:
+     * {{getterExpression}}
+     * {{getterAssignment:var}}
+     * {{deconstructorCall}}
+     * {{getterAssignment:basic}}
+     * {{getterAssignment:basic:default}}
+     * {{sourceIteratorAssignment}}
+     * 
+     * {{function}}
+     * {{functionVariable}}
+     * {{target}}
+     */
     public function getSetter(Property $property): Setter
     {
         $name = $property->options['name'] ?? $property->originName;
         $property->options['name'] = $name;
 
-        return new Setter(
-            [
-                'basic' => "\${{target}}->{$name} = {{getter}};\n",
-                '000000' => "\${{target}}->{$name} = {{getter}};\n",
-                '000001' => "\${{target}}->{$name} = \${{var}};\n",
-                '000010' => "\${{target}}->{$name} = ({{getter}}){{simpleObjectDeconstructor}};\n",
-                '000011' => "\${{target}}->{$name} = \${{var}}{{simpleObjectDeconstructor}};\n",
-                '000100' => "\${{target}}->{$name} = {{getter}};\n",
-                '000101' => "\${{target}}->{$name} = \${{var}};\n",
-                '000110' => "\${{target}}->{$name} = ({{getter}}){{simpleObjectDeconstructor}};\n",
-                '000111' => "\${{target}}->{$name} = \${{var}}{{simpleObjectDeconstructor}};\n",
-                '001000' => "\${{target}}->{$name} = {{getter}};\n",
-                '001001' => "\${{target}}->{$name} = \${{var}};\n",
-                '001010' => "\${{target}}->{$name} = ({{getter}}){{simpleObjectDeconstructor}};\n",
-                '001011' => "\${{target}}->{$name} = \${{var}}{{simpleObjectDeconstructor}};\n",
-                '001100' => "\${{target}}->{$name} = {{getter}};\n",
-                '001101' => "\${{target}}->{$name} = \${{var}};\n",
-                '001110' => "\${{target}}->{$name} = ({{getter}}){{simpleObjectDeconstructor}};\n",
-                '001111' => "\${{target}}->{$name} = \${{var}}{{simpleObjectDeconstructor}};\n",
-                '010000' => '${{functionVariable}} = {{function}};'
-                    ."\${{target}}->{$name} = \${{functionVariable}}({{getter}});\n",
-                '010001' => '${{functionVariable}} = {{function}};'
-                    ."\${{target}}->{$name} = \${{functionVariable}}(\${{var}});\n",
-                '010010' => '${{functionVariable}} = {{function}};'
-                    ."\${{target}}->{$name} = \${{functionVariable}}(({{getter}}){{simpleObjectDeconstructor}});\n",
-                '010011' => '${{functionVariable}} = {{function}};'
-                    ."\${{target}}->{$name} = \${{functionVariable}}(\${{var}}{{simpleObjectDeconstructor}});\n",
-                '010100' => '${{functionVariable}} = {{function}};'
-                    ."\${{target}}->{$name} = \${{functionVariable}}({{getter}});\n",
-                '010101' => '${{functionVariable}} = {{function}};'
-                    ."\${{target}}->{$name} = \${{functionVariable}}(\${{var}});\n",
-                '010110' => '${{functionVariable}} = {{function}};'
-                    ."\${{target}}->{$name} = \${{functionVariable}}(({{getter}}){{simpleObjectDeconstructor}});\n",
-                '010111' => '${{functionVariable}} = {{function}};'
-                    ."\${{target}}->{$name} = \${{functionVariable}}(\${{var}}{{simpleObjectDeconstructor}});\n",
-                '011000' => '${{functionVariable}} = {{function}};'
-                    ."\${{target}}->{$name} = \${{functionVariable}}({{getter}}, \${{pathName}} . \".{$name}\");\n",
-                '011001' => '${{functionVariable}} = {{function}};'
-                    ."\${{target}}->{$name} = \${{functionVariable}}(\${{var}}, \${{pathName}} . \".{$name}\");\n",
-                '011010' => '${{functionVariable}} = {{function}};'
-                    ."\${{target}}->{$name} = \${{functionVariable}}(({{getter}}){{simpleObjectDeconstructor}}, \${{pathName}} . \".{$name}\");\n",
-                '011011' => '${{functionVariable}} = {{function}};'
-                    ."\${{target}}->{$name} = \${{functionVariable}}(\${{var}}{{simpleObjectDeconstructor}}, \${{pathName}} . \".{$name}\");\n",
-                '011100' => '${{functionVariable}} = {{function}};'
-                    ."\${{target}}->{$name} = \${{functionVariable}}({{getter}}, \${{pathName}} . \".{$name}\");\n",
-                '011101' => '${{functionVariable}} = {{function}};'
-                    ."\${{target}}->{$name} = \${{functionVariable}}(\${{var}}, \${{pathName}} . \".{$name}\");\n",
-                '011110' => '${{functionVariable}} = {{function}};'
-                    ."\${{target}}->{$name} = \${{functionVariable}}(({{getter}}){{simpleObjectDeconstructor}}, \${{pathName}} . \".{$name}\");\n",
-                '011111' => '${{functionVariable}} = {{function}};'
-                    ."\${{target}}->{$name} = \${{functionVariable}}(\${{var}}{{simpleObjectDeconstructor}}, \${{pathName}} . \".{$name}\");\n",
-                '110000' => "\${{functionVariable}} = {{function}};\n"
-                    ."\${{target}}->{$name} = [];\n"
-                    ."foreach ({{getter}} as \$index => \$item) {\n"
-                    ."\t\${{target}}->{$name}[] = \${{functionVariable}}(\$item);\n"
-                    ."}\n",
-                '110001' => "\${{functionVariable}} = {{function}};\n"
-                    ."\${{target}}->{$name} = [];\n"
-                    ."foreach ({{getter}} as \$index => \$item) {\n"
-                    ."\t\${{target}}->{$name}[] = \${{functionVariable}}(\$item);\n"
-                    ."}\n",
-                '110010' => "\${{functionVariable}} = {{function}};\n"
-                    ."\${{target}}->{$name} = [];\n"
-                    ."foreach ({{getter}} as \$index => \$item) {\n"
-                    ."\t\${{target}}->{$name}[] = \${{functionVariable}}(\$item);\n"
-                    ."}\n",
-                '110011' => "\${{functionVariable}} = {{function}};\n"
-                    ."\${{target}}->{$name} = [];\n"
-                    ."foreach ({{getter}} as \$index => \$item) {\n"
-                    ."\t\${{target}}->{$name}[] = \${{functionVariable}}(\$item);\n"
-                    ."}\n",
-                '110100' => "\${{functionVariable}} = {{function}};\n"
-                    ."\${{target}}->{$name} = [];\n"
-                    ."foreach ({{getter}} as \$index => \$item) {\n"
-                    ."\t\${{target}}->{$name}[] = \${{functionVariable}}(\$item);\n"
-                    ."}\n",
-                '110101' => "\${{functionVariable}} = {{function}};\n"
-                    ."\${{target}}->{$name} = [];\n"
-                    ."foreach ({{getter}} as \$index => \$item) {\n"
-                    ."\t\${{target}}->{$name}[] = \${{functionVariable}}(\$item);\n"
-                    ."}\n",
-                '110110' => "\${{functionVariable}} = {{function}};\n"
-                    ."\${{target}}->{$name} = [];\n"
-                    ."foreach ({{getter}} as \$index => \$item) {\n"
-                    ."\t\${{target}}->{$name}[] = \${{functionVariable}}(\$item);\n"
-                    ."}\n",
-                '110111' => "\${{functionVariable}} = {{function}};\n"
-                    ."\${{target}}->{$name} = [];\n"
-                    ."foreach ({{getter}} as \$index => \$item) {\n"
-                    ."\t\${{target}}->{$name}[] = \${{functionVariable}}(\$item);\n"
-                    ."}\n",
-                '111000' => "\${{functionVariable}} = {{function}};\n"
-                    ."\${{target}}->{$name} = [];\n"
-                    ."foreach ({{getter}} as \$index => \$item) {\n"
-                    ."\t\${{target}}->{$name}[] = \${{functionVariable}}(\$item, \${{pathName}} . \".{$name}.{\$index}\");\n"
-                    ."}\n",
-                '111001' => "\${{functionVariable}} = {{function}};\n"
-                    ."\${{target}}->{$name} = [];\n"
-                    ."foreach ({{getter}} as \$index => \$item) {\n"
-                    ."\t\${{target}}->{$name}[] = \${{functionVariable}}(\$item, \${{pathName}} . \".{$name}.{\$index}\");\n"
-                    ."}\n",
-                '111010' => "\${{functionVariable}} = {{function}};\n"
-                    ."\${{target}}->{$name} = [];\n"
-                    ."foreach ({{getter}} as \$index => \$item) {\n"
-                    ."\t\${{target}}->{$name}[] = \${{functionVariable}}((\$item, \${{pathName}} . \".{$name}.{\$index}\");\n"
-                    ."}\n",
-                '111011' => "\${{functionVariable}} = {{function}};\n"
-                    ."\${{target}}->{$name} = [];\n"
-                    ."foreach ({{getter}} as \$index => \$item) {\n"
-                    ."\t\${{target}}->{$name}[] = \${{functionVariable}}(\$item, \${{pathName}} . \".{$name}.{\$index}\");\n"
-                    ."}\n",
-                '111100' => "\${{functionVariable}} = {{function}};\n"
-                    ."\${{target}}->{$name} = [];\n"
-                    ."foreach ({{getter}} as \$index => \$item) {\n"
-                    ."\t\${{target}}->{$name}[] = \${{functionVariable}}(\$item, \${{pathName}} . \".{$name}.{\$index}\");\n"
-                    ."}\n",
-                '111101' => "\${{functionVariable}} = {{function}};\n"
-                    ."\${{target}}->{$name} = [];\n"
-                    ."foreach ({{getter}} as \$index => \$item) {\n"
-                    ."\t\${{target}}->{$name}[] = \${{functionVariable}}(\$item, \${{pathName}} . \".{$name}.{\$index}\");\n"
-                    ."}\n",
-                '111110' => "\${{functionVariable}} = {{function}};\n"
-                    ."\${{target}}->{$name} = [];\n"
-                    ."foreach ({{getter}} as \$index => \$item) {\n"
-                    ."\t\${{target}}->{$name}[] = \${{functionVariable}}((\$item, \${{pathName}} . \".{$name}.{\$index}\");\n"
-                    ."}\n",
-                '111111' => "\${{functionVariable}} = {{function}};\n"
-                    ."\${{target}}->{$name} = [];\n"
-                    ."foreach ({{getter}} as \$index => \$item) {\n"
-                    ."\t\${{target}}->{$name}[] = \${{functionVariable}}(\$item, \${{pathName}} . \".{$name}.{\$index}\");\n"
-                    ."}\n",
-            ]
-        );
+        $expressionTemplates = [];
+        $expressions = [];
+        for ($i = 0; $i < 32; $i++) {
+            $key = str_pad(decbin($i), 5, '0', STR_PAD_LEFT);
+            $isCollection = $key[0] === '1';
+            $hasFunction = $key[1] === '1';
+            $hasPathUsed = $key[2] === '1';
+            $isVarVariableUsed = $key[3] === '1';
+            $hasDeconstructor = $key[4] === '1';
+
+            $template = $this->getSetterExpressionTemplate(
+                $isCollection,
+                $hasFunction,
+            );
+
+            $expressions[$key] = [
+                '{{setterAssignment:var}}' => sprintf(
+                    $isCollection ? "\${{var}}[\$index] = %s;\n" : "\${{target}}->{$name} = %s;\n",
+                    $hasFunction ? $this->getFunctionCallExpressionTemplate($isCollection, $hasPathUsed, $isVarVariableUsed) : "{{getterAssignment:var}}" . ($hasDeconstructor ? "{{deconstructorCall}}" : "")
+                ),
+                '{{setterAssignment:basic}}' => sprintf(
+                    $isCollection ? "\${{var}}[\$index] = %s;\n" : "\${{target}}->{$name} = %s;\n",
+                    $hasFunction ? $this->getFunctionCallExpressionTemplate($isCollection, $hasPathUsed, $isVarVariableUsed) : ($isCollection ? '{{getterAssignment:item}}' : '{{getterAssignment:basic}}') . ($hasDeconstructor ? "{{deconstructorCall}}" : "")
+                ),
+                '{{setterAssignment:basic:default}}' => sprintf(
+                    $isCollection ? "\${{var}}[\$index] = %s;\n" : "\${{target}}->{$name} = %s;\n",
+                    $hasFunction ? $this->getFunctionCallExpressionTemplate($isCollection, $hasPathUsed, $isVarVariableUsed) : "{{getterAssignment:basic:default}}"
+                ),
+                '{{targetIteratorInitialAssignment}}' => "\${{var}} = [];\n",
+                '{{targetIteratorFinalAssignment}}' => "",
+            ];
+
+            foreach ($expressions[$key] as &$value) {
+                $value = str_replace('{{name}}', $name, $value);
+            }
+
+            $vars = $expressions[$key];
+            $expressionTemplates[$key] = str_replace(array_keys($vars), array_values($vars), $template);
+        }
+
+        return new Setter($expressionTemplates, $expressions);
     }
 }

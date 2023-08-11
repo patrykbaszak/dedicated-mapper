@@ -11,6 +11,7 @@ class Setter
         'hasFunction',
         'hasPathUsed',
         'isVarVariableUsed',
+        'hasDeconstructorCall'
     ];
 
     /**
@@ -28,6 +29,7 @@ class Setter
         bool $hasFunction,
         bool $hasPathUsed,
         bool $isVarVariableUsed,
+        bool $hasDeconstructorCall,
     ): string {
         $key = implode('', array_map(fn ($statement) => (int) $statement, func_get_args()));
 
@@ -42,6 +44,7 @@ class Setter
         bool $hasFunction,
         bool $hasPathUsed,
         bool $isVarVariableUsed,
+        bool $hasDeconstructorCall,
     ): array {
         $key = implode('', array_map(fn ($statement) => (int) $statement, func_get_args()));
 

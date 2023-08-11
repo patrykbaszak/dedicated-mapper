@@ -12,7 +12,8 @@ class Getter
         'hasDefaultValue',
         'hasCallbacks',
         'hasValueNotFoundCallbacks',
-        'isCollection'
+        'isCollection',
+        'preAssignmentExpression'
     ];
 
     /**
@@ -32,6 +33,7 @@ class Getter
         bool $hasCallbacks,
         bool $hasValueNotFoundCallbacks,
         bool $isCollection,
+        bool $preAssignmentExpression,
     ): string {
         $key = implode('', array_map(fn ($statement) => (int) $statement, func_get_args()));
 
@@ -48,6 +50,7 @@ class Getter
         bool $hasCallbacks,
         bool $hasValueNotFoundCallbacks,
         bool $isCollection,
+        bool $preAssignmentExpression,
     ): array {
         $key = implode('', array_map(fn ($statement) => (int) $statement, func_get_args()));
         

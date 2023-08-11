@@ -100,7 +100,6 @@ class Property
 
             if (!empty($applyToCollectionItems = $reflection->getAttributes(ApplyToCollectionItems::class))) {
                 $applyToCollectionItems = $applyToCollectionItems[0]->newInstance();
-                $property->options['applyToCollectionItems'] = $applyToCollectionItems;
             } else {
                 $applyToCollectionItems = null;
             }
@@ -212,13 +211,12 @@ class Property
 
     public function hasDedicatedInitCallback(bool $asCollectionItem = false): bool
     {
-        if ($asCollectionItem) {
-            return !empty($this->getApplyToCollectionItemsAttribute()?->getAttributes(InitialValueCallback::class))
-                || 7 === ($this->getPropertyType() & 7);
-        }
+        $attr = $asCollectionItem
+            ? $this->getApplyToCollectionItemsAttribute()
+            : $this->reflection;
 
-        return !empty($this->reflection->getAttributes(InitialValueCallback::class))
-            || 3 === ($this->getPropertyType() & 3);
+        return !empty($attr?->getAttributes(InitialValueCallback::class))
+            || $this->isSimpleObject($asCollectionItem);
     }
 
     public function getInitialCallbackAttribute(bool $asCollectionItem = false): ?InitialValueCallback
@@ -238,7 +236,7 @@ class Property
             return new InitialValueCallback(
                 $this->getPropertySimpleObjectAttribute($asCollectionItem)->getConstructorExpression(
                     $this->getClassType($asCollectionItem),
-                    true,
+                    $asCollectionItem,
                 ),
                 true,
             );
@@ -249,7 +247,11 @@ class Property
 
     public function getApplyToCollectionItemsAttribute(): ?ApplyToCollectionItems
     {
-        return $this->reflection->getAttributes(ApplyToCollectionItems::class)[0]?->newInstance();
+        if (empty($attr = $this->reflection->getAttributes(ApplyToCollectionItems::class))) {
+            return null;
+        }
+        
+        return $attr[0]->newInstance();
     }
 
     public function getPropertySimpleObjectAttribute(bool $asCollectionItem = false): ?SimpleObject
@@ -285,15 +287,15 @@ class Property
         if ($asCollectionItem) {
             return array_filter(
                 array_map(
-                    fn (\ReflectionAttribute $attr) => is_subclass_of($attr, MappingCallback::class) ? $attr->newInstance() : null,
-                    $this->options['applyToCollectionItems']?->getAttributes() ?? []
+                    fn (object $attr) => is_subclass_of($attr, MappingCallback::class) ? $attr->newInstance() : null,
+                    $this->getApplyToCollectionItemsAttribute()?->getAttributes() ?? []
                 )
             );
         }
 
         return array_filter(
             array_map(
-                fn (\ReflectionAttribute $attr) => is_subclass_of($attr, MappingCallback::class) ? $attr->newInstance() : null,
+                fn (\ReflectionAttribute $attr) => is_subclass_of($attr->getName(), MappingCallback::class) ? $attr->newInstance() : null,
                 $this->reflection->getAttributes()
             )
         );

@@ -81,7 +81,7 @@ class ArrayGetterExpressionBuilderTest extends TestCase
             null,
             [],
             $callbacks,
-            false,
+            [],
             $throwExceptionOnMissingRequiredValue,
             'data',
             'output',
@@ -192,7 +192,7 @@ class ArrayGetterExpressionBuilderTest extends TestCase
         $data = [];
         $expression = $this->getExpression(...$key);
 
-        $this->expectException(\Error::class);
+        $this->expectException(\Exception::class);
         @eval($expression);
     }
 
