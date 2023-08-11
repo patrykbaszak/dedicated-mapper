@@ -7,45 +7,50 @@ namespace PBaszak\DedicatedMapperBundle\Expression\Assets;
 class Getter
 {
     public const STATEMENTS_ORDER = [
-        'isSimpleObject',
+        'hasDedicatedGetter',
         'throwExceptionOnMissingRequiredValue',
         'hasDefaultValue',
         'hasCallbacks',
         'hasValueNotFoundCallbacks',
+        'isCollection'
     ];
 
-    public const SOURCE_VARIABLE_NAME = '{{source}}';
-    public const SETTER_EXPRESSION = '{{setter}}';
-    public const DEFAULT_VALUE_EXPRESSION = '{{defaultValue}}';
-    public const SIMPLE_OBJECT_EXPRESSION = '{{simpleObject}}';
-    public const CALLBACKS_EXPRESSION = '{{callbacks}}';
-    public const VALUE_NOT_FOUND_EXPRESSIONS = '{{valueNotFoundCallbacks}}';
-
-    public bool $isVarVariableUsed;
-
-    /** @param string[] $expressions */
+    /**
+     * @param string[] $expressionTemplates  
+     * @param array<array<string,string>> $expressions
+     */
     public function __construct(
-        private array $expressions,
+        private array $expressionTemplates,
+        private array $expressions
     ) {
     }
 
-    public function getSimpleGetter(): string
-    {
-        return $this->expressions['basic'];
-    }
-
-    public function getExpression(
-        bool $isSimpleObject,
+    public function getExpressionTemplate(
+        bool $hasDedicatedGetter,
         bool $throwExceptionOnMissingRequiredValue,
         bool $hasDefaultValue,
         bool $hasCallbacks,
         bool $hasValueNotFoundCallbacks,
+        bool $isCollection,
     ): string {
         $key = implode('', array_map(fn ($statement) => (int) $statement, func_get_args()));
 
-        $expression = $this->expressions[$key];
-        $this->isVarVariableUsed = false !== strpos($expression, Expression::VAR_VARIABLE);
+        return $this->expressionTemplates[$key];
+    }
 
-        return $expression;
+    /**
+     * @return array<string,string>
+     */
+    public function getExpressions(
+        bool $hasDedicatedGetter,
+        bool $throwExceptionOnMissingRequiredValue,
+        bool $hasDefaultValue,
+        bool $hasCallbacks,
+        bool $hasValueNotFoundCallbacks,
+        bool $isCollection,
+    ): array {
+        $key = implode('', array_map(fn ($statement) => (int) $statement, func_get_args()));
+        
+        return $this->expressions[$key];
     }
 }

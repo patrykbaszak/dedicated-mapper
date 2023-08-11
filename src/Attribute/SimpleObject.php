@@ -35,8 +35,10 @@ class SimpleObject
     /**
      * @param class-string $class
      */
-    public function getConstructorExpression(string $class): string
-    {
+    public function getConstructorExpression(
+        string $class, 
+        bool $isCollectionItem = false,
+    ): string {
         $constructor = $this->staticConstructor
             ? sprintf('%s::%s(%s)', $class, $this->staticConstructor, '%s')
             : sprintf('new %s(%s)', $class, '%s');
@@ -58,7 +60,7 @@ class SimpleObject
 
         return sprintf(
             '($x = %s) instanceof %s ? $x : %s',
-            Setter::GETTER_EXPRESSION,
+            $isCollectionItem ? '{{getterAssignment:item}}' : '{{getterAssignment:basic}}',
             $class,
             sprintf(
                 $constructor,

@@ -30,11 +30,12 @@ class ArrayExpressionBuilder extends AbstractBuilder implements SetterInterface,
     }
 
     /**
-     * 0 => hasDedicatedSetter
+     * 0 => hasDedicatedGetter
      * 1 => throwExceptionOnMissingRequiredValue
      * 2 => hasDefaultValue
      * 3 => hasCallbacks
      * 4 => hasValueNotFoundCallbacks
+     * 5 => isCollection
      * 
      * @return Getter<string>
      * Placeholders list:
@@ -54,21 +55,16 @@ class ArrayExpressionBuilder extends AbstractBuilder implements SetterInterface,
         $name = $property->options['name'] ?? $property->originName;
         $property->options['name'] = $name;
 
-        $expressions = [
-            'getterAssignment:var' => "\${{var}}",
-            'getterAssignment:basic' => "\${{source}}['{$name}']",
-            'getterAssignment:basic:default' => "\${{source}}['{$name}'] ?? {{defaultValue}}",
-            'existsStatement' => "array_key_exists('{$name}', \${{source}})",
-            'sourceIteratorAssignment' => "\${{source}}['{$name}']",
-        ];
-
-        for ($i = 0; $i < 32; $i++) {
-            $key = str_pad(decbin($i), 5, '0', STR_PAD_LEFT);
-            $hasDedicatedSetter = $key[0] === '1';
+        $expressions = [];
+        $expressionTemplates = [];
+        for ($i = 0; $i < 64; $i++) {
+            $key = str_pad(decbin($i), 6, '0', STR_PAD_LEFT);
+            $hasDedicatedGetter = $key[0] === '1';
             $throwExceptionOnMissingRequiredValue = $key[1] === '1';
             $hasDefaultValue = $key[2] === '1';
             $hasCallbacks = $key[3] === '1';
             $hasValueNotFoundCallbacks = $key[4] === '1';
+            $isCollection = $key[5] === '1';
 
             if ($hasDefaultValue) {
                 $throwExceptionOnMissingRequiredValue = true;
@@ -77,29 +73,36 @@ class ArrayExpressionBuilder extends AbstractBuilder implements SetterInterface,
 
             $template = $this->getGetterExpressionTemplate(
                 $throwExceptionOnMissingRequiredValue,
-                $hasDedicatedSetter,
+                $hasDedicatedGetter,
                 $hasDefaultValue,
                 $hasCallbacks,
                 $hasValueNotFoundCallbacks,
+                $isCollection
             );
 
-            $vars = [
-                '{{name}}' => $name,
+            $expressions[$key] = [
+                '{{getterAssignment:item}}' => "\$item",
+                '{{getterAssignment:var}}' => "\${{var}}",
+                '{{getterAssignment:basic}}' => "\${{source}}['{$name}']",
+                '{{getterAssignment:basic:default}}' => "\${{source}}['{$name}'] ?? {{defaultValue}}",
+                '{{existsStatement}}' => "array_key_exists('{$name}', \${{source}})",
+                '{{sourceIteratorAssignment}}' => "\${{source}}['{$name}']",
                 '{{varAssignment:basic}}' => "\${{var}} = \${{source}}['{$name}'];\n",
                 '{{varAssignment:basic:default}}' => "\${{var}} = \${{source}}['{$name}'] ?? {{defaultValue}};\n",
+                '{{varAssignnmet:item}}' => "\${{var}} = \$item;\n",
                 '{{varAssignment:dedicated}}' => "\${{var}} = {{dedicatedGetter}};\n",
                 '{{varAssignment:dedicated:default}}' => "if (array_key_exists('{$name}', \${{source}})) {\n"
                     . "\t\${{var}} = {{dedicatedGetter}};\n"
                     . "} else {\n"
                     . "\t\${{var}} = {{defaultValue}};\n"
                     . "}\n",
-                '{{existsStatement}}' => "array_key_exists('{$name}', \${{source}})"
             ];
 
-            $expressions[$key] = str_replace(array_keys($vars), array_values($vars), $template);
+            $vars = array_merge($expressions[$key], ['{{name}}' => $name]);
+            $expressionTemplates[$key] = str_replace(array_keys($vars), array_values($vars), $template);
         }
 
-        return new Getter($expressions);
+        return new Getter($expressionTemplates, $expressions);
     }
 
     /**
@@ -152,17 +155,15 @@ class ArrayExpressionBuilder extends AbstractBuilder implements SetterInterface,
                     $isCollection ? "\${{target}}['{$name}'][] = %s;\n" : "\${{target}}['{$name}'] = %s;\n",
                     $hasFunction ? $this->getFunctionCallExpressionTemplate($isCollection, $hasPathUsed, $isVarVariableUsed) : "{{getterAssignment:basic:default}}"
                 ),
+                '{{targetIteratorInitialAssignment}}' => "\${{target}}['{$name}'] = [];\n",
+                '{{targetIteratorFinalAssignment}}' => "",
             ];
 
             foreach ($expressions[$key] as &$value) {
                 $value = str_replace('{{name}}', $name, $value);
             }
-
-            $vars = [
-                '{{targetIteratorInitialAssignment}}' => "\${{target}}['{$name}'] = [];\n",
-                '{{targetIteratorFinalAssignment}}' => "",
-            ];
             
+            $vars = $expressions[$key];
             $expressionTemplates[$key] = str_replace(array_keys($vars), array_values($vars), $template);
         }
 

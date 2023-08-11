@@ -36,15 +36,4 @@ class TreeBuildingTest extends TestCase
         $this->assertCount(13, $items->blueprint->properties);
         $this->assertSame(true, $items->blueprint->isCollection);
     }
-
-    /** @test */
-    public function test(): void
-    {
-        $blueprint = Blueprint::create(self::BLUEPRINT_CLASS, false);
-        $property = $blueprint->getProperty('id');
-        $getters = (new ArrayExpressionBuilder())->getGetter($property);
-        $setters = (new ArrayExpressionBuilder())->getSetter($property);
-
-        $this->assertTrue(true);
-    }
 }

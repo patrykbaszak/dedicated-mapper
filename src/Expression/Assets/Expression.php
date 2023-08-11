@@ -17,8 +17,10 @@ class Expression
     private Property $sourceProperty;
     private Property $targetProperty;
 
-    public string $getterExpression;
-    public string $setterExpression;
+    /** @var string[] */
+    public array $expressionPatterns = [];
+    public string $getterExpressionTemplate;
+    public string $setterExpressionTemplate;
     /** @var string[] */
     public array $callbacksExpression = [];
     /** @var string[] */
@@ -59,48 +61,38 @@ class Expression
         $this->sourceProperty = $source;
         $this->targetProperty = $target;
 
-        /* Modificators */
-        foreach ($this->modificators as $modificator) {
-            $modificator->modifyPropertyExpression($source, $target, $this);
-        }
+        $this->applyModificators($source, $target);
+        $this->applyCallbacks($source, $target);
 
-        /* Callbacks */
-        $target->callbacks = array_merge($target->callbacks, $this->callbacks);
-        $target->collectionItemCallbacks = array_merge($target->collectionItemCallbacks, $this->collectionItemCallbacks);
-        $this->callbacksExpression = array_filter(array_map(fn (MappingCallback $callback) => $callback->isValueNotFoundCallback ? null : $callback->callback, $target->getSortedCallbacks()));
-        $this->collectionItemCallbacksExpression = array_filter(array_map(fn (MappingCallback $callback) => $callback->isValueNotFoundCallback ? null : $callback->callback, $target->getSortedCallbacks(true)));
-        $this->valueNotFoundExpressions = array_filter(array_map(fn (MappingCallback $callback) => $callback->isValueNotFoundCallback ? $callback->callback : null, $target->getSortedCallbacks()));
-
-        /** Getter */
-        $hasDedicatedGetter = !empty($target->reflection->getAttributes(InitialValueCallback::class)) || in_array($target->getPropertyType(), [Property::SIMPLE_OBJECT, Property::SIMPLE_OBJECT_COLLECTION, Property::SIMPLE_OBJECTS_SIMPLE_OBJECT_COLLECTION]);
-        $hasDefaultValue = $target->hasDefaultValue();
-        $hasCallbacks = !empty($this->callbacks);
-        $hasValueNotFoundCallbacks = !empty($this->valueNotFoundExpressions);
-        $hasCollectionItemCallbacks = !empty($this->collectionItemCallbacksExpression);
-
-        $this->getterExpression = $this->getter->getExpression(
-            $hasDedicatedGetter,
-            $this->throwExceptionOnMissingRequiredValue,
-            $hasDefaultValue,
-            $hasCallbacks,
-            $hasValueNotFoundCallbacks,
-        );
-
-        /** Setter */
         $hasFunction = !empty($this->function);
         $isPathUsed = (bool) $this->function?->pathVariable;
-        $isVarVariableUsed = $this->getter->isVarVariableUsed;
-        $simpleObjectAttr = $isSimpleObject ? $target->getPropertySimpleObjectAttribute() : null;
-        $hasSimpleObjectDeconstructor = (bool) $simpleObjectAttr?->deconstructor;
 
-        $this->setterExpression = $this->setter->getExpression(
-            $this->isCollection,
-            $hasFunction,
-            $isPathUsed,
-            $isSimpleObject,
-            $hasSimpleObjectDeconstructor,
-            $isVarVariableUsed,
-        );
+        if ($target->isCollection()) {
+            $collectionItemArgs = [$target->hasDedicatedInitCallback(true), true, false, !empty($this->collectionItemCallbacksExpression), false, true];
+            $collectionItemGetterExpressionTemplate = $this->getter->getExpressionTemplate(...$collectionItemArgs);
+            $collectionItemExpressions = $this->getter->getExpressions(...$collectionItemArgs); 
+            $isCollectionItemVarVariableUsed = false !== strpos($collectionItemGetterExpressionTemplate, '{{setterAssignment:var}}');
+            
+            $collectionItemArgs = [true, $hasFunction, $isPathUsed, $isCollectionItemVarVariableUsed];
+            $collectionItemSetterExpressionTemplate = $this->setter->getExpressionTemplate(...$collectionItemArgs);
+            $collectionItemExpressions = array_merge(
+                $collectionItemExpressions,
+                $this->setter->getExpressions(...$collectionItemArgs)
+            );
+
+            $expr = str_replace(
+                array_keys($collectionItemExpressions),
+                array_values($collectionItemExpressions),
+                $collectionItemSetterExpressionTemplate
+            );
+
+            $hasFunction = false;
+        }
+
+        // $args = [$target->hasDedicatedInitCallback(false), $this->throwExceptionOnMissingRequiredValue, $target->hasDefaultValue(), !empty($this->callbacksExpression), !empty($this->valueNotFoundExpressions), false];
+        // $expressionTemplate = $this->getter->getExpressionTemplate(...$collectionArgs);
+        // $expressions = $this->getter->getExpression(...$collectionArgs);
+        // $isVarVariableUsed = false !== strpos($collectionExpressionTemplate, '{{setterAssignment:var}}');
 
         return $this;
     }
@@ -155,5 +147,22 @@ class Expression
         } while (false !== strpos($expr, '{{'));
 
         return $expr;
+    }
+
+    private function applyModificators(Property $source, Property $target): void
+    {
+        foreach ($this->modificators as $modificator) {
+            $modificator->modifyPropertyExpression($source, $target, $this);
+        }
+    }
+
+    private function applyCallbacks(Property $source, Property $target): void
+    {
+        $target->callbacks = array_merge($target->callbacks, $this->callbacks);
+        $target->collectionItemCallbacks = array_merge($target->collectionItemCallbacks, $this->collectionItemCallbacks);
+        $this->callbacksExpression = array_filter(array_map(fn (MappingCallback $callback) => $callback->isValueNotFoundCallback ? null : $callback->callback, $target->getSortedCallbacks()));
+        $this->collectionItemCallbacksExpression = array_filter(array_map(fn (MappingCallback $callback) => $callback->isValueNotFoundCallback ? null : $callback->callback, $target->getSortedCallbacks(true)));
+        $this->valueNotFoundExpressions = array_filter(array_map(fn (MappingCallback $callback) => $callback->isValueNotFoundCallback ? $callback->callback : null, $target->getSortedCallbacks()));
+
     }
 }

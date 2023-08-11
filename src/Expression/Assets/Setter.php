@@ -10,35 +10,41 @@ class Setter
         'isCollection',
         'hasFunction',
         'hasPathUsed',
-        'isSimpleObject',
-        'hasSimpleObjectDeconstructor',
         'isVarVariableUsed',
     ];
 
-    public const GETTER_EXPRESSION = '{{getter}}';
-    public const TARGET_VARIABLE = '{{target}}';
-    public const SIMPLE_OBJECT_DECONSTRUCTOR = '{{simpleObjectDeconstructor}}';
-    public const FUNCTION_DECLARATION = '{{function}}';
-    public const FUNCTION_VARIABLE = '{{functionVariable}}';
-
-    /** @param string[] $expressions */
+    /**
+     * @param string[] $expressionTemplates  
+     * @param array<array<string,string>> $expressions
+     */
     public function __construct(
         private array $expressionTemplates,
         private array $expressions
     ) {
     }
 
-    public function getExpression(
+    public function getExpressionTemplate(
         bool $isCollection,
         bool $hasFunction,
         bool $hasPathUsed,
-        bool $isSimpleObject,
-        bool $hasSimpleObjectDeconstructor,
         bool $isVarVariableUsed,
     ): string {
         $key = implode('', array_map(fn ($statement) => (int) $statement, func_get_args()));
-        $expression = $this->expressions[$key];
 
-        return $expression;
+        return $this->expressionTemplates[$key];
+    }
+
+    /**
+     * @return array<string,string>
+     */
+    public function getExpressions(
+        bool $isCollection,
+        bool $hasFunction,
+        bool $hasPathUsed,
+        bool $isVarVariableUsed,
+    ): array {
+        $key = implode('', array_map(fn ($statement) => (int) $statement, func_get_args()));
+
+        return $this->expressions[$key];
     }
 }

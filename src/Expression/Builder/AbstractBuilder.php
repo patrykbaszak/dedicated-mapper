@@ -78,6 +78,7 @@ abstract class AbstractBuilder
         bool $hasDefaultValue,
         bool $hasCallbacks,
         bool $hasNotFoundCallbacks,
+        bool $isCollection,
     ): string {
         $hasVarAssignment = $hasDedicatedGetter || $hasCallbacks;
 

@@ -20,8 +20,18 @@ trait Type
     protected Types $types;
 
     /** @return class-string */
-    public function getClassType(): string
+    public function getClassType(bool $asCollectionItem = false): string
     {
+        if ($asCollectionItem) {
+            foreach ($this->getTypes()->innerTypes as $type) {
+                if (class_exists($type, false)) {
+                    return $type;
+                }
+            }
+
+            throw new \RuntimeException(sprintf('Item class not found. Property: %s.', $this->reflection->getName()));
+        }
+
         foreach ($this->getTypes()->types as $type) {
             if (class_exists($type, false)) {
                 return $type;
@@ -227,6 +237,12 @@ class Types
                     return;
                 }
             }
+
+            // class not exists! It's simple type
+            $this->innerTypes[] = (string) $itemType;
+            $this->addType((string) $reflection->getKeyType());
+
+            return;
         }
 
         if ($reflection instanceof Object_) {

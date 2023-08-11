@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PBaszak\DedicatedMapperBundle\Tests\Unit\Properties;
 
+use ArrayObject;
 use PBaszak\DedicatedMapperBundle\Attribute\ApplyToCollectionItems;
 use PBaszak\DedicatedMapperBundle\Attribute\SimpleObject;
 use PBaszak\DedicatedMapperBundle\Properties\Property;
@@ -134,72 +135,35 @@ class PropertyFunctionsTest extends TestCase
             )->getPropertyType()
         );
 
-        /* COLLECTION */
+        /* PROPERTIES_COLLECTION */
         $this->assertEquals(
-            Property::COLLECTION,
+            Property::PROPERTIES_COLLECTION,
+            Property::create(
+                new \ReflectionClass(PropertyFunctionsNestedTester::class),
+                'testStrings'
+            )->getPropertyType()
+        );
+        $this->assertEquals(
+            Property::PROPERTIES_COLLECTION,
+            Property::create(
+                new \ReflectionClass(PropertyFunctionsNestedTester::class),
+                'testStrings2'
+            )->getPropertyType()
+        );
+
+        /* CLASS_OBJECTS_COLLECTION */
+        $this->assertEquals(
+            Property::CLASS_OBJECTS_COLLECTION,
             Property::create(
                 new \ReflectionClass(PropertyFunctionsTester::class),
                 'test1'
             )->getPropertyType()
         );
         $this->assertEquals(
-            Property::COLLECTION,
+            Property::CLASS_OBJECTS_COLLECTION,
             Property::create(
                 new \ReflectionClass(PropertyFunctionsTester::class),
                 'test2'
-            )->getPropertyType()
-        );
-
-        /* SIMPLE_OBJECT_COLLECTION */
-        $this->assertEquals(
-            Property::SIMPLE_OBJECT_COLLECTION,
-            Property::create(
-                new \ReflectionClass(PropertyFunctionsTester::class),
-                'test3'
-            )->getPropertyType()
-        );
-        $this->assertEquals(
-            Property::SIMPLE_OBJECT_COLLECTION,
-            Property::create(
-                new \ReflectionClass(PropertyFunctionsTester::class),
-                'test4'
-            )->getPropertyType()
-        );
-
-        /* SIMPLE_OBJECTS_SIMPLE_OBJECT_COLLECTION */
-        $this->assertEquals(
-            Property::SIMPLE_OBJECTS_SIMPLE_OBJECT_COLLECTION,
-            Property::create(
-                new \ReflectionClass(PropertyFunctionsNestedTester::class),
-                'test2'
-            )->getPropertyType()
-        );
-        $this->assertEquals(
-            Property::SIMPLE_OBJECTS_SIMPLE_OBJECT_COLLECTION,
-            Property::create(
-                new \ReflectionClass(PropertyFunctionsNestedTester::class),
-                'test3'
-            )->getPropertyType()
-        );
-        $this->assertEquals(
-            Property::SIMPLE_OBJECTS_SIMPLE_OBJECT_COLLECTION,
-            Property::create(
-                new \ReflectionClass(PropertyFunctionsTester::class),
-                'simpleObjects'
-            )->getPropertyType()
-        );
-        $this->assertEquals(
-            Property::SIMPLE_OBJECTS_SIMPLE_OBJECT_COLLECTION,
-            Property::create(
-                new \ReflectionClass(PropertyFunctionsTester::class),
-                'simpleObjectsNo1'
-            )->getPropertyType()
-        );
-        $this->assertEquals(
-            Property::SIMPLE_OBJECTS_SIMPLE_OBJECT_COLLECTION,
-            Property::create(
-                new \ReflectionClass(PropertyFunctionsTester::class),
-                'simpleObjectsNo2'
             )->getPropertyType()
         );
 
@@ -225,6 +189,75 @@ class PropertyFunctionsTest extends TestCase
                 'simpleObjectsCollection'
             )->getPropertyType()
         );
+
+        /* SIMPLE_OBJECT_COLLECTION */
+        $this->assertEquals(
+            Property::SIMPLE_OBJECT_COLLECTION,
+            Property::create(
+                new \ReflectionClass(PropertyFunctionsNestedTester::class),
+                'testInts'
+            )->getPropertyType()
+        );
+        $this->assertEquals(
+            Property::SIMPLE_OBJECT_COLLECTION,
+            Property::create(
+                new \ReflectionClass(PropertyFunctionsNestedTester::class),
+                'testInts2'
+            )->getPropertyType()
+        );
+        
+        /* SIMPLE_OBJECT_CLASS_OBJECT_COLLECTION */
+        $this->assertEquals(
+            Property::SIMPLE_OBJECT_CLASS_OBJECT_COLLECTION,
+            Property::create(
+                new \ReflectionClass(PropertyFunctionsTester::class),
+                'test3'
+            )->getPropertyType()
+        );
+        $this->assertEquals(
+            Property::SIMPLE_OBJECT_CLASS_OBJECT_COLLECTION,
+            Property::create(
+                new \ReflectionClass(PropertyFunctionsTester::class),
+                'test4'
+            )->getPropertyType()
+        );
+
+        /* SIMPLE_OBJECT_SIMPLE_OBJECTS_COLLECTION */
+        $this->assertEquals(
+            Property::SIMPLE_OBJECT_SIMPLE_OBJECTS_COLLECTION,
+            Property::create(
+                new \ReflectionClass(PropertyFunctionsNestedTester::class),
+                'test2'
+            )->getPropertyType()
+        );
+        $this->assertEquals(
+            Property::SIMPLE_OBJECT_SIMPLE_OBJECTS_COLLECTION,
+            Property::create(
+                new \ReflectionClass(PropertyFunctionsNestedTester::class),
+                'test3'
+            )->getPropertyType()
+        );
+        $this->assertEquals(
+            Property::SIMPLE_OBJECT_SIMPLE_OBJECTS_COLLECTION,
+            Property::create(
+                new \ReflectionClass(PropertyFunctionsTester::class),
+                'simpleObjects'
+            )->getPropertyType()
+        );
+        $this->assertEquals(
+            Property::SIMPLE_OBJECT_SIMPLE_OBJECTS_COLLECTION,
+            Property::create(
+                new \ReflectionClass(PropertyFunctionsTester::class),
+                'simpleObjectsNo1'
+            )->getPropertyType()
+        );
+        $this->assertEquals(
+            Property::SIMPLE_OBJECT_SIMPLE_OBJECTS_COLLECTION,
+            Property::create(
+                new \ReflectionClass(PropertyFunctionsTester::class),
+                'simpleObjectsNo2'
+            )->getPropertyType()
+        );
     }
 }
 
@@ -243,6 +276,34 @@ class PropertyFunctionsNestedTester
      * PROPERTY.
      */
     public ?string $test;
+
+    /**
+     * PROPERTIES_COLLECTION.
+     * 
+     * @var string[]
+     */
+    public array $testStrings;
+
+    /**
+     * PROPERTIES_COLLECTION.
+     * 
+     * @var array<string>
+     */
+    public array $testStrings2;
+
+    /**
+     * SIMPLE_OBJECT_COLLECTION
+     * 
+     * @var int[]
+     */
+    public ArrayObject $testInts;
+
+    /**
+     * SIMPLE_OBJECT_COLLECTION
+     * 
+     * @var array<int>
+     */
+    public ArrayObject $testInts2;
 
     /**
      * SIMPLE_OBJECT.
@@ -269,14 +330,14 @@ class PropertyFunctionsNestedTester
     public array $test1;
 
     /**
-     * SIMPLE_OBJECTS_SIMPLE_OBJECT_COLLECTION.
+     * SIMPLE_OBJECT_SIMPLE_OBJECTS_COLLECTION.
      *
      * @var \ArrayObject<\DateTime>
      */
     public \ArrayObject|null $test2;
 
     /**
-     * SIMPLE_OBJECTS_SIMPLE_OBJECT_COLLECTION.
+     * SIMPLE_OBJECT_SIMPLE_OBJECTS_COLLECTION.
      *
      * @var \DateTime[]
      */
@@ -304,14 +365,14 @@ class PropertyFunctionsTester
     public $test0;
 
     /**
-     * COLLECTION.
+     * CLASS_OBJECTS_COLLECTION.
      *
      * @var PropertyFunctionsNestedTester[]
      */
     public array $test1;
 
     /**
-     * COLLECTION.
+     * CLASS_OBJECTS_COLLECTION.
      *
      * @var array<PropertyFunctionsNestedTester>
      */
@@ -332,7 +393,7 @@ class PropertyFunctionsTester
     public \ArrayObject $test4;
 
     /**
-     * SIMPLE_OBJECTS_SIMPLE_OBJECT_COLLECTION.
+     * SIMPLE_OBJECT_SIMPLE_OBJECTS_COLLECTION.
      *
      * @var PropertyFunctionsNestedTester[]
      */
@@ -344,14 +405,14 @@ class PropertyFunctionsTester
     public \ArrayObject $simpleObjects;
 
     /**
-     * SIMPLE_OBJECTS_SIMPLE_OBJECT_COLLECTION.
+     * SIMPLE_OBJECT_SIMPLE_OBJECTS_COLLECTION.
      *
      * @var \DateTime[]
      */
     public PropertyFunctionsSimpleObject $simpleObjectsNo1;
 
     /**
-     * SIMPLE_OBJECTS_SIMPLE_OBJECT_COLLECTION.
+     * SIMPLE_OBJECT_SIMPLE_OBJECTS_COLLECTION.
      *
      * @var PropertyFunctionsNestedTester[]
      */
