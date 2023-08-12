@@ -44,7 +44,7 @@ class ApplyToCollectionItems
 
         return array_filter(
             $this->attributes,
-            fn (object $attribute): bool => $attribute instanceof $attribute,
+            fn (object $attr): bool => $attr instanceof $attribute,
         );
     }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PBaszak\DedicatedMapperBundle\Tests\Unit\Expression;
 
+use PBaszak\DedicatedMapperBundle\Attribute\ApplyToCollectionItems;
 use PBaszak\DedicatedMapperBundle\Attribute\MappingCallback;
 use PBaszak\DedicatedMapperBundle\Attribute\SimpleObject;
 use PBaszak\DedicatedMapperBundle\Expression\Assets\FunctionExpression;
@@ -22,6 +23,14 @@ class ArraySetterExpressionTester
     public ?\DateTime $test3 = null;
 
     public \DateTime $test4;
+
+    /**
+     * @var \DateTime[]
+     */
+    #[ApplyToCollectionItems(
+        [new SimpleObject(deconstructor: 'format', deconstructorArguments: ['Y-m-d'])]
+    )]
+    public \ArrayObject $test5;
 }
 
 class NestedArraySetterExpressionTester
@@ -76,8 +85,8 @@ class ArraySetterExpressionBuilderTest extends TestCase
             throw new \LogicException('Property must be test3, test4 or test5.');
         }
 
-        if ($hasSimpleObjectDeconstructor && !in_array($property, ['test3'])) {
-            throw new \LogicException('Property must be test3.');
+        if ($hasSimpleObjectDeconstructor && !in_array($property, ['test3', 'test5'])) {
+            throw new \LogicException('Property must be test3 or test5.');
         }
 
         $blueprint = Blueprint::create($class, $isCollection, null);
@@ -207,7 +216,17 @@ class ArraySetterExpressionBuilderTest extends TestCase
             throw new \LogicException('Collection is not used.');
         }
 
-        if ($key[3]) {
+        if ($key[4]) {
+            $class = ArraySetterExpressionTester::class;
+            $property = 'test5';
+            $data = [
+                $property => new \ArrayObject([
+                    '2021-01-01',
+                    '2022-01-01',
+                    '2023-01-01',
+                ]),
+            ];
+        } elseif ($key[3]) {
             $class = NestedArraySetterExpressionTester::class;
             $property = 'test5';
             $data = [
@@ -320,6 +339,16 @@ class ArraySetterExpressionBuilderTest extends TestCase
                     'test' => 'test',
                     'test2' => true,
                     'test3' => '2021-01-01',
+                ],
+            ];
+        } elseif ($key[0] && $key[3]) {
+            $class = NestedArraySetterExpressionTester::class;
+            $property = 'test5';
+            $data = [
+                $property => [
+                    new \DateTime('2021-01-01'),
+                    new \DateTime('2022-01-01'),
+                    new \DateTime('2023-01-01'),
                 ],
             ];
         } elseif ($key[0]) {
