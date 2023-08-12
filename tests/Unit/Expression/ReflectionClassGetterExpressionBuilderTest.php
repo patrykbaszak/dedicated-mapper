@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace PBaszak\DedicatedMapperBundle\Tests\Unit\Expression;
 
-use ArrayObject;
 use PBaszak\DedicatedMapperBundle\Attribute\MappingCallback;
 use PBaszak\DedicatedMapperBundle\Expression\Assets\Expression;
 use PBaszak\DedicatedMapperBundle\Expression\Builder\ReflectionClassExpressionBuilder;
@@ -43,8 +42,8 @@ class ReflectionClassGetterExpressionBuilderTestedClass
     public function assertNotAssigned(): bool
     {
         return !isset($this->test)
-            && $this->test2 === null
-            && $this->test3 === 'default'
+            && null === $this->test2
+            && 'default' === $this->test3
             && !isset($this->test4);
     }
 }
@@ -86,7 +85,7 @@ class ReflectionClassGetterExpressionBuilderTest extends TestCase
         $class = ReflectionClassGetterExpressionBuilderTestedClass::class;
         $blueprint = Blueprint::create($class, false);
 
-        return str_replace('{{target}}', 'output', $this->builder->getSetterInitialExpression($blueprint, Uuid::v4()->toRfc4122())->toString()) . (new Expression(
+        return str_replace('{{target}}', 'output', $this->builder->getSetterInitialExpression($blueprint, Uuid::v4()->toRfc4122())->toString()).(new Expression(
             $this->builder->getGetter($blueprint->getProperty($propertyName)),
             $this->builder->getSetter($blueprint->getProperty($propertyName)),
             null,
@@ -177,8 +176,8 @@ class ReflectionClassGetterExpressionBuilderTest extends TestCase
         }
 
         $data = new ReflectionClassGetterExpressionBuilderTestedClass();
-        $key[2] ? $data->test2 = new ArrayObject(['a', 'b', 'c'])
-            : $data->test = new ArrayObject(['a', 'b', 'c']);
+        $key[2] ? $data->test2 = new \ArrayObject(['a', 'b', 'c'])
+            : $data->test = new \ArrayObject(['a', 'b', 'c']);
         $expression = $this->getExpression(...$key);
 
         eval($expression);
@@ -253,7 +252,7 @@ class ReflectionClassGetterExpressionBuilderTest extends TestCase
         }
 
         $data = new ReflectionClassGetterExpressionBuilderTestedClass();
-        $key[0] ? $data->$propertyName = new ArrayObject([
+        $key[0] ? $data->$propertyName = new \ArrayObject([
             'a', 'b', 'c',
         ])
             : $data->$propertyName = 'test';

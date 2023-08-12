@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace PBaszak\DedicatedMapperBundle\Expression\Assets;
 
-use Stringable;
-
-class InitialExpression implements Stringable
+class InitialExpression implements \Stringable
 {
     public function __construct(
         public string $expression
