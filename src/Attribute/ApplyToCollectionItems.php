@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace PBaszak\DedicatedMapperBundle\Attribute;
+namespace PBaszak\DedicatedMapper\Attribute;
 
 /**
  * Part of the mapping process.

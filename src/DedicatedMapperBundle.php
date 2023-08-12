@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace PBaszak\DedicatedMapperBundle;
+namespace PBaszak\DedicatedMapper;
 
 use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
 use Symfony\Component\HttpKernel\Bundle\Bundle;

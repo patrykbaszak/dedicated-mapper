@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace PBaszak\DedicatedMapperBundle\Tests\Func\Expression;
+namespace PBaszak\DedicatedMapper\Tests\Func\Expression;
 
-use PBaszak\DedicatedMapperBundle\Expression\Assets\Expression;
-use PBaszak\DedicatedMapperBundle\Expression\Builder\ArrayExpressionBuilder;
-use PBaszak\DedicatedMapperBundle\Properties\Blueprint;
+use PBaszak\DedicatedMapper\Expression\Assets\Expression;
+use PBaszak\DedicatedMapper\Expression\Builder\ArrayExpressionBuilder;
+use PBaszak\DedicatedMapper\Properties\Blueprint;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class ExpressionTestedClass

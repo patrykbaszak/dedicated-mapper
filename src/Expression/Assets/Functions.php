@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace PBaszak\DedicatedMapperBundle\Expression\Assets;
+namespace PBaszak\DedicatedMapper\Expression\Assets;
 
 class Functions
 {

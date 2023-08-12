@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace PBaszak\DedicatedMapperBundle;
+namespace PBaszak\DedicatedMapper;
 
-use PBaszak\DedicatedMapperBundle\Contract\FunctionInterface;
-use PBaszak\DedicatedMapperBundle\Contract\GetterInterface;
-use PBaszak\DedicatedMapperBundle\Contract\MapperServiceInterface;
-use PBaszak\DedicatedMapperBundle\Contract\SetterInterface;
-use PBaszak\DedicatedMapperBundle\Expression\Builder\AbstractBuilder;
+use PBaszak\DedicatedMapper\Contract\FunctionInterface;
+use PBaszak\DedicatedMapper\Contract\GetterInterface;
+use PBaszak\DedicatedMapper\Contract\MapperServiceInterface;
+use PBaszak\DedicatedMapper\Contract\SetterInterface;
+use PBaszak\DedicatedMapper\Expression\Builder\AbstractBuilder;
 use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Exception\ValidationFailedException;

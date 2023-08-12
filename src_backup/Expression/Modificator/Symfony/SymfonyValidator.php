@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace PBaszak\DedicatedMapperBundle\Expression\Modificator\Symfony;
+namespace PBaszak\DedicatedMapper\Expression\Modificator\Symfony;
 
-use PBaszak\DedicatedMapperBundle\Attribute\MappingCallback;
-use PBaszak\DedicatedMapperBundle\Contract\GetterInterface;
-use PBaszak\DedicatedMapperBundle\Contract\SetterInterface;
-use PBaszak\DedicatedMapperBundle\Expression\Modificator\ModificatorInterface;
-use PBaszak\DedicatedMapperBundle\Properties\Blueprint;
+use PBaszak\DedicatedMapper\Attribute\MappingCallback;
+use PBaszak\DedicatedMapper\Contract\GetterInterface;
+use PBaszak\DedicatedMapper\Contract\SetterInterface;
+use PBaszak\DedicatedMapper\Expression\Modificator\ModificatorInterface;
+use PBaszak\DedicatedMapper\Properties\Blueprint;
 use Symfony\Component\Validator\Constraint;
 
 class SymfonyValidator implements ModificatorInterface

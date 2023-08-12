@@ -3,20 +3,20 @@ services:
         autowire: true
         autoconfigure: true
 
-    PBaszak\DedicatedMapperBundle\:
+    PBaszak\DedicatedMapper\:
         resource: '../../*'
         exclude:
-            - '../../{Resources,DependencyInjection,DedicatedMapperBundle.php,Mapper.php}'
+            - '../../{Resources,DependencyInjection,DedicatedMapper.php,Mapper.php}'
 
-    PBaszak\DedicatedMapperBundle\Contract\MapperServiceInterface:
-        alias: PBaszak\DedicatedMapperBundle\MapperService
+    PBaszak\DedicatedMapper\Contract\MapperServiceInterface:
+        alias: PBaszak\DedicatedMapper\MapperService
         public: true
     
-    PBaszak\DedicatedMapperBundle\MapperService:
+    PBaszak\DedicatedMapper\MapperService:
         arguments:
             $directory: '%kernel.project_dir%/var/mapper/'
 
-    PBaszak\DedicatedMapperBundle\ValidatedMapperService:
+    PBaszak\DedicatedMapper\ValidatedMapperService:
         public: true
         arguments:
             $directory: '%kernel.project_dir%/var/mapper/'

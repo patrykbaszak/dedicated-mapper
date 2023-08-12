@@ -1,6 +1,6 @@
 <?php
 
-namespace PBaszak\DedicatedMapperBundle\Tests;
+namespace PBaszak\DedicatedMapper\Tests;
 
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
 use Symfony\Component\HttpKernel\Kernel as BaseKernel;
@@ -12,7 +12,7 @@ class Kernel extends BaseKernel
     private const BUNDLES = [
         \Symfony\Bundle\FrameworkBundle\FrameworkBundle::class,
         \PBaszak\MessengerCacheBundle\MessengerCacheBundle::class,
-        \PBaszak\DedicatedMapperBundle\DedicatedMapperBundle::class,
+        \PBaszak\DedicatedMapper\DedicatedMapperBundle::class,
         \JMS\SerializerBundle\JMSSerializerBundle::class,
     ];
 

@@ -34,12 +34,12 @@
     "license": "MIT",
     "autoload": {
         "psr-4": {
-            "PBaszak\\DedicatedMapperBundle\\": "src/"
+            "PBaszak\\DedicatedMapper\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "PBaszak\\DedicatedMapperBundle\\Tests\\": "tests/"
+            "PBaszak\\DedicatedMapper\\Tests\\": "tests/"
         }
     },
     "authors": [

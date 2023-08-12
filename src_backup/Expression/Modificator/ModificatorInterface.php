@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace PBaszak\DedicatedMapperBundle\Expression\Modificator;
+namespace PBaszak\DedicatedMapper\Expression\Modificator;
 
-use PBaszak\DedicatedMapperBundle\Contract\GetterInterface;
-use PBaszak\DedicatedMapperBundle\Contract\SetterInterface;
-use PBaszak\DedicatedMapperBundle\Properties\Blueprint;
+use PBaszak\DedicatedMapper\Contract\GetterInterface;
+use PBaszak\DedicatedMapper\Contract\SetterInterface;
+use PBaszak\DedicatedMapper\Properties\Blueprint;
 
 interface ModificatorInterface
 {

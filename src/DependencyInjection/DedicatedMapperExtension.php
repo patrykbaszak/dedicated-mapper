@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace PBaszak\DedicatedMapperBundle\DependencyInjection;
+namespace PBaszak\DedicatedMapper\DependencyInjection;
 
-use PBaszak\DedicatedMapperBundle\DedicatedMapperBundle;
+use PBaszak\DedicatedMapper\DedicatedMapperBundle;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\Extension;

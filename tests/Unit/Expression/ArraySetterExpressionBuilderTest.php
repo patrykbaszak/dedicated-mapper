@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace PBaszak\DedicatedMapperBundle\Tests\Unit\Expression;
+namespace PBaszak\DedicatedMapper\Tests\Unit\Expression;
 
-use PBaszak\DedicatedMapperBundle\Attribute\ApplyToCollectionItems;
-use PBaszak\DedicatedMapperBundle\Attribute\MappingCallback;
-use PBaszak\DedicatedMapperBundle\Attribute\SimpleObject;
-use PBaszak\DedicatedMapperBundle\Expression\Assets\FunctionExpression;
-use PBaszak\DedicatedMapperBundle\Expression\Builder\ArrayExpressionBuilder;
-use PBaszak\DedicatedMapperBundle\Expression\Builder\FunctionExpressionBuilder;
-use PBaszak\DedicatedMapperBundle\Expression\ExpressionBuilder;
-use PBaszak\DedicatedMapperBundle\Properties\Blueprint;
+use PBaszak\DedicatedMapper\Attribute\ApplyToCollectionItems;
+use PBaszak\DedicatedMapper\Attribute\MappingCallback;
+use PBaszak\DedicatedMapper\Attribute\SimpleObject;
+use PBaszak\DedicatedMapper\Expression\Assets\FunctionExpression;
+use PBaszak\DedicatedMapper\Expression\Builder\ArrayExpressionBuilder;
+use PBaszak\DedicatedMapper\Expression\Builder\FunctionExpressionBuilder;
+use PBaszak\DedicatedMapper\Expression\ExpressionBuilder;
+use PBaszak\DedicatedMapper\Properties\Blueprint;
 use PHPUnit\Framework\TestCase;
 
 class ArraySetterExpressionTester

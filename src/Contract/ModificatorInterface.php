@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace PBaszak\DedicatedMapperBundle\Contract;
+namespace PBaszak\DedicatedMapper\Contract;
 
-use PBaszak\DedicatedMapperBundle\Expression\Assets\Expression;
-use PBaszak\DedicatedMapperBundle\Expression\Assets\FunctionExpression;
-use PBaszak\DedicatedMapperBundle\Properties\Blueprint;
-use PBaszak\DedicatedMapperBundle\Properties\Property;
+use PBaszak\DedicatedMapper\Expression\Assets\Expression;
+use PBaszak\DedicatedMapper\Expression\Assets\FunctionExpression;
+use PBaszak\DedicatedMapper\Properties\Blueprint;
+use PBaszak\DedicatedMapper\Properties\Property;
 
 interface ModificatorInterface
 {

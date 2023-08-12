@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace PBaszak\DedicatedMapperBundle\Expression\Builder;
+namespace PBaszak\DedicatedMapper\Expression\Builder;
 
-use PBaszak\DedicatedMapperBundle\Contract\FunctionInterface;
-use PBaszak\DedicatedMapperBundle\Expression\Assets\Functions;
+use PBaszak\DedicatedMapper\Contract\FunctionInterface;
+use PBaszak\DedicatedMapper\Expression\Assets\Functions;
 
 class FunctionExpressionBuilder implements FunctionInterface
 {

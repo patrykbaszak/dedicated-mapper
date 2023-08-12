@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace PBaszak\DedicatedMapperBundle\Tests\Unit\Expression;
+namespace PBaszak\DedicatedMapper\Tests\Unit\Expression;
 
-use PBaszak\DedicatedMapperBundle\Attribute\MappingCallback;
-use PBaszak\DedicatedMapperBundle\Expression\Assets\Expression;
-use PBaszak\DedicatedMapperBundle\Expression\Builder\AnonymousObjectExpressionBuilder;
-use PBaszak\DedicatedMapperBundle\Properties\Blueprint;
+use PBaszak\DedicatedMapper\Attribute\MappingCallback;
+use PBaszak\DedicatedMapper\Expression\Assets\Expression;
+use PBaszak\DedicatedMapper\Expression\Builder\AnonymousObjectExpressionBuilder;
+use PBaszak\DedicatedMapper\Properties\Blueprint;
 use PHPUnit\Framework\TestCase;
 
 class AnonymousObjectGetterExpressionBuilderTestedClass

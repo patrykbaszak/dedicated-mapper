@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace PBaszak\DedicatedMapperBundle\Expression\Builder;
+namespace PBaszak\DedicatedMapper\Expression\Builder;
 
-use PBaszak\DedicatedMapperBundle\Contract\GetterInterface;
-use PBaszak\DedicatedMapperBundle\Contract\SetterInterface;
-use PBaszak\DedicatedMapperBundle\Expression\Assets\Getter;
-use PBaszak\DedicatedMapperBundle\Expression\Assets\InitialExpression;
-use PBaszak\DedicatedMapperBundle\Expression\Assets\Setter;
-use PBaszak\DedicatedMapperBundle\Properties\Blueprint;
-use PBaszak\DedicatedMapperBundle\Properties\Property;
+use PBaszak\DedicatedMapper\Contract\GetterInterface;
+use PBaszak\DedicatedMapper\Contract\SetterInterface;
+use PBaszak\DedicatedMapper\Expression\Assets\Getter;
+use PBaszak\DedicatedMapper\Expression\Assets\InitialExpression;
+use PBaszak\DedicatedMapper\Expression\Assets\Setter;
+use PBaszak\DedicatedMapper\Properties\Blueprint;
+use PBaszak\DedicatedMapper\Properties\Property;
 
 class ArrayExpressionBuilder extends AbstractBuilder implements SetterInterface, GetterInterface
 {

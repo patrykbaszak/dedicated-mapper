@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace PBaszak\DedicatedMapperBundle\Tests\Unit\Properties;
+namespace PBaszak\DedicatedMapper\Tests\Unit\Properties;
 
-use PBaszak\DedicatedMapperBundle\Attribute\ApplyToCollectionItems;
-use PBaszak\DedicatedMapperBundle\Attribute\SimpleObject;
-use PBaszak\DedicatedMapperBundle\Properties\Property;
+use PBaszak\DedicatedMapper\Attribute\ApplyToCollectionItems;
+use PBaszak\DedicatedMapper\Attribute\SimpleObject;
+use PBaszak\DedicatedMapper\Properties\Property;
 use PHPUnit\Framework\TestCase;
 
 /** @group unit */

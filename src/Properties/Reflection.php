@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace PBaszak\DedicatedMapperBundle\Properties;
+namespace PBaszak\DedicatedMapper\Properties;
 
 trait Reflection
 {

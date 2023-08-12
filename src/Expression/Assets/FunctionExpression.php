@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace PBaszak\DedicatedMapperBundle\Expression\Assets;
+namespace PBaszak\DedicatedMapper\Expression\Assets;
 
-use PBaszak\DedicatedMapperBundle\Contract\ModificatorInterface;
-use PBaszak\DedicatedMapperBundle\Properties\Blueprint;
+use PBaszak\DedicatedMapper\Contract\ModificatorInterface;
+use PBaszak\DedicatedMapper\Properties\Blueprint;
 
 class FunctionExpression
 {

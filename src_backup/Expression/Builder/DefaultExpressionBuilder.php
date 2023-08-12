@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace PBaszak\DedicatedMapperBundle\Expression\Builder;
+namespace PBaszak\DedicatedMapper\Expression\Builder;
 
-use PBaszak\DedicatedMapperBundle\Contract\FunctionInterface;
-use PBaszak\DedicatedMapperBundle\Contract\LoopInterface;
-use PBaszak\DedicatedMapperBundle\Expression\Function_;
-use PBaszak\DedicatedMapperBundle\Expression\Loop;
+use PBaszak\DedicatedMapper\Contract\FunctionInterface;
+use PBaszak\DedicatedMapper\Contract\LoopInterface;
+use PBaszak\DedicatedMapper\Expression\Function_;
+use PBaszak\DedicatedMapper\Expression\Loop;
 
 class DefaultExpressionBuilder implements FunctionInterface, LoopInterface
 {

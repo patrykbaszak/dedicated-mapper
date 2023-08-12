@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace PBaszak\DedicatedMapperBundle\Properties;
+namespace PBaszak\DedicatedMapper\Properties;
 
-use PBaszak\DedicatedMapperBundle\Attribute\ApplyToCollectionItems;
-use PBaszak\DedicatedMapperBundle\Attribute\InitialValueCallback;
-use PBaszak\DedicatedMapperBundle\Attribute\MappingCallback;
-use PBaszak\DedicatedMapperBundle\Attribute\SimpleObject;
+use PBaszak\DedicatedMapper\Attribute\ApplyToCollectionItems;
+use PBaszak\DedicatedMapper\Attribute\InitialValueCallback;
+use PBaszak\DedicatedMapper\Attribute\MappingCallback;
+use PBaszak\DedicatedMapper\Attribute\SimpleObject;
 
 class Property
 {

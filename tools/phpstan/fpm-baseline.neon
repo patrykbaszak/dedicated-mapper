@@ -1,6 +1,6 @@
 parameters:
 	ignoreErrors:
 		-
-			message: "#^Anonymous function should return PBaszak\\\\DedicatedMapperBundle\\\\Attribute\\\\MappingCallback\\|null but returns object\\|null\\.$#"
+			message: "#^Anonymous function should return PBaszak\\\\DedicatedMapper\\\\Attribute\\\\MappingCallback\\|null but returns object\\|null\\.$#"
 			count: 1
 			path: ../../src/Properties/Property.php

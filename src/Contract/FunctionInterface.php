@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace PBaszak\DedicatedMapperBundle\Contract;
+namespace PBaszak\DedicatedMapper\Contract;
 
-use PBaszak\DedicatedMapperBundle\Expression\Assets\Functions;
+use PBaszak\DedicatedMapper\Expression\Assets\Functions;
 
 interface FunctionInterface
 {

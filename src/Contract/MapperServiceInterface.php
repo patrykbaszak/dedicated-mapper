@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace PBaszak\DedicatedMapperBundle\Contract;
+namespace PBaszak\DedicatedMapper\Contract;
 
-use PBaszak\DedicatedMapperBundle\Expression\Builder\AbstractBuilder;
+use PBaszak\DedicatedMapper\Expression\Builder\AbstractBuilder;
 
 interface MapperServiceInterface
 {

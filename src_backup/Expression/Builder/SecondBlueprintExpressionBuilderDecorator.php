@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace PBaszak\DedicatedMapperBundle\Expression\Builder;
+namespace PBaszak\DedicatedMapper\Expression\Builder;
 
-use PBaszak\DedicatedMapperBundle\Attribute\TargetProperty;
-use PBaszak\DedicatedMapperBundle\Contract\GetterInterface;
-use PBaszak\DedicatedMapperBundle\Contract\SetterInterface;
-use PBaszak\DedicatedMapperBundle\Expression\Getter;
-use PBaszak\DedicatedMapperBundle\Expression\InitialExpression;
-use PBaszak\DedicatedMapperBundle\Expression\Modificator\ModificatorInterface;
-use PBaszak\DedicatedMapperBundle\Expression\Setter;
-use PBaszak\DedicatedMapperBundle\Expression\Statement;
-use PBaszak\DedicatedMapperBundle\Properties\Blueprint;
-use PBaszak\DedicatedMapperBundle\Properties\Property;
+use PBaszak\DedicatedMapper\Attribute\TargetProperty;
+use PBaszak\DedicatedMapper\Contract\GetterInterface;
+use PBaszak\DedicatedMapper\Contract\SetterInterface;
+use PBaszak\DedicatedMapper\Expression\Getter;
+use PBaszak\DedicatedMapper\Expression\InitialExpression;
+use PBaszak\DedicatedMapper\Expression\Modificator\ModificatorInterface;
+use PBaszak\DedicatedMapper\Expression\Setter;
+use PBaszak\DedicatedMapper\Expression\Statement;
+use PBaszak\DedicatedMapper\Properties\Blueprint;
+use PBaszak\DedicatedMapper\Properties\Property;
 use Symfony\Component\Uid\Uuid;
 
 class SecondBlueprintExpressionBuilderDecorator implements SetterInterface, GetterInterface
