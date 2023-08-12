@@ -143,7 +143,7 @@ class ReflectionClassExpressionBuilder extends AbstractBuilder implements Setter
                 '{{varAssignment:basic:default}}' => $preAssignmentExpression ? "\${{var}} ??= {{defaultValue}};\n" : "\${{var}} = {{getterAssignment:basic:default}};\n",
                 '{{varAssignnmet:item}}' => "\${{var}} = \$item;\n",
                 '{{varAssignment:dedicated}}' => "\${{var}} = {{dedicatedGetter}};\n",
-                '{{varAssignment:dedicated:default}}' => "if ({{existsStatement}}) {\n"
+                '{{varAssignment:dedicated:default}}' => "if ({{existsStatement}} && {{defaultValue}} !== {{getterAssignment:basic}}) {\n"
                     ."\t\${{var}} = {{dedicatedGetter}};\n"
                     ."} else {\n"
                     ."\t\${{var}} = {{defaultValue}};\n"
