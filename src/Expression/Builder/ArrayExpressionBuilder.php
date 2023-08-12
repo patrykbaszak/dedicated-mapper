@@ -38,10 +38,11 @@ class ArrayExpressionBuilder extends AbstractBuilder implements SetterInterface,
      * 5 => isCollection.
      *
      * @return Getter
-     *                Placeholders list:
-     *                {{setterAssignment:var}}
-     *                {{setterAssignment:basic}}
-     *                {{setterAssignment:basic:default}}
+     *
+     * Placeholders list:
+     * {{setterAssignment:var}}
+     * {{setterAssignment:basic}}
+     * {{setterAssignment:basic:default}}
      *
      * {{var}}
      * {{source}}
@@ -115,14 +116,16 @@ class ArrayExpressionBuilder extends AbstractBuilder implements SetterInterface,
      * 3 => isVarVariableUsed.
      *
      * @return Setter
-     *                Placeholders list:
-     *                {{getterExpression}}
-     *                {{getterAssignment:var}}
-     *                {{deconstructorCall}}
-     *                {{getterAssignment:basic}}
-     *                {{getterAssignment:basic:default}}
-     *                {{sourceIteratorAssignment}}
      *
+     * Placeholders list:
+     * {{getterExpression}}
+     * {{getterAssignment:var}}
+     * {{deconstructorCall}}
+     * {{getterAssignment:basic}}
+     * {{getterAssignment:basic:default}}
+     * {{sourceIteratorAssignment}}
+     *
+     * {{array}}
      * {{pathName}}
      * {{function}}
      * {{functionVariable}}
@@ -150,19 +153,19 @@ class ArrayExpressionBuilder extends AbstractBuilder implements SetterInterface,
 
             $expressions[$key] = [
                 '{{setterAssignment:var}}' => sprintf(
-                    $isCollection ? "\${{var}}[\$index] = %s;\n" : "\${{target}}['{$name}'] = %s;\n",
+                    $isCollection ? "\${{array}}[\$index] = %s;\n" : "\${{target}}['{$name}'] = %s;\n",
                     $hasFunction ? $this->getFunctionCallExpressionTemplate($isCollection, $hasPathUsed, $isVarVariableUsed) : '{{getterAssignment:var}}'.($hasDeconstructor ? '{{deconstructorCall}}' : '')
                 ),
                 '{{setterAssignment:basic}}' => sprintf(
-                    $isCollection ? "\${{var}}[\$index] = %s;\n" : "\${{target}}['{$name}'] = %s;\n",
+                    $isCollection ? "\${{array}}[\$index] = %s;\n" : "\${{target}}['{$name}'] = %s;\n",
                     $hasFunction ? $this->getFunctionCallExpressionTemplate($isCollection, $hasPathUsed, $isVarVariableUsed) : ($isCollection ? '{{getterAssignment:item}}' : '{{getterAssignment:basic}}').($hasDeconstructor ? '{{deconstructorCall}}' : '')
                 ),
                 '{{setterAssignment:basic:default}}' => sprintf(
-                    $isCollection ? "\${{var}}[\$index] = %s;\n" : "\${{target}}['{$name}'] = %s;\n",
+                    $isCollection ? "\${{array}}[\$index] = %s;\n" : "\${{target}}['{$name}'] = %s;\n",
                     $hasFunction ? $this->getFunctionCallExpressionTemplate($isCollection, $hasPathUsed, $isVarVariableUsed) : '{{getterAssignment:basic:default}}'
                 ),
-                '{{targetIteratorInitialAssignment}}' => "\${{var}} = [];\n",
-                '{{targetIteratorFinalAssignment}}' => '',
+                '{{targetIteratorInitialAssignment}}' => "\${{array}} = [];\n",
+                '{{targetIteratorFinalAssignment}}' => "\${{var}} = \${{array}};\n",
             ];
 
             foreach ($expressions[$key] as &$value) {

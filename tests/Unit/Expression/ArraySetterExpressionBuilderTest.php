@@ -212,9 +212,9 @@ class ArraySetterExpressionBuilderTest extends TestCase
             $property = 'test5';
             $data = [
                 $property => [
-                    '2021-01-01',
-                    '2022-01-01',
-                    '2023-01-01',
+                    new \DateTime('2021-01-01'),
+                    new \DateTime('2022-01-01'),
+                    new \DateTime('2023-01-01'),
                 ],
             ];
         } else {

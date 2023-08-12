@@ -44,7 +44,8 @@ class Expression
         public string $source = 'data',
         public string $target = 'output',
         public string $var = 'var',
-        public ?string $functionVar = null
+        public ?string $functionVar = null,
+        public string $array = 'array',
     ) {
         if (!empty($this->function) && null === $this->functionVar) {
             throw new \LogicException('Function variable name must be provided when function is set.');
@@ -74,12 +75,16 @@ class Expression
             ];
 
             [$itemExpression, $itemExpressionPlaceholders] = $this->newExpression(...$itemExpressionArgs);
-            if ($hasItemDeconstructor) {
-                $itemExpressionPlaceholders['{{decotructorCall}}'] = $target->getPropertySimpleObjectAttribute(true)?->getDeconstructorExpression();
-                do {
-                    $itemExpression = str_replace(array_keys($itemExpressionPlaceholders), array_values($itemExpressionPlaceholders), $itemExpression);
-                } while ($this->hasNotFilledPlaceholders(array_keys($itemExpressionPlaceholders), $itemExpression));
+            if ($itemExpressionArgs[0]) {
+                $itemExpressionPlaceholders['{{dedicatedGetter}}'] = $target->getInitialCallbackAttribute(true)?->callback ?? '';
             }
+            if ($hasItemDeconstructor) {
+                $itemExpressionPlaceholders['{{deconstructorCall}}'] = $target->getPropertySimpleObjectAttribute(true)?->getDeconstructorExpression();
+            }
+
+            do {
+                $itemExpression = str_replace(array_keys($itemExpressionPlaceholders), array_values($itemExpressionPlaceholders), $itemExpression);
+            } while ($this->hasNotFilledPlaceholders(array_keys($itemExpressionPlaceholders), $itemExpression));
 
             $expressionArgs = [
                 $target->hasDedicatedInitCallback(false),
@@ -126,7 +131,7 @@ class Expression
             $expressionPlaceholders['{{notFoundCallbacks}}'] = implode("\n", $this->valueNotFoundExpressions);
         }
         if ($hasDeconstructor) {
-            $expressionPlaceholders['{{decotructorCall}}'] = $target->getPropertySimpleObjectAttribute(false)?->getDeconstructorExpression() ?? '';
+            $expressionPlaceholders['{{deconstructorCall}}'] = $target->getPropertySimpleObjectAttribute(false)?->getDeconstructorExpression() ?? '';
         }
 
         do {
@@ -145,6 +150,7 @@ class Expression
         $expressionPlaceholders = [
             '{{source}}' => $this->source,
             '{{target}}' => $this->target,
+            '{{array}}' => $this->array,
             '{{var}}' => $this->var,
             '{{functionVariable}}' => $this->functionVar,
             '{{function}}' => $this->function?->toString(),

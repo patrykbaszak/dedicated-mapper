@@ -209,6 +209,12 @@ class Property
         return (bool) ($this->getPropertyType() & 8);
     }
 
+    public function isNativeSimpleObject(bool $asCollectionItem = false): bool
+    {
+        return in_array($this->getClassType($asCollectionItem), array_keys(self::NATIVE_SIMPLE_OBJECTS))
+            || in_array(ltrim($this->getClassType($asCollectionItem), '\\'), array_keys(self::NATIVE_SIMPLE_OBJECTS));
+    }
+
     public function hasDedicatedInitCallback(bool $asCollectionItem = false): bool
     {
         $attr = $asCollectionItem
@@ -265,7 +271,7 @@ class Property
             /** @var SimpleObject[] $attributes */
             $attributes = $this->getApplyToCollectionItemsAttribute()?->getAttributes(SimpleObject::class) ?? [];
             if (empty($attributes)) {
-                if (in_array($this->getClassType(), array_keys(self::NATIVE_SIMPLE_OBJECTS))) {
+                if ($this->isNativeSimpleObject($asCollectionItem)) {
                     return new SimpleObject();
                 }
 
@@ -277,7 +283,7 @@ class Property
 
         $attributes = $this->reflection->getAttributes(SimpleObject::class);
         if (empty($attributes)) {
-            if (in_array($this->getClassType(), array_keys(self::NATIVE_SIMPLE_OBJECTS))) {
+            if ($this->isNativeSimpleObject($asCollectionItem)) {
                 return new SimpleObject();
             }
 
