@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace PBaszak\DedicatedMapperBundle\Attribute;
 
-use PBaszak\DedicatedMapperBundle\Expression\Assets\Setter;
-
 /**
  * Part of the mapping process.
  * Use is if You got class like DateTime or ArrayObject but Your own.
@@ -36,7 +34,7 @@ class SimpleObject
      * @param class-string $class
      */
     public function getConstructorExpression(
-        string $class, 
+        string $class,
         bool $isCollectionItem = false,
     ): string {
         $constructor = $this->staticConstructor

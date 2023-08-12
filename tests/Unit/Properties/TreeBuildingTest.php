@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace PBaszak\DedicatedMapperBundle\Tests\Unit\Properties;
 
-use PBaszak\DedicatedMapperBundle\Expression\Builder\ArrayExpressionBuilder;
 use PBaszak\DedicatedMapperBundle\Properties\Blueprint;
 use PBaszak\DedicatedMapperBundle\Properties\Property;
 use PBaszak\DedicatedMapperBundle\Tests\assets\Dummy;

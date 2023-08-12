@@ -55,18 +55,18 @@ abstract class AbstractBuilder
 
     /**
      * @return string
-     * Placeholders list:
-     * {{name}}
-     * 
+     *                Placeholders list:
+     *                {{name}}
+     *
      * {{setterAssignment:var}}
      * {{setterAssignment:basic}}
      * {{setterAssignment:basic:default}}
-     * 
+     *
      * {{varAssignment:basic}}
      * {{varAssignment:basic:default}}
      * {{varAssignment:dedicated}}
      * {{varAssignment:dedicated:default}}
-     * 
+     *
      * {{callbacks}}
      * {{notFoundCallbacks}}
      * {{preAssignmentExpression}}
@@ -106,7 +106,7 @@ abstract class AbstractBuilder
 
         $callbacksExpression = $hasCallbacks ? '{{callbacks}}' : '';
 
-        $successExpression = $preAssignmentExpression . $varAssignmentExpression . $callbacksExpression . $setterAssigmentExpression;
+        $successExpression = $preAssignmentExpression.$varAssignmentExpression.$callbacksExpression.$setterAssigmentExpression;
         $failureExpression = $missingExpression;
 
         if (!$isCollection) {
@@ -128,10 +128,10 @@ abstract class AbstractBuilder
 
     /**
      * @return string
-     * Placeholders list:
-     * {{getterExpression}}
-     * {{sourceIteratorAssignment}}
-     * 
+     *                Placeholders list:
+     *                {{getterExpression}}
+     *                {{sourceIteratorAssignment}}
+     *
      * {{function}}
      * {{functionVariable}}
      * {{targetIteratorInitialAssignment}}
@@ -144,13 +144,13 @@ abstract class AbstractBuilder
         $getterExpression = '{{getterExpression}}';
         $functionDeclarationExpression = $hasFunction ? "\${{functionVariable}} = {{function}};\n" : '';
         $collectionExpression = $isCollection
-            ? "{{targetIteratorInitialAssignment}}"
-            . "foreach ({{sourceIteratorAssignment}} as \$index => \$item) {\n{$getterExpression}}\n"
-            . "{{targetIteratorFinalAssignment}}"
+            ? '{{targetIteratorInitialAssignment}}'
+            ."foreach ({{sourceIteratorAssignment}} as \$index => \$item) {\n{$getterExpression}}\n"
+            .'{{targetIteratorFinalAssignment}}'
             : '';
 
         if ($isCollection && $hasFunction) {
-            return $functionDeclarationExpression . $collectionExpression;
+            return $functionDeclarationExpression.$collectionExpression;
         }
 
         if ($isCollection && !$hasFunction) {
@@ -158,7 +158,7 @@ abstract class AbstractBuilder
         }
 
         if (!$isCollection && $hasFunction) {
-            return $functionDeclarationExpression . $getterExpression;
+            return $functionDeclarationExpression.$getterExpression;
         }
 
         return $getterExpression;
@@ -166,12 +166,12 @@ abstract class AbstractBuilder
 
     /**
      * @return string
-     * Placeholders list:
-     * {{name}}
-     * {{pathName}}
-     * {{getterAssignment:var}}
-     * {{getterAssignment:basic}}
-     * {{functionVariable}}
+     *                Placeholders list:
+     *                {{name}}
+     *                {{pathName}}
+     *                {{getterAssignment:var}}
+     *                {{getterAssignment:basic}}
+     *                {{functionVariable}}
      */
     public function getFunctionCallExpressionTemplate(
         bool $isCollection,
@@ -181,13 +181,13 @@ abstract class AbstractBuilder
         $functionArguments = implode(', ', array_filter([
             $hasVarUsed ? '{{getterAssignment:var}}' : ($isCollection ? '{{getterAssignment:item}}' : '{{getterAssignment:basic}}'),
             $hasPathUsed ? ($isCollection
-                ? "\${{pathName}} . \".{{name}}.{\$index}\""
-                : "\${{pathName}} . \".{{name}}\""
+                ? '${{pathName}} . ".{{name}}.{$index}"'
+                : '${{pathName}} . ".{{name}}"'
             ) : null,
         ]));
 
         return sprintf(
-            "\${{functionVariable}}(%s)",
+            '${{functionVariable}}(%s)',
             $functionArguments
         );
     }

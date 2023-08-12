@@ -11,11 +11,11 @@ class Setter
         'hasFunction',
         'hasPathUsed',
         'isVarVariableUsed',
-        'hasDeconstructorCall'
+        'hasDeconstructorCall',
     ];
 
     /**
-     * @param string[] $expressionTemplates  
+     * @param string[]                    $expressionTemplates
      * @param array<array<string,string>> $expressions
      */
     public function __construct(

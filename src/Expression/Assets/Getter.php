@@ -13,11 +13,11 @@ class Getter
         'hasCallbacks',
         'hasValueNotFoundCallbacks',
         'isCollection',
-        'preAssignmentExpression'
+        'preAssignmentExpression',
     ];
 
     /**
-     * @param string[] $expressionTemplates  
+     * @param string[]                    $expressionTemplates
      * @param array<array<string,string>> $expressions
      */
     public function __construct(
@@ -53,7 +53,7 @@ class Getter
         bool $preAssignmentExpression,
     ): array {
         $key = implode('', array_map(fn ($statement) => (int) $statement, func_get_args()));
-        
+
         return $this->expressions[$key];
     }
 }

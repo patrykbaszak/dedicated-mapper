@@ -18,15 +18,17 @@ class Expression
     public array $callbacksExpression = [];
     /** @var string[] */
     public array $collectionItemCallbacksExpression = [];
-    /** 
+    /**
      * There is no not found callbacks for collection items.
-     * @var string[] 
+     *
+     * @var string[]
      */
     public array $valueNotFoundExpressions = [];
 
     /**
      * @param ModificatorInterface[] $modificators
      * @param MappingCallback[]      $callbacks
+     * @param MappingCallback[]      $collectionItemCallbacks
      * @param bool                   $throwExceptionOnMissingRequiredValue If `false` then property without defeault value
      *                                                                     will be skipped, but code from valueNotFoundExpressions will be executed anyway.
      *                                                                     If `true` then `if isset` will not be added to the code.
@@ -68,9 +70,9 @@ class Expression
                 $hasFunction,
                 $isPathUsed,
                 false,
-                $hasItemDeconstructor = (bool) ($target->isSimpleObject(true) && $target->getPropertySimpleObjectAttribute(true)?->deconstructor)
+                $hasItemDeconstructor = (bool) ($target->isSimpleObject(true) && $target->getPropertySimpleObjectAttribute(true)?->deconstructor),
             ];
-            
+
             [$itemExpression, $itemExpressionPlaceholders] = $this->newExpression(...$itemExpressionArgs);
             if ($hasItemDeconstructor) {
                 $itemExpressionPlaceholders['{{decotructorCall}}'] = $target->getPropertySimpleObjectAttribute(true)?->getDeconstructorExpression();
@@ -78,7 +80,7 @@ class Expression
                     $itemExpression = str_replace(array_keys($itemExpressionPlaceholders), array_values($itemExpressionPlaceholders), $itemExpression);
                 } while ($this->hasNotFilledPlaceholders(array_keys($itemExpressionPlaceholders), $itemExpression));
             }
-            
+
             $expressionArgs = [
                 $target->hasDedicatedInitCallback(false),
                 $this->throwExceptionOnMissingRequiredValue,
@@ -89,9 +91,9 @@ class Expression
                 false,
                 $isPathUsed,
                 true,
-                $hasDeconstructor = (bool) ($target->isSimpleObject(false) && $target->getPropertySimpleObjectAttribute(false)?->deconstructor)
+                $hasDeconstructor = (bool) ($target->isSimpleObject(false) && $target->getPropertySimpleObjectAttribute(false)?->deconstructor),
             ];
-            
+
             [$expression, $expressionPlaceholders] = $this->newExpression(...$expressionArgs);
             $expressionPlaceholders['{{preAssignmentExpression}}'] = $itemExpression;
         } else {
@@ -105,18 +107,17 @@ class Expression
                 $hasFunction,
                 $isPathUsed,
                 false,
-                $hasDeconstructor = (bool) ($target->isSimpleObject(false) && $target->getPropertySimpleObjectAttribute(false)?->deconstructor)
+                $hasDeconstructor = (bool) ($target->isSimpleObject(false) && $target->getPropertySimpleObjectAttribute(false)?->deconstructor),
             ];
 
             [$expression, $expressionPlaceholders] = $this->newExpression(...$expressionArgs);
         }
 
-
         if ($expressionArgs[0]) {
-            $expressionPlaceholders['{{dedicatedGetter}}'] = $target->getInitialCallbackAttribute(false)->callback;
+            $expressionPlaceholders['{{dedicatedGetter}}'] = $target->getInitialCallbackAttribute(false)?->callback ?? '';
         }
         if ($expressionArgs[2]) {
-            $expressionPlaceholders['{{defaultValue}}'] = var_export($target->getDefaultValue(), true);
+            $expressionPlaceholders['{{defaultValue}}'] = var_export($target->getDefaultValue(), true) ?? 'null';
         }
         if ($expressionArgs[3]) {
             $expressionPlaceholders['{{callbacks}}'] = implode("\n", $this->callbacksExpression);
@@ -125,7 +126,7 @@ class Expression
             $expressionPlaceholders['{{notFoundCallbacks}}'] = implode("\n", $this->valueNotFoundExpressions);
         }
         if ($hasDeconstructor) {
-            $expressionPlaceholders['{{decotructorCall}}'] = $target->getPropertySimpleObjectAttribute(false)?->getDeconstructorExpression();
+            $expressionPlaceholders['{{decotructorCall}}'] = $target->getPropertySimpleObjectAttribute(false)?->getDeconstructorExpression() ?? '';
         }
 
         do {
@@ -148,7 +149,7 @@ class Expression
             '{{functionVariable}}' => $this->functionVar,
             '{{function}}' => $this->function?->toString(),
             '{{pathName}}' => $this->function?->pathVariable,
-            '{{preAssignmentExpression}}' => ''
+            '{{preAssignmentExpression}}' => '',
         ] + $this->expressionPlaceholders;
 
         do {
@@ -175,7 +176,7 @@ class Expression
     }
 
     /**
-     * @return array<string|array<string,string>>
+     * @return array{0: string, 1: array<string,string>}
      */
     private function newExpression(
         bool $hasDedicatedGetter,
@@ -196,7 +197,7 @@ class Expression
             $hasCallbacks,
             $hasValueNotFoundCallbacks,
             $isCollection,
-            $preAssignmentExpression
+            $preAssignmentExpression,
         ];
 
         $getterExpressionTemplate = $this->getter->getExpressionTemplate(...$getterExpressionArgs);
@@ -206,8 +207,8 @@ class Expression
             $isCollection,
             $hasFunction,
             $hasPathUsed,
-            strpos($getterExpressionTemplate, '{{setterAssignment:var}}') !== false,
-            $hasDeconstructorCall
+            false !== strpos($getterExpressionTemplate, '{{setterAssignment:var}}'),
+            $hasDeconstructorCall,
         ];
 
         $setterExpressionTemplate = $this->setter->getExpressionTemplate(...$setterExpressionArgs);
@@ -228,6 +229,9 @@ class Expression
         ];
     }
 
+    /**
+     * @param string[] $placeholders
+     */
     private function hasNotFilledPlaceholders(array $placeholders, string $subject): bool
     {
         static $subjects = [];

@@ -20,28 +20,13 @@ class ApplyToCollectionItems
     ) {
         foreach ($attributes as $attribute) {
             if (!is_object($attribute)) {
-                throw new \InvalidArgumentException(
-                    sprintf(
-                        'Attribute must be an object, %s given',
-                        gettype($attribute),
-                    ),
-                );
+                throw new \InvalidArgumentException(sprintf('Attribute must be an object, %s given', gettype($attribute)));
             }
             if ($attribute instanceof InitialValueCallback) {
-                throw new \InvalidArgumentException(
-                    sprintf(
-                        'Attribute %s is not allowed in collection items',
-                        InitialValueCallback::class,
-                    ),
-                );
+                throw new \InvalidArgumentException(sprintf('Attribute %s is not allowed in collection items', InitialValueCallback::class));
             }
             if ($attribute instanceof TargetProperty) {
-                throw new \InvalidArgumentException(
-                    sprintf(
-                        'Attribute %s is not allowed in collection items',
-                        TargetProperty::class,
-                    ),
-                );
+                throw new \InvalidArgumentException(sprintf('Attribute %s is not allowed in collection items', TargetProperty::class));
             }
         }
     }
@@ -51,7 +36,7 @@ class ApplyToCollectionItems
      *
      * @return object[]
      */
-    public function getAttributes(?string $attribute = null): array
+    public function getAttributes(string $attribute = null): array
     {
         if (null === $attribute) {
             return $this->attributes;

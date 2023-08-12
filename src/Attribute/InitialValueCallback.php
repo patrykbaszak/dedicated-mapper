@@ -9,7 +9,7 @@ class InitialValueCallback
 {
     /**
      * @param string  $callback - Just type php as string and init value of Your property.
-     *                example: `new DateTime()` - without `;` at the end and remember that.
+     *                          example: `new DateTime()` - without `;` at the end and remember that.
      * @param mixed[] $options  - any options required but custom actions
      */
     public function __construct(

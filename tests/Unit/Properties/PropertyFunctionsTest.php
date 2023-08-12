@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace PBaszak\DedicatedMapperBundle\Tests\Unit\Properties;
 
-use ArrayObject;
 use PBaszak\DedicatedMapperBundle\Attribute\ApplyToCollectionItems;
 use PBaszak\DedicatedMapperBundle\Attribute\SimpleObject;
 use PBaszak\DedicatedMapperBundle\Properties\Property;
@@ -205,7 +204,7 @@ class PropertyFunctionsTest extends TestCase
                 'testInts2'
             )->getPropertyType()
         );
-        
+
         /* SIMPLE_OBJECT_CLASS_OBJECT_COLLECTION */
         $this->assertEquals(
             Property::SIMPLE_OBJECT_CLASS_OBJECT_COLLECTION,
@@ -279,31 +278,31 @@ class PropertyFunctionsNestedTester
 
     /**
      * PROPERTIES_COLLECTION.
-     * 
+     *
      * @var string[]
      */
     public array $testStrings;
 
     /**
      * PROPERTIES_COLLECTION.
-     * 
+     *
      * @var array<string>
      */
     public array $testStrings2;
 
     /**
-     * SIMPLE_OBJECT_COLLECTION
-     * 
+     * SIMPLE_OBJECT_COLLECTION.
+     *
      * @var int[]
      */
-    public ArrayObject $testInts;
+    public \ArrayObject $testInts;
 
     /**
-     * SIMPLE_OBJECT_COLLECTION
-     * 
+     * SIMPLE_OBJECT_COLLECTION.
+     *
      * @var array<int>
      */
-    public ArrayObject $testInts2;
+    public \ArrayObject $testInts2;
 
     /**
      * SIMPLE_OBJECT.

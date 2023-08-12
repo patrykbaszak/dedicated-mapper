@@ -105,8 +105,8 @@ class ExpressionBuilder
     }
 
     protected function newFunctionExpression(
-        Blueprint $origin, 
-        Blueprint $source, 
+        Blueprint $origin,
+        Blueprint $source,
         Blueprint $target
     ): FunctionExpression {
         $expression = new FunctionExpression(

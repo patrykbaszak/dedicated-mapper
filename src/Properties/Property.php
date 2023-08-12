@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace PBaszak\DedicatedMapperBundle\Properties;
 
-use LogicException;
 use PBaszak\DedicatedMapperBundle\Attribute\ApplyToCollectionItems;
 use PBaszak\DedicatedMapperBundle\Attribute\InitialValueCallback;
 use PBaszak\DedicatedMapperBundle\Attribute\MappingCallback;
@@ -27,11 +26,11 @@ class Property
 
     /**
      * @var int
-     * ---0 - property with simple type (int, string, array, object, boolean, float, null)
-     * ---1 - hasClass
-     * --1- - isSimpleObject
-     * -1-- - isCollection - if true, then --xx is about collection items
-     * 1--- - isCollectionInsideSimpleObject
+     *          ---0 - property with simple type (int, string, array, object, boolean, float, null)
+     *          ---1 - hasClass
+     *          --1- - isSimpleObject
+     *          -1-- - isCollection - if true, then --xx is about collection items
+     *          1--- - isCollectionInsideSimpleObject
      */
     public const PROPERTY = 0; // 0000 example: int
     public const CLASS_OBJECT = 1; // 0001 example new App\Example()
@@ -151,7 +150,7 @@ class Property
                         }
                     }
 
-                    throw new LogicException('This should not happen.');
+                    throw new \LogicException('This should not happen.');
                 }
             }
 
@@ -194,6 +193,7 @@ class Property
     public function isSimpleObject(bool $asCollectionItem = false): bool
     {
         $type = $this->getPropertyType();
+
         return $asCollectionItem
             ? (bool) ($type & 2)
             : (bool) ($type & 10) && 7 !== $type;
@@ -229,20 +229,25 @@ class Property
             ? $this->getApplyToCollectionItemsAttribute()
             : $this->reflection;
         if (!empty($attributes?->getAttributes(InitialValueCallback::class))) {
-            return $attributes->getAttributes(InitialValueCallback::class)[0]->newInstance();
+            /** @var InitialValueCallback|\ReflectionAttribute $attr */
+            $attr = $attributes->getAttributes(InitialValueCallback::class)[0];
+            /** @var InitialValueCallback $attr */
+            $attr = $attr instanceof \ReflectionAttribute ? $attr->newInstance() : $attr;
+
+            return $attr;
         }
 
         if ($this->isSimpleObject($asCollectionItem)) {
             return new InitialValueCallback(
-                $this->getPropertySimpleObjectAttribute($asCollectionItem)->getConstructorExpression(
+                $this->getPropertySimpleObjectAttribute($asCollectionItem)?->getConstructorExpression(
                     $this->getClassType($asCollectionItem),
                     $asCollectionItem,
-                ),
+                ) ?? throw new \LogicException('This should not happen.'),
                 true,
             );
         }
 
-        throw new LogicException('This should not happen.');
+        throw new \LogicException('This should not happen.');
     }
 
     public function getApplyToCollectionItemsAttribute(): ?ApplyToCollectionItems
@@ -250,14 +255,15 @@ class Property
         if (empty($attr = $this->reflection->getAttributes(ApplyToCollectionItems::class))) {
             return null;
         }
-        
+
         return $attr[0]->newInstance();
     }
 
     public function getPropertySimpleObjectAttribute(bool $asCollectionItem = false): ?SimpleObject
     {
         if ($asCollectionItem) {
-            $attributes = $this->getApplyToCollectionItemsAttribute()?->getAttributes(SimpleObject::class);
+            /** @var SimpleObject[] $attributes */
+            $attributes = $this->getApplyToCollectionItemsAttribute()?->getAttributes(SimpleObject::class) ?? [];
             if (empty($attributes)) {
                 if (in_array($this->getClassType(), array_keys(self::NATIVE_SIMPLE_OBJECTS))) {
                     return new SimpleObject();
@@ -266,7 +272,7 @@ class Property
                 return null;
             }
 
-            return $attributes[0]->newInstance();
+            return $attributes[0];
         }
 
         $attributes = $this->reflection->getAttributes(SimpleObject::class);
@@ -287,7 +293,7 @@ class Property
         if ($asCollectionItem) {
             return array_filter(
                 array_map(
-                    fn (object $attr) => is_subclass_of($attr, MappingCallback::class) ? $attr->newInstance() : null,
+                    fn (object $attr): ?MappingCallback => is_subclass_of($attr, MappingCallback::class) ? $attr : null,
                     $this->getApplyToCollectionItemsAttribute()?->getAttributes() ?? []
                 )
             );
@@ -295,7 +301,7 @@ class Property
 
         return array_filter(
             array_map(
-                fn (\ReflectionAttribute $attr) => is_subclass_of($attr->getName(), MappingCallback::class) ? $attr->newInstance() : null,
+                fn (\ReflectionAttribute $attr): ?MappingCallback => is_subclass_of($attr->getName(), MappingCallback::class) ? $attr->newInstance() : null,
                 $this->reflection->getAttributes()
             )
         );

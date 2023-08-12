@@ -1,11 +1,6 @@
 parameters:
 	ignoreErrors:
 		-
-			message: "#^Property PBaszak\\\\DedicatedMapperBundle\\\\Expression\\\\Assets\\\\Expression\\:\\:\\$sourceProperty is never read, only written\\.$#"
-			count: 1
-			path: ../../src/Expression/Assets/Expression.php
-
-		-
-			message: "#^Call to function is_subclass_of\\(\\) with ReflectionAttribute\\<object\\> and 'PBaszak\\\\\\\\DedicatedMapperBundle\\\\\\\\Attribute\\\\\\\\MappingCallback' will always evaluate to false\\.$#"
+			message: "#^Anonymous function should return PBaszak\\\\DedicatedMapperBundle\\\\Attribute\\\\MappingCallback\\|null but returns object\\|null\\.$#"
 			count: 1
 			path: ../../src/Properties/Property.php
