@@ -8,11 +8,12 @@ use PBaszak\DedicatedMapper\Attribute\ApplyToCollectionItems;
 use PBaszak\DedicatedMapper\Attribute\MappingCallback;
 use PBaszak\DedicatedMapper\Attribute\SimpleObject;
 use PBaszak\DedicatedMapper\Expression\Assets\FunctionExpression;
-use PBaszak\DedicatedMapper\Expression\Builder\ReflectionClassExpressionBuilder;
 use PBaszak\DedicatedMapper\Expression\Builder\FunctionExpressionBuilder;
+use PBaszak\DedicatedMapper\Expression\Builder\ReflectionClassExpressionBuilder;
 use PBaszak\DedicatedMapper\Expression\ExpressionBuilder;
 use PBaszak\DedicatedMapper\Properties\Blueprint;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Uid\Uuid;
 
 class ReflectionClassSetterExpressionTester
 {
@@ -108,9 +109,9 @@ class ReflectionClassSetterExpressionBuilderTest extends TestCase
             $callbacks = array_merge($callbacks ?? [], [new MappingCallback("\n")]);
         }
 
-        $initialExpression = "\$output = (object) [];\n";
+        $initialExpression = str_replace('{{target}}', 'output', (new ReflectionClassExpressionBuilder())->getSetterInitialExpression($blueprint, Uuid::v4()->toRfc4122())->toString());
         if ($hasPathUsed) {
-            $initialExpression = "\$path = 'root';\n".$initialExpression;
+            $initialExpression = "\$path = 'root';\n" . $initialExpression;
         }
 
         $function = $hasFunction ? $reflection->getMethod('newFunctionExpression')->invokeArgs(
@@ -128,7 +129,7 @@ class ReflectionClassSetterExpressionBuilderTest extends TestCase
             }
         }
 
-        return ($initialExpression ?? '').$reflection->getMethod('newPropertyExpression')->invokeArgs(
+        return ($initialExpression ?? '') . $reflection->getMethod('newPropertyExpression')->invokeArgs(
             $expressionBuilder,
             [
                 $sourceProperty,
@@ -153,42 +154,30 @@ class ReflectionClassSetterExpressionBuilderTest extends TestCase
         if (!$key[0] && !$key[1] && !$key[3] && !$key[4]) {
             $class = ReflectionClassSetterExpressionTester::class;
             $property = 'test';
-            $data = (object) [
-                $property => 'test',
-            ];
+            $data = new $class();
+            $data->$property = 'test';
         } elseif (!$key[1] && ($key[3] || $key[4])) {
             $class = ReflectionClassSetterExpressionTester::class;
             $property = 'test3';
-            $data = (object) [
-                $property => '2021-01-01',
-            ];
+            $data = new $class();
+            $data->$property = '2021-01-01';
         } elseif ($key[1] && !$key[0]) {
             $class = NestedReflectionClassSetterExpressionTester::class;
             $property = 'test0';
-            $data = (object) [
-                $property => (object) [
-                    'test' => 'test',
-                    'test2' => true,
-                    'test3' => '2021-01-01',
-                ],
-            ];
+            $data = new $class();
+            $data->$property = new ReflectionClassSetterExpressionTester();
+            $data->$property->test = 'test';
+            $data->$property->test2 = true;
+            $data->$property->test3 = '2021-01-01';
         } elseif ($key[0]) {
             $class = NestedReflectionClassSetterExpressionTester::class;
             $property = 'test6';
-            $data = (object) [
-                $property => [
-                    (object) [
-                        'test' => 'test',
-                        'test2' => true,
-                        'test3' => '2021-01-01',
-                    ],
-                    (object) [
-                        'test' => 'test',
-                        'test2' => true,
-                        'test3' => '2021-01-01',
-                    ],
-                ],
-            ];
+            $d = new ReflectionClassSetterExpressionTester();
+            $d->test = 'test';
+            $d->test2 = true;
+            $d->test3 = '2021-01-01';
+            $data = new $class();
+            $data->$property = [$d, clone $d];
         }
 
         $args = array_merge($key, [$class, $property]);
