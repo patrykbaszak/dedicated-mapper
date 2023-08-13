@@ -2,9 +2,12 @@
 
 declare(strict_types=1);
 
-namespace PBaszak\MessengerMapperBundle\Attribute;
+namespace PBaszak\DedicatedMapper\Attribute;
 
-#[\Attribute(\Attribute::TARGET_PROPERTY | \Attribute::TARGET_CLASS)]
+/**
+ * Part of the mapping process.
+ */
+#[\Attribute(\Attribute::TARGET_PROPERTY)]
 class TargetProperty
 {
     /**

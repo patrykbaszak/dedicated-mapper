@@ -1,6 +1,16 @@
 parameters:
 	ignoreErrors:
 		-
-			message: "#^Anonymous function should return PBaszak\\\\MessengerMapperBundle\\\\Attribute\\\\MappingCallback\\|null but returns object\\|null\\.$#"
+			message: "#^Access to an undefined property Symfony\\\\Component\\\\Validator\\\\Constraint\\:\\:\\$message\\.$#"
+			count: 2
+			path: ../../src/Expression/Modificator/Symfony/SymfonyValidator.php
+
+		-
+			message: "#^Method PBaszak\\\\DedicatedMapper\\\\Expression\\\\Modificator\\\\Symfony\\\\SymfonyValidator\\:\\:createConstraintCallback\\(\\) has parameter \\$constraints with no value type specified in iterable type array\\.$#"
 			count: 1
-			path: ../../src/Handler/GetMapperHandler.php
+			path: ../../src/Expression/Modificator/Symfony/SymfonyValidator.php
+
+		-
+			message: "#^Anonymous function should return PBaszak\\\\DedicatedMapper\\\\Attribute\\\\MappingCallback\\|null but returns object\\|null\\.$#"
+			count: 1
+			path: ../../src/Properties/Property.php

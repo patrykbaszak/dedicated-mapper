@@ -11,7 +11,7 @@
 
 /.vscode
 /node_modules/
-
+/.dockerfile_checksum
 
 ###> friendsofphp/php-cs-fixer ###
 /.php-cs-fixer.php

@@ -1,0 +1,54 @@
+{
+    "id": "e2a85ae5-490b-4747-abc1-6efa3352a587",
+    "name": "test",
+    "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla nec velit vitae arcu aliquam tincidunt.",
+    "_embedded": {
+        "page": 1,
+        "pageSize": 10,
+        "total": 2,
+        "items": [
+            {
+                "id": "e2a85ae5-490b-4747-abc1-6efa3352a587",
+                "name": "test",
+                "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla nec velit vitae arcu aliquam tincidunt.",
+                "price": 100.0,
+                "currency": "CHF",
+                "quantity": 1,
+                "type": "PHYSICAL",
+                "category": "FOOD",
+                "vat": 21,
+                "metadata": {
+                    "test": "test",
+                    "test2": 52324.43
+                },
+                "created_at": "2018-01-01T12:00:00+00:00",
+                "updated_at": "2018-01-01T12:00:00+00:00",
+                "availableActions": [
+                    "update",
+                    "delete"
+                ]
+            },
+            {
+                "id": "e2a85ae5-490b-4747-abc1-6efa3352a587",
+                "name": "test",
+                "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla nec velit vitae arcu aliquam tincidunt.",
+                "price": 100.0,
+                "currency": "EUR",
+                "quantity": 1,
+                "type": "PHYSICAL",
+                "category": "FOOD",
+                "vat": 21,
+                "metadata": {
+                    "test": "test",
+                    "test2": 52324.43
+                },
+                "created_at": "2018-01-01T12:00:00+00:00",
+                "updated_at": "2018-01-01T12:00:00+00:00",
+                "availableActions": [
+                    "update",
+                    "delete"
+                ]
+            }
+        ]
+    }
+}
