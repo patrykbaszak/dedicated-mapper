@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace PBaszak\DedicatedMapper\Expression\Assets;
 
 use PBaszak\DedicatedMapper\Attribute\MappingCallback;
+use PBaszak\DedicatedMapper\Contract\GetterInterface;
 use PBaszak\DedicatedMapper\Contract\ModificatorInterface;
+use PBaszak\DedicatedMapper\Contract\SetterInterface;
 use PBaszak\DedicatedMapper\Properties\Property;
 use PBaszak\DedicatedMapper\Utils\HasNotFilledPlaceholdersTrait;
 
@@ -28,6 +30,9 @@ class Expression
      */
     public array $valueNotFoundExpressions = [];
 
+    protected Property $sourceProperty;
+    protected Property $targetProperty;
+
     /**
      * @param ModificatorInterface[] $modificators
      * @param MappingCallback[]      $callbacks
@@ -37,8 +42,8 @@ class Expression
      *                                                                     If `true` then `if isset` will not be added to the code.
      */
     public function __construct(
-        public Getter $getter,
-        public Setter $setter,
+        public GetterInterface $getter,
+        public SetterInterface $setter,
         public ?FunctionExpression $function = null,
         public array $modificators = [],
         public array $callbacks = [],
@@ -57,6 +62,8 @@ class Expression
 
     public function build(Property $source, Property $target): self
     {
+        $this->sourceProperty = $source;
+        $this->targetProperty = $target;
         $this->applyModificators($source, $target);
         $this->applyCallbacks($source, $target);
 
@@ -209,8 +216,8 @@ class Expression
             $preAssignmentExpression,
         ];
 
-        $getterExpressionTemplate = $this->getter->getExpressionTemplate(...$getterExpressionArgs);
-        $expressionPlaceholders = $this->getter->getExpressions(...$getterExpressionArgs);
+        $getterExpressionTemplate = $this->getter->getGetter($this->sourceProperty)->getExpressionTemplate(...$getterExpressionArgs);
+        $expressionPlaceholders = $this->getter->getGetter($this->sourceProperty)->getExpressions(...$getterExpressionArgs);
 
         $setterExpressionArgs = [
             $isCollection,
@@ -220,8 +227,8 @@ class Expression
             $hasDeconstructorCall,
         ];
 
-        $setterExpressionTemplate = $this->setter->getExpressionTemplate(...$setterExpressionArgs);
-        $expressionPlaceholders = array_merge($expressionPlaceholders, $this->setter->getExpressions(...$setterExpressionArgs));
+        $setterExpressionTemplate = $this->setter->getSetter($this->targetProperty)->getExpressionTemplate(...$setterExpressionArgs);
+        $expressionPlaceholders = array_merge($expressionPlaceholders, $this->setter->getSetter($this->targetProperty)->getExpressions(...$setterExpressionArgs));
 
         $placeholder = '{{getterExpression}}';
         $expression = strpos($setterExpressionTemplate, $placeholder)

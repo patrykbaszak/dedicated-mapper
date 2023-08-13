@@ -76,8 +76,8 @@ class ArrayGetterExpressionBuilderTest extends TestCase
         $blueprint = Blueprint::create(ArrayGetterExpressionBuilderTestedClass::class, false);
 
         return (new Expression(
-            $this->builder->getGetter($blueprint->getProperty($propertyName)),
-            $this->builder->getSetter($blueprint->getProperty($propertyName)),
+            $this->builder,
+            $this->builder,
             null,
             [],
             $callbacks,

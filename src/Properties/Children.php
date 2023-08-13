@@ -51,6 +51,13 @@ trait Children
         }
     }
 
+    public function deleteChild(Property $child): void
+    {
+        if (in_array($child, $this->children, true)) {
+            unset($this->children[$child->originName]);
+        }
+    }
+
     public function hasChildren(): bool
     {
         return !empty($this->children);

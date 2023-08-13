@@ -76,8 +76,8 @@ class AnonymousObjectGetterExpressionBuilderTest extends TestCase
         $blueprint = Blueprint::create(AnonymousObjectGetterExpressionBuilderTestedClass::class, false);
 
         return "\$output = (object) [];\n".(new Expression(
-            $this->builder->getGetter($blueprint->getProperty($propertyName)),
-            $this->builder->getSetter($blueprint->getProperty($propertyName)),
+            $this->builder,
+            $this->builder,
             null,
             [],
             $callbacks,

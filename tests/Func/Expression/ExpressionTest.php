@@ -27,8 +27,8 @@ class ExpressionTest extends KernelTestCase
     {
         $property = Blueprint::create(ExpressionTestedClass::class, false)->getProperty('test2');
         $expression = (new Expression(
-            (new ArrayExpressionBuilder())->getGetter($property),
-            (new ArrayExpressionBuilder())->getSetter($property),
+            new ArrayExpressionBuilder(),
+            new ArrayExpressionBuilder(),
         ))->build($property, $property)->toString();
 
         $output = null;
@@ -43,8 +43,8 @@ class ExpressionTest extends KernelTestCase
     {
         $property = Blueprint::create(ExpressionTestedClass::class, false)->getProperty('test');
         $expression = (new Expression(
-            (new ArrayExpressionBuilder())->getGetter($property),
-            (new ArrayExpressionBuilder())->getSetter($property),
+            new ArrayExpressionBuilder(),
+            new ArrayExpressionBuilder(),
         ))->build($property, $property)->toString();
 
         $output = null;

@@ -86,8 +86,8 @@ class ReflectionClassGetterExpressionBuilderTest extends TestCase
         $blueprint = Blueprint::create($class, false);
 
         return str_replace('{{target}}', 'output', $this->builder->getSetterInitialExpression($blueprint, Uuid::v4()->toRfc4122())->toString()).(new Expression(
-            $this->builder->getGetter($blueprint->getProperty($propertyName)),
-            $this->builder->getSetter($blueprint->getProperty($propertyName)),
+            $this->builder,
+            $this->builder,
             null,
             [],
             $callbacks,

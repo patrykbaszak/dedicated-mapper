@@ -47,4 +47,30 @@ class Blueprint
 
         return null;
     }
+
+    public function deleteProperty(string $name): void
+    {
+        foreach ($this->properties as $index => $property) {
+            if ($property->originName === $name) {
+                unset($this->properties[$index]);
+            }
+        }
+    }
+
+    /**
+     * Includes all properties from nested blueprints.
+     *
+     * @return Property[]
+     */
+    public function getAllProperties(): array
+    {
+        $properties = $this->properties;
+        foreach ($this->properties as $property) {
+            if ($property->blueprint) {
+                $properties = array_merge($properties, $property->blueprint->getAllProperties());
+            }
+        }
+
+        return $properties;
+    }
 }

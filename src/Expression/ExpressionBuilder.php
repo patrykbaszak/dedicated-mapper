@@ -116,8 +116,8 @@ class ExpressionBuilder
         array $callbacks = [] // it is required by tests, do not recommend to use it
     ): Expression {
         $expression = new Expression(
-            $this->getterBuilder->getGetter($source),
-            $this->setterBuilder->getSetter($target),
+            $this->getterBuilder,
+            $this->setterBuilder,
             $function,
             $this->modificators,
             $callbacks,
@@ -152,8 +152,8 @@ class ExpressionBuilder
         foreach ($origin->properties as $property) {
             $expression->addExpression(
                 (new Expression(
-                    $this->getterBuilder->getGetter($this->getProperty($property, 'source')),
-                    $this->setterBuilder->getSetter($this->getProperty($property, 'target')),
+                    $this->getterBuilder,
+                    $this->setterBuilder,
                     $property->blueprint ? $this->newFunctionExpression(
                         $property->blueprint,
                         $this->getBlueprint($property->blueprint, 'source'),

@@ -74,6 +74,12 @@ class Property
         $this->applyCallbacks();
     }
 
+    public function delete(): void
+    {
+        $this->getParent()?->blueprint?->deleteProperty($this->originName);
+        $this->getParent()?->deleteChild($this);
+    }
+
     /** @param class-string $name */
     public static function create(\ReflectionClass $class, string $name, self $parent = null): self
     {
@@ -238,6 +244,14 @@ class Property
 
         return !empty($attr?->getAttributes(InitialValueCallback::class))
             || $this->isSimpleObject($asCollectionItem);
+    }
+
+    /**
+     * @return array<\ReflectionAttribute>
+     */
+    public function getAttributes(string $attribute): array
+    {
+        return $this->reflection->getAttributes($attribute);
     }
 
     public function getInitialCallbackAttribute(bool $asCollectionItem = false): ?InitialValueCallback

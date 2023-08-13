@@ -2,19 +2,22 @@
 
 namespace PBaszak\DedicatedMapper\Tests\assets;
 
-use JMS\Serializer\Annotation\SerializedName;
-use JMS\Serializer\Annotation\Type;
+use JMS\Serializer\Annotation as JMS;
+use Symfony\Component\Serializer\Annotation as SymfonySerializer;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class Dummy
 {
     public function __construct(
         #[Assert\NotBlank()]
+        #[SymfonySerializer\Groups('test')]
         public string $id,
 
         #[Assert\Length(min: 3, max: 255)]
+        #[SymfonySerializer\Groups('test')]
         public string $name,
         public string $description,
+        #[SymfonySerializer\Groups('test')]
         public EmbeddedDTO $_embedded,
     ) {
     }
@@ -23,12 +26,16 @@ class Dummy
 class EmbeddedDTO
 {
     public function __construct(
+        #[SymfonySerializer\Groups('test')]
         public int $page,
-        #[SerializedName('pageSize')]
+
+        #[SymfonySerializer\Groups('test')]
+        #[JMS\SerializedName('pageSize')]
         public int $pageSize,
+        #[SymfonySerializer\Groups('test')]
         public int $total,
         /** @var ItemDTO[] */
-        #[Type("array<PBaszak\DedicatedMapper\Tests\assets\ItemDTO>")]
+        #[JMS\Type("array<PBaszak\DedicatedMapper\Tests\assets\ItemDTO>")]
         public array $items,
     ) {
     }
@@ -37,7 +44,10 @@ class EmbeddedDTO
 class ItemDTO
 {
     public function __construct(
+        #[SymfonySerializer\Groups('test')]
         public string $id,
+        #[SymfonySerializer\Groups('test')]
+        #[SymfonySerializer\Ignore()]
         public string $name,
         public string $description,
         public float $price,
@@ -51,8 +61,8 @@ class ItemDTO
         public \DateTime $created_at,
         public \DateTime $updated_at,
         /** @var array<string> */
-        #[Type('array<string>')]
-        #[SerializedName('availableActions')]
+        #[JMS\Type('array<string>')]
+        #[JMS\SerializedName('availableActions')]
         public array $availableActions,
     ) {
     }

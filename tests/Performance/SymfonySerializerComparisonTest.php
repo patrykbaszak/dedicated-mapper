@@ -35,6 +35,7 @@ class SymfonySerializerComparisonTest extends KernelTestCase
      */
     public function checkSameMappingResultsBeforeComparison(): void
     {
+        system('rm -rf -- '.escapeshellarg(__DIR__.'/../../var/mapper'), $retval);
         $serializer = self::getContainer()->get(SerializerInterface::class);
         $mapper = self::getContainer()->get(MapperServiceInterface::class);
         $serializerDummyObject = $serializer->denormalize($this->dummy, Dummy::class);
