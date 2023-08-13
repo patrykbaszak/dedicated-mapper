@@ -39,8 +39,7 @@ class ValidatedMapperService extends MapperService implements MapperServiceInter
         FunctionInterface $functionBuilder = null,
         bool $throwExceptionOnMissingProperty = false,
         bool $isCollection = false,
-        array $modificators = [],
-        array $groups = null
+        array $modificators = []
     ): mixed {
         $output = parent::map(...func_get_args());
 

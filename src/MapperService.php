@@ -36,8 +36,7 @@ class MapperService implements MapperServiceInterface
         FunctionInterface $functionBuilder = null,
         bool $throwExceptionOnMissingProperty = false,
         bool $isCollection = false,
-        array $modificators = [],
-        array $groups = null
+        array $modificators = []
     ): mixed {
         $mapperId = hash(in_array('xxh3', hash_algos()) ? 'xxh3' : 'crc32', var_export(array_slice(func_get_args(), 1), true));
         $function = self::$mappers[$mapperId] ??= $this->getFunction(
@@ -48,8 +47,7 @@ class MapperService implements MapperServiceInterface
             $functionBuilder,
             $throwExceptionOnMissingProperty,
             $isCollection,
-            $modificators,
-            $groups
+            $modificators
         );
 
         return $function($data);
@@ -58,7 +56,6 @@ class MapperService implements MapperServiceInterface
     /**
      * @param class-string           $blueprint
      * @param ModificatorInterface[] $modificators
-     * @param array<string>|null     $groups
      */
     private function getFunction(
         string $mapperId,
@@ -68,8 +65,7 @@ class MapperService implements MapperServiceInterface
         FunctionInterface $functionBuilder = null,
         bool $throwException = false,
         bool $isCollection = false,
-        array $modificators = [],
-        array $groups = null
+        array $modificators = []
     ): callable {
         if ($function = @include $fileName = $this->directory.$mapperId.'.php') {
             return $function;
@@ -81,8 +77,7 @@ class MapperService implements MapperServiceInterface
             $blueprint,
             $getterBuilder,
             $setterBuilder,
-            $functionBuilder ?? new FunctionExpressionBuilder(),
-            $groups,
+            $functionBuilder ?? new FunctionExpressionBuilder()
         );
 
         $mapper = sprintf(

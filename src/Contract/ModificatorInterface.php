@@ -11,10 +11,7 @@ use PBaszak\DedicatedMapper\Properties\Property;
 
 interface ModificatorInterface
 {
-    /**
-     * @param array<string>|null $groups
-     */
-    public function init(Blueprint $blueprint, ?array $groups): void;
+    public function init(Blueprint $blueprint): void;
 
     public function modifyPropertyExpression(Property $sourceProperty, Property $targetProperty, Expression $expression): void;
 

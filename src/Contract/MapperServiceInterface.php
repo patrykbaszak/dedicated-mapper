@@ -11,8 +11,8 @@ interface MapperServiceInterface
     /**
      * @param class-string           $blueprint
      * @param ModificatorInterface[] $modificators
-     * @param bool                   $throwExceptionOnMissingProperty If true, exception will be thrown when not found property in data and no default value is set
-     * @param array<string>|null     $groups
+     * @param bool                   $throwExceptionOnMissingProperty if `false` then before each property assignment
+     *                                                                there will be a condition checking whether it exists in the source data
      */
     public function map(
         mixed $data,
@@ -22,7 +22,6 @@ interface MapperServiceInterface
         FunctionInterface $functionBuilder = null,
         bool $throwExceptionOnMissingProperty = false,
         bool $isCollection = false,
-        array $modificators = [],
-        array $groups = null,
+        array $modificators = []
     ): mixed;
 }

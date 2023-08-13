@@ -16,10 +16,13 @@ use PBaszak\DedicatedMapper\Expression\Builder\AbstractBuilder;
 use PBaszak\DedicatedMapper\Mapper;
 use PBaszak\DedicatedMapper\Properties\Blueprint;
 use PBaszak\DedicatedMapper\Properties\Property;
+use PBaszak\DedicatedMapper\Utils\HasNotFilledPlaceholdersTrait;
 use Symfony\Component\Uid\Uuid;
 
 class ExpressionBuilder
 {
+    use HasNotFilledPlaceholdersTrait;
+
     protected Mapper $mapper;
 
     /**
@@ -30,15 +33,12 @@ class ExpressionBuilder
     protected Blueprint $target;
     protected bool $throwExceptionOnMissingProperty = false;
 
-    /**
-     * @param array<string>|null $groups
-     */
     public function __construct(
         protected Blueprint $blueprint,
         protected AbstractBuilder&GetterInterface $getterBuilder,
         protected AbstractBuilder&SetterInterface $setterBuilder,
         protected FunctionInterface $functionBuilder,
-        protected ?array $groups = null,
+        protected bool $isCollection = false,
     ) {
         $this->source = $getterBuilder->getBlueprint($blueprint->isCollection) ?? clone $blueprint;
         $this->target = $setterBuilder->getBlueprint($blueprint->isCollection) ?? clone $blueprint;
@@ -52,7 +52,7 @@ class ExpressionBuilder
         $this->modificators = $modificators;
 
         foreach ($this->modificators as $modificator) {
-            $modificator->init($this->blueprint, $this->groups);
+            $modificator->init($this->blueprint);
         }
 
         return $this;
@@ -62,15 +62,39 @@ class ExpressionBuilder
     {
         $this->throwExceptionOnMissingProperty = $throwExceptionOnMissingProperty;
         $this->matchBlueprints($this->blueprint, $this->source, $this->target);
+        $function = $this->newFunctionExpression($this->blueprint, $this->source, $this->target);
+        if ($this->isCollection) {
+            $hasPath = (bool) $function->pathVariable;
+            $expression = $this->functionBuilder->getFunction()->getFunction(
+                false,
+                (bool) $function->useStatements,
+                true,
+                true,
+            );
+            $placeholders = [
+                '{{pathName}}' => $function->pathVariable,
+                '{{pathType}}' => $function->pathVariableType,
+                '{{useStatements}}' => $function->useStatements,
+                '{{source}}' => 'data',
+                '{{target}}' => 'output',
+                '{{sourceType}}' => 'array',
+                '{{targetType}}' => 'array',
+                '{{initialExpression}}' => '$function = '.$function->toString().";\n",
+                '{{expressions}}' => "\${{target}} = [];\n",
+                '{{finalExpression}}' => "foreach (\${{source}} as \$index => \$item) {\n".
+                    '${{target}}[$index] = $function($item'.($hasPath ? ' , $index' : '').");\n".
+                    "}\n",
+            ];
+
+            do {
+                $expression = str_replace(array_keys($placeholders), array_values($placeholders), $expression);
+            } while ($this->hasNotFilledPlaceholders(array_keys($placeholders), $expression));
+        }
 
         $this->mapper = new Mapper(
             sprintf(
                 'return %s;',
-                $this->newFunctionExpression(
-                    $this->blueprint,
-                    $this->source,
-                    $this->target
-                )->toString()
+                $expression ?? $function->toString()
             )
         );
 
