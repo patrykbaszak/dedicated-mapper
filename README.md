@@ -56,4 +56,4 @@ It's even **37** times faster than **JMS Serializer** and even **2500** times fa
 |                                   | min    | 0.14795207977295 s     | 5.8174133300781E-5 s   | 2543.26x faster       |
 |                                   | max    | 0.16473388671875 s     | 9.0122222900391E-5 s   | 1827.89x faster       |
 
-<sub>*Tables generated using Chat GPT-4 based on test data.</sub>
+<sub>*Tables generated using Chat GPT-4 based on test data. This information is here because the chat is not a perfect tool and could mess up the measured times for example.</sub>
