@@ -40,6 +40,7 @@ class ExpressionBuilder
         protected FunctionInterface $functionBuilder,
         protected bool $isCollection = false,
     ) {
+        $blueprint->isCollection = $isCollection;
         $this->source = $getterBuilder->getBlueprint($blueprint->isCollection) ?? clone $blueprint;
         $this->target = $setterBuilder->getBlueprint($blueprint->isCollection) ?? clone $blueprint;
     }
