@@ -11,7 +11,6 @@ class Kernel extends BaseKernel
 
     private const BUNDLES = [
         \Symfony\Bundle\FrameworkBundle\FrameworkBundle::class,
-        \PBaszak\MessengerCacheBundle\MessengerCacheBundle::class,
         \PBaszak\DedicatedMapper\DedicatedMapperBundle::class,
         \JMS\SerializerBundle\JMSSerializerBundle::class,
     ];
