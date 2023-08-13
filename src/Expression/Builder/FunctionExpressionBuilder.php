@@ -57,41 +57,41 @@ class FunctionExpressionBuilder implements FunctionInterface
                     {{finalExpression}}
                     \nreturn \${{target}};
                 }",
-                '1000' => "function ({{sourceType}} \${{source}}, {{pathType}} \${{pathName}}): {{targetType}} {
+                '1000' => "function ({{sourceType}} \${{source}}, {{pathType}} \${{pathName}} = ''): {{targetType}} {
                     {{expressions}}
                     \nreturn \${{target}};
                 }",
-                '1001' => "function ({{sourceType}} \${{source}}, {{pathType}} \${{pathName}}): {{targetType}} {
-                    {{expressions}}
-                    {{finalExpression}}
-                    \nreturn \${{target}};
-                }",
-                '1010' => "function ({{sourceType}} \${{source}}, {{pathType}} \${{pathName}}): {{targetType}} {
-                    {{initialExpression}}
-                    {{expressions}}
-                    \nreturn \${{target}};
-                }",
-                '1011' => "function ({{sourceType}} \${{source}}, {{pathType}} \${{pathName}}): {{targetType}} {
-                    {{initialExpression}}
+                '1001' => "function ({{sourceType}} \${{source}}, {{pathType}} \${{pathName}} = ''): {{targetType}} {
                     {{expressions}}
                     {{finalExpression}}
                     \nreturn \${{target}};
                 }",
-                '1100' => "function ({{sourceType}} \${{source}}, {{pathType}} \${{pathName}}) use ({{useStatements}}): {{targetType}} {
-                    {{expressions}}
-                    \nreturn \${{target}};
-                }",
-                '1101' => "function ({{sourceType}} \${{source}}, {{pathType}} \${{pathName}}) use ({{useStatements}}): {{targetType}} {
-                    {{expressions}}
-                    {{finalExpression}}
-                    \nreturn \${{target}};
-                }",
-                '1110' => "function ({{sourceType}} \${{source}}, {{pathType}} \${{pathName}}) use ({{useStatements}}): {{targetType}} {
+                '1010' => "function ({{sourceType}} \${{source}}, {{pathType}} \${{pathName}} = ''): {{targetType}} {
                     {{initialExpression}}
                     {{expressions}}
                     \nreturn \${{target}};
                 }",
-                '1111' => "function ({{sourceType}} \${{source}}, {{pathType}} \${{pathName}}) use ({{useStatements}}): {{targetType}} {
+                '1011' => "function ({{sourceType}} \${{source}}, {{pathType}} \${{pathName}} = ''): {{targetType}} {
+                    {{initialExpression}}
+                    {{expressions}}
+                    {{finalExpression}}
+                    \nreturn \${{target}};
+                }",
+                '1100' => "function ({{sourceType}} \${{source}}, {{pathType}} \${{pathName}} = '') use ({{useStatements}}): {{targetType}} {
+                    {{expressions}}
+                    \nreturn \${{target}};
+                }",
+                '1101' => "function ({{sourceType}} \${{source}}, {{pathType}} \${{pathName}} = '') use ({{useStatements}}): {{targetType}} {
+                    {{expressions}}
+                    {{finalExpression}}
+                    \nreturn \${{target}};
+                }",
+                '1110' => "function ({{sourceType}} \${{source}}, {{pathType}} \${{pathName}} = '') use ({{useStatements}}): {{targetType}} {
+                    {{initialExpression}}
+                    {{expressions}}
+                    \nreturn \${{target}};
+                }",
+                '1111' => "function ({{sourceType}} \${{source}}, {{pathType}} \${{pathName}} = '') use ({{useStatements}}): {{targetType}} {
                     {{initialExpression}}
                     {{expressions}}
                     {{finalExpression}}

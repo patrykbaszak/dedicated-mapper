@@ -23,12 +23,12 @@ abstract class AbstractBuilder
         return $this->blueprint ? Blueprint::create($this->blueprint, $isCollection) : null;
     }
 
-    public function getSourceType(Blueprint $blueprint): string
+    public function getSourceType(Blueprint|string $blueprint): string
     {
         return 'mixed';
     }
 
-    public function getTargetType(Blueprint $blueprint): string
+    public function getTargetType(Blueprint|string $blueprint): string
     {
         return 'mixed';
     }

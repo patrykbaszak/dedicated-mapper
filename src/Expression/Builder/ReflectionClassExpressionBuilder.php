@@ -66,14 +66,14 @@ class ReflectionClassExpressionBuilder extends AbstractBuilder implements Setter
         );
     }
 
-    public function getSourceType(Blueprint $blueprint): string
+    public function getSourceType(Blueprint|string $blueprint): string
     {
-        return $blueprint->reflection->getName();
+        return is_string($blueprint) ? $blueprint : $blueprint->reflection->getName();
     }
 
-    public function getTargetType(Blueprint $blueprint): string
+    public function getTargetType(Blueprint|string $blueprint): string
     {
-        return $blueprint->reflection->getName();
+        return is_string($blueprint) ? $blueprint : $blueprint->reflection->getName();
     }
 
     /**

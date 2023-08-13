@@ -48,13 +48,14 @@ class ValidatedMapperService extends MapperService implements MapperServiceInter
 
             foreach ($this->validationErrors as $path => $errorList) {
                 foreach ($errorList->getIterator() as $e) {
+                    /* @var ConstraintViolation */
                     $violations->add(
                         new ConstraintViolation(
                             $e->getMessage(),
                             $e->getMessageTemplate(),
                             $e->getParameters(),
                             $e->getRoot(),
-                            $path,
+                            ltrim($path, '.'),
                             $e->getInvalidValue(),
                             $e->getPlural(),
                             $e->getCode(),
@@ -65,7 +66,7 @@ class ValidatedMapperService extends MapperService implements MapperServiceInter
                 }
             }
 
-            throw new ValidationFailedException(null, $violations);
+            throw new ValidationFailedException(sprintf('Source data failed validation during mapping from `%s` to `%s`.', $getterBuilder->getSourceType($blueprint), $setterBuilder->getTargetType($blueprint)), $violations);
         }
 
         return $output;

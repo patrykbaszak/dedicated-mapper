@@ -54,6 +54,7 @@ class Expression
         public string $var = 'var',
         public ?string $functionVar = null,
         public string $array = 'array',
+        public string $pathVariable = 'path',
     ) {
         if (!empty($this->function) && null === $this->functionVar) {
             throw new \LogicException('Function variable name must be provided when function is set.');
@@ -164,7 +165,7 @@ class Expression
             '{{var}}' => $this->var,
             '{{functionVariable}}' => $this->functionVar,
             '{{function}}' => $this->function?->toString(),
-            '{{pathName}}' => $this->function?->pathVariable,
+            '{{pathName}}' => $this->pathVariable,
             '{{preAssignmentExpression}}' => '',
         ] + $this->expressionPlaceholders;
 

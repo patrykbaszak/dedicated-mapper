@@ -249,7 +249,7 @@ class Property
     /**
      * @return array<\ReflectionAttribute>
      */
-    public function getAttributes(string $attribute): array
+    public function getAttributes(string $attribute = null): array
     {
         return $this->reflection->getAttributes($attribute);
     }

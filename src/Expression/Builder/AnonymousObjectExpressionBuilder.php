@@ -19,12 +19,12 @@ class AnonymousObjectExpressionBuilder extends AbstractBuilder implements Getter
         return new InitialExpression("\${{target}} = (object)[];\n");
     }
 
-    public function getSourceType(Blueprint $blueprint): string
+    public function getSourceType(Blueprint|string $blueprint): string
     {
         return 'object';
     }
 
-    public function getTargetType(Blueprint $blueprint): string
+    public function getTargetType(Blueprint|string $blueprint): string
     {
         return 'object';
     }

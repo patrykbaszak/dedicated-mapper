@@ -19,8 +19,8 @@ use Symfony\Component\Serializer\Annotation as Serializer;
  * - @Serializer\Ignore()
  * - @Serializer\SerializedName()
  *
- * Not supported attributes:
- * - @Serializer\Context()
+ * Not supported (yet) attributes:
+ * - @Serializer\Context() ~ have the highest priority to be implemented
  * - @Serializer\DiscriminatorMap()
  * - @Serializer\MaxDepth() ~ have the highest priority to be implemented
  * - @Serializer\SerializedPath()

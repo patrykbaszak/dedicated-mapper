@@ -12,7 +12,7 @@ use PBaszak\DedicatedMapper\Properties\Property;
 
 interface SetterInterface
 {
-    public function getTargetType(Blueprint $blueprint): string;
+    public function getTargetType(Blueprint|string $blueprint): string;
 
     public function getSetterInitialExpression(Blueprint $blueprint, string $functionId): InitialExpression;
 

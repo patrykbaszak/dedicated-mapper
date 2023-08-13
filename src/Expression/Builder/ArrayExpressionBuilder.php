@@ -19,12 +19,12 @@ class ArrayExpressionBuilder extends AbstractBuilder implements SetterInterface,
         return new InitialExpression("\${{target}} = [];\n");
     }
 
-    public function getSourceType(Blueprint $blueprint): string
+    public function getSourceType(Blueprint|string $blueprint): string
     {
         return 'array';
     }
 
-    public function getTargetType(Blueprint $blueprint): string
+    public function getTargetType(Blueprint|string $blueprint): string
     {
         return 'array';
     }

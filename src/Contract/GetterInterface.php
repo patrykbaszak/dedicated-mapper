@@ -12,7 +12,7 @@ use PBaszak\DedicatedMapper\Properties\Property;
 
 interface GetterInterface
 {
-    public function getSourceType(Blueprint $blueprint): string;
+    public function getSourceType(Blueprint|string $blueprint): string;
 
     public function getGetterInitialExpression(Blueprint $blueprint, string $functionId): InitialExpression;
 
