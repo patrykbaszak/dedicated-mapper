@@ -6,7 +6,10 @@ namespace PBaszak\DedicatedMapper\Tests\Func\Expression;
 
 use PBaszak\DedicatedMapper\Expression\Assets\Expression;
 use PBaszak\DedicatedMapper\Expression\Builder\ArrayExpressionBuilder;
+use PBaszak\DedicatedMapper\Expression\Builder\FunctionExpressionBuilder;
+use PBaszak\DedicatedMapper\Expression\ExpressionBuilder;
 use PBaszak\DedicatedMapper\Properties\Blueprint;
+use PBaszak\DedicatedMapper\Tests\assets\Dummy;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class ExpressionTestedClass
@@ -19,17 +22,10 @@ class ExpressionTestedClass
 /** @group func */
 class ExpressionTest extends KernelTestCase
 {
-    private Blueprint $blueprint;
-
-    protected function setUp(): void
-    {
-        $this->blueprint = Blueprint::create(ExpressionTestedClass::class, false);
-    }
-
     /** @test */
     public function testSimpleExpression(): void
     {
-        $property = $this->blueprint->getProperty('test2');
+        $property = Blueprint::create(ExpressionTestedClass::class, false)->getProperty('test2');
         $expression = (new Expression(
             (new ArrayExpressionBuilder())->getGetter($property),
             (new ArrayExpressionBuilder())->getSetter($property),
@@ -45,7 +41,7 @@ class ExpressionTest extends KernelTestCase
     /** @test */
     public function testSimpleObjectExpression(): void
     {
-        $property = $this->blueprint->getProperty('test');
+        $property = Blueprint::create(ExpressionTestedClass::class, false)->getProperty('test');
         $expression = (new Expression(
             (new ArrayExpressionBuilder())->getGetter($property),
             (new ArrayExpressionBuilder())->getSetter($property),
@@ -58,5 +54,38 @@ class ExpressionTest extends KernelTestCase
         self::assertNotSame($data, $output);
         self::assertInstanceOf(\ArrayObject::class, $output['test']);
         self::assertSame($data['test'], $output['test']->getArrayCopy());
+    }
+
+    /** @test */
+    public function testDummyBlueprintBetweenAllFormats(): void
+    {
+        $data = require __DIR__.'/../../assets/DummyByFormats.php';
+        $blueprint = Blueprint::create(Dummy::class);
+
+        foreach ([true, false] as $throwException) {
+            for ($i = 0; $i < count($data) - 1; ++$i) {
+                for ($j = $i; $j < count($data); ++$j) {
+                    $sourceClass = array_keys($data)[$i];
+                    $targetClass = array_keys($data)[$j];
+
+                    if (!class_exists($sourceClass) || !class_exists($targetClass)) {
+                        throw new \RuntimeException("One of classes doesn't exists: {$sourceClass}, {$targetClass}");
+                    }
+
+                    $mapper = (new ExpressionBuilder(
+                        $blueprint,
+                        new $sourceClass(),
+                        new $targetClass(),
+                        new FunctionExpressionBuilder(),
+                    ))->build($throwException)->getMapper();
+
+                    $source = $data[$sourceClass];
+                    $expectedTarget = $data[$targetClass];
+
+                    $target = $mapper($source);
+                    self::assertEquals($expectedTarget, $target);
+                }
+            }
+        }
     }
 }

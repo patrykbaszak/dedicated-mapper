@@ -8,6 +8,7 @@ use PBaszak\DedicatedMapper\Attribute\ApplyToCollectionItems;
 use PBaszak\DedicatedMapper\Attribute\InitialValueCallback;
 use PBaszak\DedicatedMapper\Attribute\MappingCallback;
 use PBaszak\DedicatedMapper\Attribute\SimpleObject;
+use PBaszak\DedicatedMapper\Utils\NativeSimpleObject;
 
 class Property
 {
@@ -18,9 +19,9 @@ class Property
     public const NATIVE_SIMPLE_OBJECTS = [
         \ArrayIterator::class => [],
         \ArrayObject::class => [],
-        \DateTime::class => [],
-        \DateTimeImmutable::class => [],
-        \DateTimeZone::class => [],
+        \DateTime::class => ['staticConstructor' => NativeSimpleObject::class.'::DateTimeConstructor'],
+        \DateTimeImmutable::class => ['staticConstructor' => NativeSimpleObject::class.'::DateTimeConstructor'],
+        \DateTimeZone::class => ['staticConstructor' => NativeSimpleObject::class.'::DateTimeZoneConstructor'],
         \DateInterval::class => [],
     ];
 
@@ -215,6 +216,20 @@ class Property
             || in_array(ltrim($this->getClassType($asCollectionItem), '\\'), array_keys(self::NATIVE_SIMPLE_OBJECTS));
     }
 
+    /** @return mixed[] */
+    public function getNativeSimpleObjectArguments(bool $asCollectionItem = false): array
+    {
+        if (in_array($class = $this->getClassType($asCollectionItem), array_keys(self::NATIVE_SIMPLE_OBJECTS))) {
+            return self::NATIVE_SIMPLE_OBJECTS[$class];
+        }
+
+        if (in_array($class = ltrim($this->getClassType($asCollectionItem), '\\'), array_keys(self::NATIVE_SIMPLE_OBJECTS))) {
+            return self::NATIVE_SIMPLE_OBJECTS[$class];
+        }
+
+        throw new \LogicException('This property is not a native simple object.');
+    }
+
     public function hasDedicatedInitCallback(bool $asCollectionItem = false): bool
     {
         $attr = $asCollectionItem
@@ -272,7 +287,7 @@ class Property
             $attributes = $this->getApplyToCollectionItemsAttribute()?->getAttributes(SimpleObject::class) ?? [];
             if (empty($attributes)) {
                 if ($this->isNativeSimpleObject($asCollectionItem)) {
-                    return new SimpleObject();
+                    return new SimpleObject(...$this->getNativeSimpleObjectArguments($asCollectionItem));
                 }
 
                 return null;
@@ -284,7 +299,7 @@ class Property
         $attributes = $this->reflection->getAttributes(SimpleObject::class);
         if (empty($attributes)) {
             if ($this->isNativeSimpleObject($asCollectionItem)) {
-                return new SimpleObject();
+                return new SimpleObject(...$this->getNativeSimpleObjectArguments($asCollectionItem));
             }
 
             return null;

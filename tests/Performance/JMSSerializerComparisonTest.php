@@ -35,6 +35,7 @@ class JMSSerializerComparisonTest extends KernelTestCase
      */
     public function checkSameMappingResultsBeforeComparison(): void
     {
+        system('rm -rf -- '.escapeshellarg(__DIR__.'/../../var/mapper'), $retval);
         $serializer = self::getContainer()->get(ArrayTransformerInterface::class);
         $mapper = self::getContainer()->get(MapperServiceInterface::class);
         $serializerDummyObject = $serializer->fromArray($this->dummy, Dummy::class);

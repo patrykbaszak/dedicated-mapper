@@ -38,7 +38,14 @@ class SimpleObject
         bool $isCollectionItem = false,
     ): string {
         $constructor = $this->staticConstructor
-            ? sprintf('%s::%s(%s)', $class, $this->staticConstructor, '%s')
+            ? sprintf(
+                ($s = false === strpos($this->staticConstructor, '::')) ? '%s::%s(%s)' : '%s(%s)',
+                ...array_filter([
+                    $s ? $class : null,
+                    $this->staticConstructor,
+                    '%s',
+                ])
+            )
             : sprintf('new %s(%s)', $class, '%s');
 
         $constructorArguments = $this->nameOfArgument
