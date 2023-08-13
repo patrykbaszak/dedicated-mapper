@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PBaszak\DedicatedMapper\Tests\Unit\Expression;
 
+use DateTime;
 use PBaszak\DedicatedMapper\Attribute\ApplyToCollectionItems;
 use PBaszak\DedicatedMapper\Attribute\MappingCallback;
 use PBaszak\DedicatedMapper\Attribute\SimpleObject;
@@ -111,7 +112,7 @@ class ReflectionClassSetterExpressionBuilderTest extends TestCase
 
         $initialExpression = str_replace('{{target}}', 'output', (new ReflectionClassExpressionBuilder())->getSetterInitialExpression($blueprint, Uuid::v4()->toRfc4122())->toString());
         if ($hasPathUsed) {
-            $initialExpression = "\$path = 'root';\n" . $initialExpression;
+            $initialExpression = "\$path = 'root';\n".$initialExpression;
         }
 
         $function = $hasFunction ? $reflection->getMethod('newFunctionExpression')->invokeArgs(
@@ -129,7 +130,7 @@ class ReflectionClassSetterExpressionBuilderTest extends TestCase
             }
         }
 
-        return ($initialExpression ?? '') . $reflection->getMethod('newPropertyExpression')->invokeArgs(
+        return ($initialExpression ?? '').$reflection->getMethod('newPropertyExpression')->invokeArgs(
             $expressionBuilder,
             [
                 $sourceProperty,
@@ -160,7 +161,7 @@ class ReflectionClassSetterExpressionBuilderTest extends TestCase
             $class = ReflectionClassSetterExpressionTester::class;
             $property = 'test3';
             $data = new $class();
-            $data->$property = '2021-01-01';
+            $data->$property = new \DateTime('2021-01-01');
         } elseif ($key[1] && !$key[0]) {
             $class = NestedReflectionClassSetterExpressionTester::class;
             $property = 'test0';
@@ -168,14 +169,14 @@ class ReflectionClassSetterExpressionBuilderTest extends TestCase
             $data->$property = new ReflectionClassSetterExpressionTester();
             $data->$property->test = 'test';
             $data->$property->test2 = true;
-            $data->$property->test3 = '2021-01-01';
+            $data->$property->test3 = new \DateTime('2021-01-01');
         } elseif ($key[0]) {
             $class = NestedReflectionClassSetterExpressionTester::class;
             $property = 'test6';
             $d = new ReflectionClassSetterExpressionTester();
             $d->test = 'test';
             $d->test2 = true;
-            $d->test3 = '2021-01-01';
+            $d->test3 = new \DateTime('2021-01-01');
             $data = new $class();
             $data->$property = [$d, clone $d];
         }
@@ -202,40 +203,30 @@ class ReflectionClassSetterExpressionBuilderTest extends TestCase
         if ($key[4]) {
             $class = ReflectionClassSetterExpressionTester::class;
             $property = 'test5';
-            $data = (object) [
-                $property => new \ArrayObject([
-                    '2021-01-01',
-                    '2022-01-01',
-                    '2023-01-01',
-                ]),
-            ];
+            $data = new $class();
+            $data->$property = new \ArrayObject([
+                new \DateTime('2021-01-01'),
+                new \DateTime('2022-01-01'),
+                new \DateTime('2023-01-01'),
+            ]);
         } elseif ($key[3]) {
             $class = NestedReflectionClassSetterExpressionTester::class;
             $property = 'test5';
-            $data = (object) [
-                $property => [
-                    new \DateTime('2021-01-01'),
-                    new \DateTime('2022-01-01'),
-                    new \DateTime('2023-01-01'),
-                ],
+            $data = new $class();
+            $data->$property = [
+                new \DateTime('2021-01-01'),
+                new \DateTime('2022-01-01'),
+                new \DateTime('2023-01-01'),
             ];
         } else {
             $class = NestedReflectionClassSetterExpressionTester::class;
             $property = 'test6';
-            $data = (object) [
-                $property => [
-                    (object) [
-                        'test' => 'test',
-                        'test2' => true,
-                        'test3' => '2021-01-01',
-                    ],
-                    (object) [
-                        'test' => 'test',
-                        'test2' => true,
-                        'test3' => '2021-01-01',
-                    ],
-                ],
-            ];
+            $d = new ReflectionClassSetterExpressionTester();
+            $d->test = 'test';
+            $d->test2 = true;
+            $d->test3 = new \DateTime('2021-01-01');  // Converted string to DateTime object
+            $data = new $class();
+            $data->$property = [$d, clone $d];
         }
 
         $args = array_merge($key, [$class, $property]);
@@ -260,25 +251,20 @@ class ReflectionClassSetterExpressionBuilderTest extends TestCase
         if (!$key[0]) {
             $class = NestedReflectionClassSetterExpressionTester::class;
             $property = 'test0';
-            $data = (object) [
-                $property => (object) [
-                    'test' => 'test',
-                    'test2' => true,
-                    'test3' => '2021-01-01',
-                ],
-            ];
+            $data = new $class();
+            $data->$property = new ReflectionClassSetterExpressionTester();
+            $data->$property->test = 'test';
+            $data->$property->test2 = true;
+            $data->$property->test3 = new \DateTime('2021-01-01');
         } else {
             $class = NestedReflectionClassSetterExpressionTester::class;
             $property = 'test6';
-            $data = (object) [
-                $property => [
-                    (object) [
-                        'test' => 'test',
-                        'test2' => true,
-                        'test3' => '2021-01-01',
-                    ],
-                ],
-            ];
+            $d = new ReflectionClassSetterExpressionTester();
+            $d->test = 'test';
+            $d->test2 = true;
+            $d->test3 = new \DateTime('2021-01-01');
+            $data = new $class();
+            $data->$property = [$d];
         }
 
         $args = array_merge($key, [$class, $property]);
@@ -303,49 +289,41 @@ class ReflectionClassSetterExpressionBuilderTest extends TestCase
 
         if (!$key[0] && !$key[1]) {
             $class = ReflectionClassSetterExpressionTester::class;
+            $data = new $class();
             if ($key[3] || $key[4]) {
                 $property = 'test3';
-                $data = (object) [
-                    $property => '2021-01-01',
-                ];
+                $data->$property = new \DateTime('2021-01-01');
             } else {
                 $property = 'test';
-                $data = (object) [
-                    $property => 'test',
-                ];
+                $data->$property = 'test';
             }
         } elseif ($key[1] && !$key[0]) {
             $class = NestedReflectionClassSetterExpressionTester::class;
             $property = 'test0';
-            $data = (object) [
-                $property => (object) [
-                    'test' => 'test',
-                    'test2' => true,
-                    'test3' => '2021-01-01',
-                ],
-            ];
+            $nestedData = new ReflectionClassSetterExpressionTester();
+            $nestedData->test = 'test';
+            $nestedData->test2 = true;
+            $nestedData->test3 = new \DateTime('2021-01-01');
+            $data = new $class();
+            $data->$property = $nestedData;
         } elseif ($key[0] && $key[3]) {
             $class = NestedReflectionClassSetterExpressionTester::class;
             $property = 'test5';
-            $data = (object) [
-                $property => [
-                    new \DateTime('2021-01-01'),
-                    new \DateTime('2022-01-01'),
-                    new \DateTime('2023-01-01'),
-                ],
+            $data = new $class();
+            $data->$property = [
+                new \DateTime('2021-01-01'),
+                new \DateTime('2022-01-01'),
+                new \DateTime('2023-01-01'),
             ];
         } elseif ($key[0]) {
             $class = NestedReflectionClassSetterExpressionTester::class;
             $property = 'test6';
-            $data = (object) [
-                $property => [
-                    (object) [
-                        'test' => 'test',
-                        'test2' => true,
-                        'test3' => '2021-01-01',
-                    ],
-                ],
-            ];
+            $nestedData = new ReflectionClassSetterExpressionTester();
+            $nestedData->test = 'test';
+            $nestedData->test2 = true;
+            $nestedData->test3 = new \DateTime('2021-01-01');
+            $data = new $class();
+            $data->$property = [$nestedData];
         }
 
         $args = array_merge($key, [$class, $property]);
@@ -370,35 +348,34 @@ class ReflectionClassSetterExpressionBuilderTest extends TestCase
         if ($key[0] && !$key[4]) {
             $class = NestedReflectionClassSetterExpressionTester::class;
             $property = 'test4';
-            $data = (object) [
-                $property => [
-                    (object) [
-                        'test' => 'test',
-                        'test2' => true,
-                        'test3' => '2021-01-01 15:30:00',
-                    ],
-                    (object) [
-                        'test' => 'test2',
-                        'test2' => false,
-                        'test3' => '2021-01-01 15:30:00',
-                    ],
-                ],
-            ];
+            $data1 = new ReflectionClassSetterExpressionTester();
+            $data1->test = 'test';
+            $data1->test2 = true;
+            $data1->test3 = new \DateTime('2021-01-01 15:30:00');
+
+            $data2 = new ReflectionClassSetterExpressionTester();
+            $data2->test = 'test2';
+            $data2->test2 = false;
+            $data2->test3 = new \DateTime('2021-01-01 15:30:00');
+
+            $data = new $class();
+            $data->$property = new \ArrayObject([$data1, $data2]);
+
             $instanceOf = \ArrayObject::class;
         } elseif (!$key[0] && !$key[4]) {
             $class = ReflectionClassSetterExpressionTester::class;
             $property = 'test4';
-            $data = (object) [
-                $property => '2021-01-01 15:30:00',
-            ];
+            $data = new $class();
+            $data->$property = new \DateTime('2021-01-01 15:30:00');
+
             $instanceOf = \DateTime::class;
         } elseif ($key[4]) {
             $class = ReflectionClassSetterExpressionTester::class;
             $property = 'test3';
-            $data = (object) [
-                $property => '2021-01-01',
-            ];
-            $instanceOf = 'string';
+            $data = new $class();
+            $data->$property = new \DateTime('2021-01-01');
+
+            $instanceOf = \DateTime::class;
         }
 
         $args = array_merge($key, [$class, $property]);
@@ -417,37 +394,6 @@ class ReflectionClassSetterExpressionBuilderTest extends TestCase
         }
     }
 
-    protected function assertIsAsignedSimpleObjectDeconstructor(string $key): void
-    {
-        $key = $this->explodeKey($key);
-
-        if ($key[1]) {
-            throw new \LogicException('Function cannot be used for simple object.');
-        }
-
-        if (!$key[3]) {
-            throw new \LogicException('Simple object is not used.');
-        }
-
-        if (!$key[4]) {
-            throw new \LogicException('Simple object deconstructor is not used.');
-        }
-
-        $data = (object) [
-            'test3' => '2021-01-01 15:30:00',
-        ];
-
-        $args = array_merge($key, [ReflectionClassSetterExpressionTester::class, 'test3']);
-        $expression = $this->getExpression(...$args);
-        eval($expression);
-
-        if (!isset($output)) {
-            throw new \LogicException('Output is not set.');
-        }
-
-        $this->assertEquals('2021-01-01', $output->test3);
-    }
-
     protected function assertIsAssignedVarVariable(string $key): void
     {
         $key = $this->explodeKey($key);
@@ -459,25 +405,22 @@ class ReflectionClassSetterExpressionBuilderTest extends TestCase
         if ($key[1]) {
             $class = NestedReflectionClassSetterExpressionTester::class;
             $property = 'test0';
-            $data = (object) [
-                $property => (object) [
-                    'test' => 'test',
-                    'test2' => true,
-                    'test3' => '2021-01-01',
-                ],
-            ];
+            $nestedData = new ReflectionClassSetterExpressionTester();
+            $nestedData->test = 'test';
+            $nestedData->test2 = true;
+            $nestedData->test3 = new \DateTime('2021-01-01');
+            $data = new $class();
+            $data->$property = $nestedData;
         } elseif ($key[3] || $key[4]) {
             $class = ReflectionClassSetterExpressionTester::class;
             $property = 'test3';
-            $data = (object) [
-                $property => '2021-01-01',
-            ];
+            $data = new $class();
+            $data->$property = new \DateTime('2021-01-01');
         } else {
             $class = ReflectionClassSetterExpressionTester::class;
             $property = 'test';
-            $data = (object) [
-                $property => 'test',
-            ];
+            $data = new $class();
+            $data->$property = 'test';
         }
 
         $args = array_merge($key, [$class, $property]);
@@ -540,7 +483,6 @@ class ReflectionClassSetterExpressionBuilderTest extends TestCase
         $key = '000110';
         $this->assertIsOutputAsigned($key);
         $this->assertIsAsignedSimpleObject($key);
-        $this->assertIsAsignedSimpleObjectDeconstructor($key);
     }
 
     /** @test */
@@ -549,7 +491,7 @@ class ReflectionClassSetterExpressionBuilderTest extends TestCase
         $key = '000111';
         $this->assertIsOutputAsigned($key);
         $this->assertIsAsignedSimpleObject($key);
-        $this->assertIsAsignedSimpleObjectDeconstructor($key);
+
         $this->assertIsAssignedVarVariable($key);
     }
 
@@ -613,7 +555,6 @@ class ReflectionClassSetterExpressionBuilderTest extends TestCase
         $this->assertIsOutputAsigned($key);
         $this->assertIsAsignedPath($key);
         $this->assertIsAsignedSimpleObject($key);
-        $this->assertIsAsignedSimpleObjectDeconstructor($key);
     }
 
     /** @test */
@@ -623,7 +564,7 @@ class ReflectionClassSetterExpressionBuilderTest extends TestCase
         $this->assertIsOutputAsigned($key);
         $this->assertIsAsignedPath($key);
         $this->assertIsAsignedSimpleObject($key);
-        $this->assertIsAsignedSimpleObjectDeconstructor($key);
+
         $this->assertIsAssignedVarVariable($key);
     }
 
@@ -689,7 +630,6 @@ class ReflectionClassSetterExpressionBuilderTest extends TestCase
         $this->assertIsOutputAsigned($key);
         $this->assertIsAsignedCollection($key);
         $this->assertIsAsignedSimpleObject($key);
-        $this->assertIsAsignedSimpleObjectDeconstructor($key);
     }
 
     /** @test */
@@ -699,7 +639,7 @@ class ReflectionClassSetterExpressionBuilderTest extends TestCase
         $this->assertIsOutputAsigned($key);
         $this->assertIsAsignedCollection($key);
         $this->assertIsAsignedSimpleObject($key);
-        $this->assertIsAsignedSimpleObjectDeconstructor($key);
+
         $this->assertIsAssignedVarVariable($key);
     }
 
@@ -732,7 +672,6 @@ class ReflectionClassSetterExpressionBuilderTest extends TestCase
         $this->assertIsAsignedCollection($key);
         $this->assertIsAsignedPath($key);
         $this->assertIsAsignedSimpleObject($key);
-        $this->assertIsAsignedSimpleObjectDeconstructor($key);
     }
 
     /** @test */
@@ -743,7 +682,7 @@ class ReflectionClassSetterExpressionBuilderTest extends TestCase
         $this->assertIsAsignedCollection($key);
         $this->assertIsAsignedPath($key);
         $this->assertIsAsignedSimpleObject($key);
-        $this->assertIsAsignedSimpleObjectDeconstructor($key);
+
         $this->assertIsAssignedVarVariable($key);
     }
 

@@ -7,9 +7,12 @@ namespace PBaszak\DedicatedMapper\Expression\Assets;
 use PBaszak\DedicatedMapper\Attribute\MappingCallback;
 use PBaszak\DedicatedMapper\Contract\ModificatorInterface;
 use PBaszak\DedicatedMapper\Properties\Property;
+use PBaszak\DedicatedMapper\Utils\HasNotFilledPlaceholdersTrait;
 
 class Expression
 {
+    use HasNotFilledPlaceholdersTrait;
+
     public string $expression;
     /** @var array<string,string> */
     public array $expressionPlaceholders = [];
@@ -233,32 +236,5 @@ class Expression
             $expression,
             $expressionPlaceholders,
         ];
-    }
-
-    /**
-     * @param string[] $placeholders
-     */
-    private function hasNotFilledPlaceholders(array $placeholders, string $subject): bool
-    {
-        static $subjects = [];
-
-        if (!in_array($subject, $subjects, true)) {
-            $subjects[] = (object) ['subject' => $subject, 'counter' => 1];
-        } else {
-            $index = array_search($subject, $subjects, true);
-            ++$subjects[$index]->counter;
-
-            if ($subjects[$index]->counter > 5) {
-                throw new \LogicException(sprintf("Infinity loop detected! Expression has too many iterations.\nSubject:\n\n\%s", $subject));
-            }
-        }
-
-        foreach ($placeholders as $placeholder) {
-            if (false !== strpos($subject, $placeholder)) {
-                return true;
-            }
-        }
-
-        return false;
     }
 }

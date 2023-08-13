@@ -168,7 +168,6 @@ class ReflectionClassExpressionBuilder extends AbstractBuilder implements Setter
      * Placeholders list:
      * {{getterExpression}}
      * {{getterAssignment:var}}
-     * {{deconstructorCall}}
      * {{getterAssignment:basic}}
      * {{getterAssignment:basic:default}}
      * {{sourceIteratorAssignment}}
@@ -193,7 +192,7 @@ class ReflectionClassExpressionBuilder extends AbstractBuilder implements Setter
             $hasFunction = '1' === $key[1];
             $hasPathUsed = '1' === $key[2];
             $isVarVariableUsed = '1' === $key[3];
-            $hasDeconstructor = '1' === $key[4];
+            $hasDeconstructor = '1' === $key[4]; // ReflectionClass cannot support deconstructor
 
             $template = $this->getSetterExpressionTemplate(
                 $isCollection,
@@ -203,11 +202,11 @@ class ReflectionClassExpressionBuilder extends AbstractBuilder implements Setter
             $expressions[$key] = [
                 '{{setterAssignment:var}}' => sprintf(
                     $isCollection ? "\${{array}}[\$index] = %s;\n" : "\${$reflectionClass}->getProperty('{$name}')->setValue(\${{target}}, %s);\n",
-                    $hasFunction ? $this->getFunctionCallExpressionTemplate($isCollection, $hasPathUsed, $isVarVariableUsed) : '{{getterAssignment:var}}'.($hasDeconstructor ? '{{deconstructorCall}}' : '')
+                    $hasFunction ? $this->getFunctionCallExpressionTemplate($isCollection, $hasPathUsed, $isVarVariableUsed) : '{{getterAssignment:var}}'
                 ),
                 '{{setterAssignment:basic}}' => sprintf(
                     $isCollection ? "\${{array}}[\$index] = %s;\n" : "\${$reflectionClass}->getProperty('{$name}')->setValue(\${{target}}, %s);\n",
-                    $hasFunction ? $this->getFunctionCallExpressionTemplate($isCollection, $hasPathUsed, $isVarVariableUsed) : ($isCollection ? '{{getterAssignment:item}}' : '{{getterAssignment:basic}}').($hasDeconstructor ? '{{deconstructorCall}}' : '')
+                    $hasFunction ? $this->getFunctionCallExpressionTemplate($isCollection, $hasPathUsed, $isVarVariableUsed) : ($isCollection ? '{{getterAssignment:item}}' : '{{getterAssignment:basic}}')
                 ),
                 '{{setterAssignment:basic:default}}' => sprintf(
                     $isCollection ? "\${{array}}[\$index] = %s;\n" : "\${$reflectionClass}->getProperty('{$name}')->setValue(\${{target}}, %s);\n",

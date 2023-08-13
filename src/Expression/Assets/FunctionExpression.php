@@ -6,9 +6,12 @@ namespace PBaszak\DedicatedMapper\Expression\Assets;
 
 use PBaszak\DedicatedMapper\Contract\ModificatorInterface;
 use PBaszak\DedicatedMapper\Properties\Blueprint;
+use PBaszak\DedicatedMapper\Utils\HasNotFilledPlaceholdersTrait;
 
 class FunctionExpression
 {
+    use HasNotFilledPlaceholdersTrait;
+
     private Blueprint $sourceBlueprint;
     private Blueprint $targetBlueprint;
 
@@ -79,36 +82,21 @@ class FunctionExpression
         );
 
         $args = [
-            $this->sourceType,
-            $this->source,
-            $this->targetType,
-            $this->target,
-            implode("\n", array_map(fn (InitialExpression $expression) => $expression->toString(), $this->initialExpressions)),
-            implode("\n", array_map(fn (Expression $expression) => $expression->toString(), $this->expressions)),
-            implode("\n", array_map(fn (FinalExpression $expression) => $expression->toString(), $this->finalExpressions)),
-            $this->useStatements,
-            $this->pathVariableType,
-            $this->pathVariable,
+            Functions::SOURCE_TYPE => $this->sourceType,
+            Functions::SOURCE_NAME => $this->source,
+            Functions::TARGET_TYPE => $this->targetType,
+            Functions::TARGET_NAME => $this->target,
+            Functions::INITIAL_EXPRESSION => implode("\n", array_map(fn (InitialExpression $expression) => $expression->toString(), $this->initialExpressions)),
+            Functions::EXPRESSIONS => implode("\n", array_map(fn (Expression $expression) => $expression->toString(), $this->expressions)),
+            Functions::FINAL_EXPRESSION => implode("\n", array_map(fn (FinalExpression $expression) => $expression->toString(), $this->finalExpressions)),
+            Functions::USE_STATEMENTS => $this->useStatements,
+            Functions::PATH_TYPE => $this->pathVariableType,
+            Functions::PATH_NAME => $this->pathVariable,
         ];
 
         do {
-            $expr = str_replace(
-                [
-                    Functions::SOURCE_TYPE,
-                    Functions::SOURCE_NAME,
-                    Functions::TARGET_TYPE,
-                    Functions::TARGET_NAME,
-                    Functions::INITIAL_EXPRESSION,
-                    Functions::EXPRESSIONS,
-                    Functions::FINAL_EXPRESSION,
-                    Functions::USE_STATEMENTS,
-                    Functions::PATH_TYPE,
-                    Functions::PATH_NAME,
-                ],
-                $args,
-                $expr
-            );
-        } while (false !== strpos($expr, '{{'));
+            $expr = str_replace(array_keys($args), array_values($args), $expr);
+        } while ($this->hasNotFilledPlaceholders(array_keys($args), $expr));
 
         if (in_array($expr, self::$createdExpressions, true)) {
             $counts = 0;

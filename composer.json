@@ -71,6 +71,13 @@
             "@test:func",
             "@test:integration"
         ],
+        "test:all": [
+            "@code:fix --show-progress=1",
+            "@code:analyse",
+            "@test:unit",
+            "@test:func",
+            "@test:integration"
+        ],
         "version:up": [
             "git fetch --tags",
             "$(npm bin)/standard-version"
