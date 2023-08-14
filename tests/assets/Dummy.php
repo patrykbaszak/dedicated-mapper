@@ -47,7 +47,6 @@ class ItemDTO
         #[SymfonySerializer\Groups('test')]
         public string $id,
         #[SymfonySerializer\Groups('test')]
-        #[SymfonySerializer\Ignore()]
         public string $name,
         public string $description,
         public float $price,

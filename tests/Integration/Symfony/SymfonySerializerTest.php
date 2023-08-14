@@ -13,6 +13,7 @@ use PBaszak\DedicatedMapper\Expression\Modificator\Symfony\SymfonySerializer;
 use PBaszak\DedicatedMapper\Properties\Blueprint;
 use PBaszak\DedicatedMapper\Tests\assets\Dummy;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Serializer\Annotation\Ignore;
 use Symfony\Component\Serializer\Annotation\SerializedName;
 use Symfony\Component\Uid\Uuid;
 
@@ -47,17 +48,16 @@ class SymfonySerializerTest extends TestCase
     /** @test */
     public function shouldMapOnlyPropertiesWhichAreNotIgnored(): void
     {
-        $data = require __DIR__.'/../../assets/DummyByFormats.php';
-        unset(
-            $data[AnonymousObjectExpressionBuilder::class]->_embedded->items[0]->name,
-            $data[AnonymousObjectExpressionBuilder::class]->_embedded->items[1]->name
-        );
-
-        $source = $data[ArrayExpressionBuilder::class];
-        $expectedTarget = $data[AnonymousObjectExpressionBuilder::class];
+        $source = [
+            'test' => Uuid::v4()->toRfc4122(),
+            'ignored' => 'test',
+        ];
+        $expectedTarget = (object) [
+            'test' => $source['test'],
+        ];
 
         $target = (new ExpressionBuilder(
-            Blueprint::create(Dummy::class, false),
+            Blueprint::create(SymfonySerializerTestedClass::class, false),
             new ArrayExpressionBuilder(),
             new AnonymousObjectExpressionBuilder(),
             new FunctionExpressionBuilder(),
@@ -113,6 +113,9 @@ class SymfonySerializerTest extends TestCase
 
 class SymfonySerializerTestedClass
 {
+    #[Ignore()]
+    public string $ignored;
+
     public function __construct(
         #[SerializedName('test')]
         public string $id,

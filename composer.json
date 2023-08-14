@@ -53,7 +53,7 @@
         }
     },
     "scripts": {
-        "cache:clear": "bin/console cache:clear && rm -rf /tmp/symfony-cache",
+        "cache:clear": "rm -rf var/cache var/mapper /tmp/symfony-cache && bin/console cache:clear",
         "code:fix": "vendor/bin/php-cs-fixer fix",
         "code:analyse": "vendor/bin/phpstan analyse src -c tools/phpstan/fpm-config.neon",
         "code:analyse:b": "vendor/bin/phpstan analyse src -c tools/phpstan/fpm-config.neon --generate-baseline tools/phpstan/fpm-baseline.neon --allow-empty-baseline",
@@ -61,13 +61,22 @@
         "test:unit": "@phpunit --group unit tests",
         "test:func": "@phpunit --group func tests",
         "test:integration": "@phpunit --group integration tests",
-        "test:performance": "@phpunit --group performance tests",
+        "test:performance": [
+            "rm -rf var/mapper",
+            "@phpunit --group performance tests"
+        ],
         "test:ci": [
             "@code:fix",
             "@code:analyse",
             "@test:unit",
             "@test:func",
             "@test:integration"
+        ],
+        "test:all": [
+            "@test:unit",
+            "@test:func",
+            "@test:integration",
+            "@test:performance"
         ],
         "version:up": [
             "git fetch --tags",
