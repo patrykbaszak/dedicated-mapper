@@ -47,8 +47,8 @@ class ValidatedMapperService extends MapperService implements MapperServiceInter
             $violations = new ConstraintViolationList();
 
             foreach ($this->validationErrors as $path => $errorList) {
+                /** @var ConstraintViolation $e */
                 foreach ($errorList->getIterator() as $e) {
-                    /* @var ConstraintViolation */
                     $violations->add(
                         new ConstraintViolation(
                             $e->getMessage(),

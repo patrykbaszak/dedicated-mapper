@@ -9,7 +9,6 @@ use PBaszak\DedicatedMapper\Expression\Builder\ArrayExpressionBuilder;
 use PBaszak\DedicatedMapper\Expression\Builder\ReflectionClassExpressionBuilder;
 use PBaszak\DedicatedMapper\Expression\Modificator\Symfony\SymfonyValidator;
 use PBaszak\DedicatedMapper\Tests\assets\Dummy;
-use PBaszak\DedicatedMapper\ValidatedMapperService;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Validator\Exception\ValidationFailedException;
 
@@ -22,7 +21,7 @@ class SymfonyValidatorTest extends KernelTestCase
     protected function setUp(): void
     {
         self::bootKernel();
-        $this->mapperService = self::getContainer()->get(ValidatedMapperService::class);
+        $this->mapperService = self::getContainer()->get('pbaszak.dedicated_mapper.validated');
         $this->dummy = json_decode(file_get_contents(__DIR__.'/../../assets/dummy.json'), true);
     }
 

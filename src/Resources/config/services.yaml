@@ -11,12 +11,22 @@ services:
     PBaszak\DedicatedMapper\Contract\MapperServiceInterface:
         alias: PBaszak\DedicatedMapper\MapperService
         public: true
-    
+
+    pbaszak.dedicated_mapper:
+        public: true
+        alias: PBaszak\DedicatedMapper\MapperService
+
     PBaszak\DedicatedMapper\MapperService:
+        public: true
         arguments:
             $directory: '%kernel.project_dir%/var/mapper/'
+
+    pbaszak.dedicated_mapper.validated:
+        public: true
+        alias: PBaszak\DedicatedMapper\ValidatedMapperService
 
     PBaszak\DedicatedMapper\ValidatedMapperService:
         public: true
         arguments:
             $directory: '%kernel.project_dir%/var/mapper/'
+            $validator: '@validator'
