@@ -1,7 +1,7 @@
 {
     "name": "pbaszak/dedicated-mapper",
     "type": "library",
-    "description": "Dedicated mapper is the fastest mapper for PHP.",
+    "description": "Dedicated Mapper is a library that generates PHP functions to speed up the mapping process between arrays, objects, and classes. You can include your own callbacks in the mapping process. See, for example, validation during mapping with Symfony Validator.",
     "require": {
         "php": ">=8.0",
         "phpdocumentor/reflection-docblock": "^5.3",
