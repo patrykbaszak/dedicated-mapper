@@ -63,12 +63,12 @@ class SymfonySerializer implements ModificatorInterface
             if (!empty($attr = $property->getAttributes(Serializer\Groups::class))) {
                 /** @var Serializer\Groups $attr */
                 $attr = $attr[0]->newInstance();
-                $groups = $attr->getGroups();
+                $groups = array_unique(array_merge($attr->getGroups(), ['Default']));
 
                 return !empty(array_intersect($this->groups, $groups));
             }
 
-            return false;
+            return !empty(array_intersect($this->groups, ['Default']));
         };
 
         foreach ($blueprint->properties as $property) {
