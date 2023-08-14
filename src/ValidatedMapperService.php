@@ -11,15 +11,19 @@ use PBaszak\DedicatedMapper\Contract\SetterInterface;
 use PBaszak\DedicatedMapper\Expression\Builder\AbstractBuilder;
 use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\ConstraintViolationList;
+use Symfony\Component\Validator\ConstraintViolationListInterface;
 use Symfony\Component\Validator\Exception\ValidationFailedException;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class ValidatedMapperService extends MapperService implements MapperServiceInterface
 {
     /**
-     * @var ConstraintViolationList[]
+     * @var constraintViolationList[]
+     *                                Used to collect validation errors during mapping
      */
     protected array $validationErrors = [];
+
+    private ?ConstraintViolationListInterface $validationResult = null;
 
     public function __construct(
         string $directory,
@@ -39,7 +43,8 @@ class ValidatedMapperService extends MapperService implements MapperServiceInter
         FunctionInterface $functionBuilder = null,
         bool $throwExceptionOnMissingProperty = false,
         bool $isCollection = false,
-        array $modificators = []
+        array $modificators = [],
+        bool $throwValidationFailedException = true,
     ): mixed {
         $output = parent::map(...func_get_args());
 
@@ -54,7 +59,7 @@ class ValidatedMapperService extends MapperService implements MapperServiceInter
                             $e->getMessage(),
                             $e->getMessageTemplate(),
                             $e->getParameters(),
-                            $e->getRoot(),
+                            $output,
                             ltrim($path, '.'),
                             $e->getInvalidValue(),
                             $e->getPlural(),
@@ -66,9 +71,18 @@ class ValidatedMapperService extends MapperService implements MapperServiceInter
                 }
             }
 
-            throw new ValidationFailedException(sprintf('Source data failed validation during mapping from `%s` to `%s`.', $getterBuilder->getSourceType($blueprint), $setterBuilder->getTargetType($blueprint)), $violations);
+            $this->validationResult = $violations;
+
+            if ($throwValidationFailedException) {
+                throw new ValidationFailedException(sprintf('Source data failed validation during mapping from `%s` to `%s`.', $getterBuilder->getSourceType($blueprint), $setterBuilder->getTargetType($blueprint)), $violations);
+            }
         }
 
         return $output;
+    }
+
+    public function getLastValidationResult(): ?ConstraintViolationListInterface
+    {
+        return $this->validationResult;
     }
 }

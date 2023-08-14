@@ -61,10 +61,7 @@
         "test:unit": "@phpunit --group unit tests",
         "test:func": "@phpunit --group func tests",
         "test:integration": "@phpunit --group integration tests",
-        "test:performance": [
-            "rm -rf var/mapper",
-            "@phpunit --group performance tests"
-        ],
+        "test:performance": "@phpunit --group performance tests",
         "test:ci": [
             "@code:fix",
             "@code:analyse",

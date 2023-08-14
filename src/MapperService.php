@@ -17,10 +17,10 @@ use PBaszak\DedicatedMapper\Properties\Blueprint;
 class MapperService implements MapperServiceInterface
 {
     /** @var array<string,callable> */
-    private static array $mappers = [];
+    protected static array $mappers = [];
 
     public function __construct(
-        private string $directory,
+        protected string $directory,
     ) {
     }
 

@@ -60,7 +60,7 @@ class SymfonyValidatorTest extends KernelTestCase
                 [new SymfonyValidator()]
             );
         } catch (ValidationFailedException $e) {
-            $this->assertEquals('_embedded.items.0.currency', $e->getViolations()->get(0)->getPropertyPath());
+            $this->assertEquals('_embedded.items[0].currency', $e->getViolations()->get(0)->getPropertyPath());
         }
     }
 }

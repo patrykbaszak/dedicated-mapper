@@ -12,6 +12,7 @@ use PBaszak\DedicatedMapper\Properties\Blueprint;
 use PBaszak\DedicatedMapper\Properties\Property;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\Valid;
 
 /**
  * Class SymfonyValidator.
@@ -56,9 +57,17 @@ class SymfonyValidator implements ModificatorInterface
 
         $notFoundConstraints = [];
         foreach ($constraints as $index => $constraint) {
+            if (in_array('groups', array_map(fn (\ReflectionParameter $param) => $param->name, (new \ReflectionMethod($constraint->name, '__construct'))->getParameters()))) {
+                $constraint->arguments['groups'] = array_merge($constraint->arguments['groups'] ?? [], array_filter(['Default', $sourceProperty->getParent()?->blueprint?->reflection->getShortName()]));
+                $constraint->arguments['groups'] = array_unique($constraint->arguments['groups']);
+            }
+
             if (NotBlank::class === $constraint->name) {
                 unset($constraints[$index]);
                 $notFoundConstraints[] = $constraint;
+            }
+            if (Valid::class === $constraint->name) {
+                unset($constraints[$index]);
             }
         }
 

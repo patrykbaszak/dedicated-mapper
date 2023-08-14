@@ -17,6 +17,7 @@ class Dummy
         #[SymfonySerializer\Groups('test')]
         public string $name,
         public string $description,
+        #[Assert\Valid()]
         #[SymfonySerializer\Groups('test')]
         public EmbeddedDTO $_embedded,
     ) {
@@ -35,6 +36,7 @@ class EmbeddedDTO
         #[SymfonySerializer\Groups('test')]
         public int $total,
         /** @var ItemDTO[] */
+        #[Assert\Valid()]
         #[JMS\Type("array<PBaszak\DedicatedMapper\Tests\assets\ItemDTO>")]
         public array $items,
     ) {

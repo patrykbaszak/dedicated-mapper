@@ -181,7 +181,7 @@ abstract class AbstractBuilder
         $functionArguments = implode(', ', array_filter([
             $hasVarUsed ? '{{getterAssignment:var}}' : ($isCollection ? '{{getterAssignment:item}}' : '{{getterAssignment:basic}}'),
             $hasPathUsed ? ($isCollection
-                ? '${{pathName}} . ".{{name}}.{$index}"'
+                ? '${{pathName}} . ".{{name}}[{$index}]"'
                 : '${{pathName}} . ".{{name}}"'
             ) : null,
         ]));
