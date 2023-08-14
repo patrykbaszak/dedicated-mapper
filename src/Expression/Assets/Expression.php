@@ -70,10 +70,12 @@ class Expression
 
         $hasFunction = !empty($this->function);
         $isPathUsed = (bool) $this->function?->pathVariable;
+        $initialCallback = $target->hasDedicatedInitCallback(true) ? $target->getInitialCallbackAttribute(true) : null;
 
         if ($target->isCollection()) {
             $itemExpressionArgs = [
-                $target->hasDedicatedInitCallback(true),
+                (bool) $initialCallback,
+
                 true,
                 false,
                 !empty($this->collectionItemCallbacksExpression),
@@ -197,6 +199,7 @@ class Expression
      */
     private function newExpression(
         bool $hasDedicatedGetter,
+        bool $useInitialCallback,
         bool $throwExceptionOnMissingRequiredValue,
         bool $hasDefaultValue,
         bool $hasCallbacks,
