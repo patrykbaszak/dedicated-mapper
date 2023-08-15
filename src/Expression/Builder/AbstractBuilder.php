@@ -129,7 +129,7 @@ abstract class AbstractBuilder
 
     /**
      * @return string
-     * 
+     *
      * Placeholders list:
      * {{getterExpression}}
      * {{sourceIteratorAssignment}}

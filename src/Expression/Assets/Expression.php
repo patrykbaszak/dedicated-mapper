@@ -75,7 +75,6 @@ class Expression
         if ($target->isCollection()) {
             $itemExpressionArgs = [
                 (bool) $initialCallback,
-
                 true,
                 false,
                 !empty($this->collectionItemCallbacksExpression),
@@ -199,7 +198,6 @@ class Expression
      */
     private function newExpression(
         bool $hasDedicatedGetter,
-        bool $useInitialCallback,
         bool $throwExceptionOnMissingRequiredValue,
         bool $hasDefaultValue,
         bool $hasCallbacks,
