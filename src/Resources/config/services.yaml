@@ -6,7 +6,7 @@ services:
     PBaszak\DedicatedMapper\:
         resource: '../../*'
         exclude:
-            - '../../{Resources,DependencyInjection,DedicatedMapper.php,Mapper.php}'
+            - '../../{Resources,DependencyInjection,DedicatedMapperBundle.php,Mapper.php}'
 
     PBaszak\DedicatedMapper\Contract\MapperServiceInterface:
         alias: PBaszak\DedicatedMapper\MapperService
