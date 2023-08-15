@@ -8,6 +8,7 @@ class Getter
 {
     public const STATEMENTS_ORDER = [
         'hasDedicatedGetter',
+        'useInitialCallbackInsteadOfGetter',
         'throwExceptionOnMissingRequiredValue',
         'hasDefaultValue',
         'hasCallbacks',
@@ -28,6 +29,7 @@ class Getter
 
     public function getExpressionTemplate(
         bool $hasDedicatedGetter,
+        bool $useInitialCallbackInsteadOfGetter,
         bool $throwExceptionOnMissingRequiredValue,
         bool $hasDefaultValue,
         bool $hasCallbacks,
@@ -45,6 +47,7 @@ class Getter
      */
     public function getExpressions(
         bool $hasDedicatedGetter,
+        bool $useInitialCallbackInsteadOfGetter,
         bool $throwExceptionOnMissingRequiredValue,
         bool $hasDefaultValue,
         bool $hasCallbacks,
