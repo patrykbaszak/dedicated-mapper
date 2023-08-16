@@ -6,5 +6,7 @@ namespace PBaszak\DedicatedMapper\Expression\Builder;
 
 class RecursiveBuilder
 {
-    public function run(array $statements)
+    public function run(Expression $expression): void
+    {
+    }
 }
