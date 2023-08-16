@@ -35,6 +35,12 @@ class Expression
         public readonly bool $hasOwnInitiator = false, // like new \DateTime()
         public readonly bool $isInitiatorUsedSource = false, // like new \DateTime($source)
     ) {
+        $this->validateBasicInfo();
+        $this->validateIsNotFound();
+        $this->validateHasMoreThanOneClassType();
+        $this->validateIsCollection();
+        $this->validateIsClassType();
+        $this->validateHasOwnInitiator();
     }
 
     private function validateBasicInfo(): void
@@ -134,6 +140,13 @@ class Expression
                     throw new InvalidArgumentException('Type must be a class if property has more than one class type. Null is allowed.');
                 }
             }
+        }
+    }
+
+    private function validateHasOwnInitiator(): void
+    {
+        if ($this->hasOwnInitiator && !$this->isInitiatorUsedSource && $this->checkIfSourceValueIsNotEmpty) {
+            throw new InvalidArgumentException('Own initiator cannot be used if check if source value is not empty is true.');
         }
     }
 }
