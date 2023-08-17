@@ -5,9 +5,12 @@ declare(strict_types=1);
 namespace PBaszak\DedicatedMapper\Expression\Builder;
 
 use InvalidArgumentException;
+use PBaszak\DedicatedMapper\Utils\HasNotFilledPlaceholdersTrait;
 
 class ExpressionTemplate
 {
+    use HasNotFilledPlaceholdersTrait;
+
     public array $expressionFullTemplate = [
         '{{functionDeclarations}}' => [
             '$this->hasFunctions' => '{{functionDeclarations}}',
@@ -38,7 +41,7 @@ class ExpressionTemplate
         '{{notFoundExpression}}' => [
             '$this->hasNotFoundCallbacks' => '{{notFoundCallbacks}}',
         ],
-        [
+        '{{init}}' => [
             '$this->checkIfSourceValueIsNotEmpty' => [
                 '$this->hasDefaultValue || $this->hasNotFoundCallbacks' => "if ({{existsStatement}}) {\n{{functionDeclarations}}{{loop}}{{expression}}} else {\n{{notFoundExpression}}}\n",
                 '(!$this->hasDefaultValue && !$this->hasNotFoundCallbacks) || ($this->hasOwnInitiator && $this->isInitiatorUsedSource)' => "if ({{existsStatement}}) {\n{{functionDeclarations}}{{loop}}{{expression}}}\n",
@@ -85,22 +88,37 @@ class ExpressionTemplate
 
     public function __toString(): string
     {
-        $expression = '';
-        $elseExpression = null;
+        $expression = '{{init}}';
+        $args = $this->expressionFullTemplate;
+        $getValue = function (array $expr) use (&$getValue) {
+            $value = '';
+            foreach ($expr as $key => $value) {
+                if (is_int($key)) {
+                    $value .= is_string($value) ? $value : $getValue($value);
+                }
+                if (is_string($key)) {
+                    if (eval($key)) {
+                        $value .= is_string($value) ? $value : $getValue($value);
+                    }
+                }
+                if (is_array($value)) {
+                    $value .= $getValue($value);
+                }
+                return $value;
+            }
+        };
 
-
-
-        if ($this->checkIfSourceValueIsNotEmpty) {
-            return sprintf(
-                $this->hasDefaultValue || $this->hasNotFoundCallbacks
-                    ? "if ({{existsStatement}}) {\n%s\n} else {\n%s\n}\n"
-                    : "if ({{existsStatement}}) {\n%s\n}\n",
-                ...array_filter([
-                    $expression,
-                    $elseExpression
-                ])
-            );
-        }
+        do {
+            foreach ($args as $placeholder => $expr) {
+                if (is_string($expr)) {
+                    $expression = str_replace($placeholder, $expr, $expression);
+                } else {
+                    $value = $getValue($expr);
+                    $expression = str_replace($placeholder, $value, $expression);
+                }
+            }
+            str_replace(array_keys($args), array_values($args), $expression);
+        } while ($this->hasNotFilledPlaceholders(array_keys($args), $expression));
 
         return $expression;
     }
