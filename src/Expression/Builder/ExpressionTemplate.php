@@ -6,66 +6,47 @@ namespace PBaszak\DedicatedMapper\Expression\Builder;
 
 use InvalidArgumentException;
 
-class Expression
+class ExpressionTemplate
 {
-    public const AUXILIARY_EXPRESSIONS = [
-        'if' => 'if ({%s}) {$this->expression .= %s}',
-        'if_else' => 'if ({%s}) {$this->expression .= "%s"} else {$this->expression .= "%s"}',
-    ];
-
-    public string $expression = '';
-
     public array $expressionFullTemplate = [
-        self::AUXILIARY_EXPRESSIONS['if'] => [
-            '$this->checkIfSourceValueIsNotEmpty',
-            [
-                "if ({{existsStatement}}) {\n",
-                self::AUXILIARY_EXPRESSIONS['if'] => [
-                    '$this->hasFunctions',
-                    [
-                        '{{functionDeclarations}}',
-                    ]
-                ],
-                self::AUXILIARY_EXPRESSIONS['if'] => [
-                    '$this->isCollectionStorage',
-                    [
-                        '{{targetIteratorInitialAssignment}}',
-                        "foreach ({{sourceIteratorAssignment}} as \${{index}} => \${{item}}) {\n",
-                        self::AUXILIARY_EXPRESSIONS['if'] => [
-                            '$this->discriminator',
-                            [
-                            ]
-                        ],
-                    ]
-                ],
+        '{{functionDeclarations}}' => [
+            '$this->hasFunctions' => '{{functionDeclarations}}',
+            '$this->nestedExpression?->hasFunctions' => '{{itemFunctionDeclarations}}'
+        ],
+        '{{loop}}' => [
+            '$this->isCollectionStorage' => [
+                '{{targetIteratorInitialAssignment}}',
+                "foreach ({{sourceIteratorAssignment}} as \${{index}} => \${{item}}) {\n{{itemExpression}}}\n",
+                '{{targetIteratorFinalAssignment}}'
             ]
         ],
-        '{{existsStatement}}' => [
-            '{{functionDeclarations}}' => [
-                '${{functionName}}' => '{{function}}',
-                '${{itemFunctionName}}' => '{{itemFunction}}',
-            ],
-            '{{loop}}' => [
-                '{{outputCollectionStorageDeclaration}}',
-                '{{loopBody}}' => [
-                    '{{itemExpression}}',
-                ],
-                '{{outputCollectionStorageAssignment}}'
-            ],
-            '{{expression}}' => [
-                '{{switch}}' => [
-                    '{{switchCase}}' => [
-                        '{{functionCall}}',
-                        '{{break}}'
-                    ]
-                ],
-                '{{initiator}}',
-                '{{callbacks}}',
-                '{{finalAssignment}}'
-            ]
+        '{{switch}}' => [
+            '$this->hasDiscriminator' => '{{switchCase}}',
         ],
-        '{{else}}' => [
-            '{{notFoundCallbacks}}',
+        '{{itemExpression}}' => [
+            '$this->hasDiscriminator' => '{{switch}}',
+            '$this->hasOwnInitiator && $this->isInitiatorUsedSource' => '{{initiator}}',
+            '$this->hasCallbacks' => '{{callbacks}}',
+            '{{finalAssignment}}'
+        ],
+        '{{expression}}' => [
+            '$this->hasDiscriminator' => '{{switch}}',
+            '$this->hasOwnInitiator' => '{{initiator}}',
+            '$this->hasCallbacks' => '{{callbacks}}',
+            '{{finalAssignment}}'
+        ],
+        '{{notFoundExpression}}' => [
+            '$this->hasNotFoundCallbacks' => '{{notFoundCallbacks}}',
+        ],
+        [
+            '$this->checkIfSourceValueIsNotEmpty' => [
+                '$this->hasDefaultValue || $this->hasNotFoundCallbacks' => "if ({{existsStatement}}) {\n{{functionDeclarations}}{{loop}}{{expression}}} else {\n{{notFoundExpression}}}\n",
+                '(!$this->hasDefaultValue && !$this->hasNotFoundCallbacks) || ($this->hasOwnInitiator && $this->isInitiatorUsedSource)' => "if ({{existsStatement}}) {\n{{functionDeclarations}}{{loop}}{{expression}}}\n",
+            ],
+            '!$this->checkIfSourceValueIsNotEmpty' => [
+                '$this->hasNotFoundCallbacks && !$this->hasDefaultValue' => "if (!{{existsStatement}}) {\n{{notFoundCallbacks}}}\n{{functionDeclarations}}{{loop}}{{expression}}",
+                '!$this->hasDefaultValue && !$this->hasNotFoundCallbacks' => "{{functionDeclarations}}{{loop}}{{expression}}",
+            ]
         ]
     ];
 
@@ -80,7 +61,7 @@ class Expression
         public readonly bool $hasNotFoundCallbacks = false,
         public readonly bool $hasDefaultValue = false,
         // if property has more than one class type
-        public readonly ?string $discriminator = null,
+        public readonly bool $hasDiscriminator = false,
         public readonly array $discriminatorMap = [],
         // if property is a collection
         public readonly bool $isCollectionStorage = false,
@@ -100,6 +81,28 @@ class Expression
         $this->validateIsCollection();
         $this->validateIsClassType();
         $this->validateHasOwnInitiator();
+    }
+
+    public function __toString(): string
+    {
+        $expression = '';
+        $elseExpression = null;
+
+
+
+        if ($this->checkIfSourceValueIsNotEmpty) {
+            return sprintf(
+                $this->hasDefaultValue || $this->hasNotFoundCallbacks
+                    ? "if ({{existsStatement}}) {\n%s\n} else {\n%s\n}\n"
+                    : "if ({{existsStatement}}) {\n%s\n}\n",
+                ...array_filter([
+                    $expression,
+                    $elseExpression
+                ])
+            );
+        }
+
+        return $expression;
     }
 
     private function validateBasicInfo(): void
@@ -138,13 +141,13 @@ class Expression
 
     private function validateHasMoreThanOneClassType(): void
     {
-        if (!empty($this->discriminatorMap) && empty($this->discriminator)) {
+        if (!empty($this->discriminatorMap) && $this->hasDiscriminator) {
             throw new InvalidArgumentException('Discriminator cannot be empty if discriminator map is not empty');
         }
-        if (empty($this->discriminatorMap) && !empty($this->discriminator)) {
+        if (empty($this->discriminatorMap) && !$this->hasDiscriminator) {
             throw new InvalidArgumentException('Discriminator map cannot be empty if discriminator is not empty');
         }
-        if (!empty($this->discriminatorMap) && !empty($this->discriminator)) {
+        if (!empty($this->discriminatorMap) && !$this->hasDiscriminator) {
             foreach ($this->discriminatorMap as $discriminatorMap) {
                 if (!is_string($discriminatorMap)) {
                     throw new InvalidArgumentException('Discriminator map must be a string');
@@ -155,7 +158,7 @@ class Expression
             }
         }
 
-        if (empty($this->discriminatorMap) && empty($this->discriminator)) {
+        if (empty($this->discriminatorMap) && $this->hasDiscriminator) {
             return;
         }
 
