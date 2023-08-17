@@ -8,7 +8,66 @@ use InvalidArgumentException;
 
 class Expression
 {
-    public array $expression = [];
+    public const AUXILIARY_EXPRESSIONS = [
+        'if' => 'if ({%s}) {$this->expression .= %s}',
+        'if_else' => 'if ({%s}) {$this->expression .= "%s"} else {$this->expression .= "%s"}',
+    ];
+
+    public string $expression = '';
+
+    public array $expressionFullTemplate = [
+        self::AUXILIARY_EXPRESSIONS['if'] => [
+            '$this->checkIfSourceValueIsNotEmpty',
+            [
+                "if ({{existsStatement}}) {\n",
+                self::AUXILIARY_EXPRESSIONS['if'] => [
+                    '$this->hasFunctions',
+                    [
+                        '{{functionDeclarations}}',
+                    ]
+                ],
+                self::AUXILIARY_EXPRESSIONS['if'] => [
+                    '$this->isCollectionStorage',
+                    [
+                        '{{targetIteratorInitialAssignment}}',
+                        "foreach ({{sourceIteratorAssignment}} as \${{index}} => \${{item}}) {\n",
+                        self::AUXILIARY_EXPRESSIONS['if'] => [
+                            '$this->discriminator',
+                            [
+                            ]
+                        ],
+                    ]
+                ],
+            ]
+        ],
+        '{{existsStatement}}' => [
+            '{{functionDeclarations}}' => [
+                '${{functionName}}' => '{{function}}',
+                '${{itemFunctionName}}' => '{{itemFunction}}',
+            ],
+            '{{loop}}' => [
+                '{{outputCollectionStorageDeclaration}}',
+                '{{loopBody}}' => [
+                    '{{itemExpression}}',
+                ],
+                '{{outputCollectionStorageAssignment}}'
+            ],
+            '{{expression}}' => [
+                '{{switch}}' => [
+                    '{{switchCase}}' => [
+                        '{{functionCall}}',
+                        '{{break}}'
+                    ]
+                ],
+                '{{initiator}}',
+                '{{callbacks}}',
+                '{{finalAssignment}}'
+            ]
+        ],
+        '{{else}}' => [
+            '{{notFoundCallbacks}}',
+        ]
+    ];
 
     public function __construct(
         // basic info
@@ -95,7 +154,7 @@ class Expression
                 }
             }
         }
-        
+
         if (empty($this->discriminatorMap) && empty($this->discriminator)) {
             return;
         }
@@ -147,6 +206,9 @@ class Expression
     {
         if ($this->hasOwnInitiator && !$this->isInitiatorUsedSource && $this->checkIfSourceValueIsNotEmpty) {
             throw new InvalidArgumentException('Own initiator cannot be used if check if source value is not empty is true.');
+        }
+        if ($this->hasOwnInitiator && $this->hasFunctions) {
+            throw new InvalidArgumentException('Own initiator cannot be used if property has functions.');
         }
     }
 }
