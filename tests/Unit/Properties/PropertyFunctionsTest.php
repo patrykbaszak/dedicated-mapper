@@ -433,6 +433,12 @@ class PropertyFunctionsTester
      */
     public PropertyFunctionsNestedTester $test;
 
+    public function __construct(
+        PropertyFunctionsNestedTester $test = null
+    ) {
+        $this->test = $test ?? new PropertyFunctionsNestedTester();
+    }
+
     /**
      * CLASS_OBJECT.
      *

@@ -43,6 +43,10 @@ trait Type
 
     public function isNullable(): bool
     {
+        if ($type = $this->reflection->getType()) {
+            return $type->allowsNull();
+        }
+
         foreach ($this->getTypes()->types as $type) {
             if ('null' === $type) {
                 return true;
@@ -55,7 +59,7 @@ trait Type
     public function hasDefaultValue(): bool
     {
         if (!$this->reflection->hasDefaultValue()) {
-            return $this->constructorParameter?->isDefaultValueAvailable() ?? false;
+            return $this->reflection->isPromoted() && $this->constructorParameter?->isDefaultValueAvailable();
         }
 
         return true;
@@ -64,7 +68,7 @@ trait Type
     public function getDefaultValue(): mixed
     {
         if (!$this->reflection->hasDefaultValue()) {
-            if (!$this->constructorParameter?->isDefaultValueAvailable()) {
+            if (!$this->reflection->isPromoted() || !$this->constructorParameter?->isDefaultValueAvailable()) {
                 return null;
             }
 
