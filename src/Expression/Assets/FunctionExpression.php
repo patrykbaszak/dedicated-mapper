@@ -98,23 +98,6 @@ class FunctionExpression
             $expr = str_replace(array_keys($args), array_values($args), $expr);
         } while ($this->hasNotFilledPlaceholders(array_keys($args), $expr));
 
-        if (in_array($expr, self::$createdExpressions, true)) {
-            $counts = 0;
-            foreach (self::$createdExpressions as $createdExpression) {
-                if ($createdExpression === $expr) {
-                    ++$counts;
-                }
-            }
-
-            if ($counts > 3) {
-                throw new \LogicException('Expression creation loop detected.');
-            }
-        }
-        self::$createdExpressions[] = $expr;
-
         return $expr;
     }
-
-    /** @var string[] */
-    public static array $createdExpressions = [];
 }

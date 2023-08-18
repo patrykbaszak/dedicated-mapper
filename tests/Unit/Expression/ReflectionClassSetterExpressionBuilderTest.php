@@ -8,7 +8,6 @@ use DateTime;
 use PBaszak\DedicatedMapper\Attribute\ApplyToCollectionItems;
 use PBaszak\DedicatedMapper\Attribute\MappingCallback;
 use PBaszak\DedicatedMapper\Attribute\SimpleObject;
-use PBaszak\DedicatedMapper\Expression\Assets\FunctionExpression;
 use PBaszak\DedicatedMapper\Expression\Builder\FunctionExpressionBuilder;
 use PBaszak\DedicatedMapper\Expression\Builder\ReflectionClassExpressionBuilder;
 use PBaszak\DedicatedMapper\Expression\ExpressionBuilder;
@@ -94,7 +93,7 @@ class ReflectionClassSetterExpressionBuilderTest extends TestCase
             new ReflectionClassExpressionBuilder(),
             new FunctionExpressionBuilder()
         ));
-        FunctionExpression::$createdExpressions = [];
+
         $reflection = new \ReflectionClass($expressionBuilder);
         $reflection->getProperty('throwExceptionOnMissingProperty')->setValue($expressionBuilder, false);
         $reflection->getMethod('matchBlueprints')->invokeArgs(

@@ -19,7 +19,7 @@ trait HasNotFilledPlaceholdersTrait
             $index = array_search($subject, $subjects, true);
             ++$subjects[$index]->counter;
 
-            if ($subjects[$index]->counter > 5) {
+            if ($subjects[$index]->counter > 100) {
                 throw new \LogicException(sprintf("Infinity loop detected! Expression has too many iterations.\nSubject:\n\n\%s", $subject));
             }
         }

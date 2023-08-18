@@ -7,7 +7,6 @@ namespace PBaszak\DedicatedMapper\Tests\Unit\Expression;
 use PBaszak\DedicatedMapper\Attribute\ApplyToCollectionItems;
 use PBaszak\DedicatedMapper\Attribute\MappingCallback;
 use PBaszak\DedicatedMapper\Attribute\SimpleObject;
-use PBaszak\DedicatedMapper\Expression\Assets\FunctionExpression;
 use PBaszak\DedicatedMapper\Expression\Builder\AnonymousObjectExpressionBuilder;
 use PBaszak\DedicatedMapper\Expression\Builder\FunctionExpressionBuilder;
 use PBaszak\DedicatedMapper\Expression\ExpressionBuilder;
@@ -92,7 +91,7 @@ class AnonymousObjectSetterExpressionBuilderTest extends TestCase
             new AnonymousObjectExpressionBuilder(),
             new FunctionExpressionBuilder()
         ));
-        FunctionExpression::$createdExpressions = [];
+
         $reflection = new \ReflectionClass($expressionBuilder);
         $reflection->getProperty('throwExceptionOnMissingProperty')->setValue($expressionBuilder, false);
         $reflection->getMethod('matchBlueprints')->invokeArgs(
