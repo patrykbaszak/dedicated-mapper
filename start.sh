@@ -1,7 +1,7 @@
 #!/bin/bash
 
 CHECKSUM_FILE=".dockerfile_checksum"
-IMAGE_NAME="cached-mapper-bundle/php:latest"
+IMAGE_NAME="dedicated-mapper/php:latest"
 
 NEW_CHECKSUM=$(sha256sum Dockerfile | cut -d " " -f 1)
 if [ -f $CHECKSUM_FILE ]; then
