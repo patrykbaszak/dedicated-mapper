@@ -84,7 +84,7 @@ class Property
     public static function create(\ReflectionClass $class, string $name, self $parent = null): self
     {
         $reflection = $class->getProperty($name);
-        $constructorParameter = ($parameters = $class->getConstructor()?->getParameters()) ? $parameters[$name] ?? null : null;
+        $constructorParameter = ($parameters = $class->getConstructor()?->getParameters()) ? array_filter($parameters, fn (\ReflectionParameter $param) => $param->getName() === $name)[0] ?? null : null;
 
         $property = new self($name, $reflection, $constructorParameter, $parent);
         $types = $property->getTypes()->types;

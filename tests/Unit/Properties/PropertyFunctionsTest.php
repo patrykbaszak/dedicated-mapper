@@ -258,13 +258,90 @@ class PropertyFunctionsTest extends TestCase
             )->getPropertyType()
         );
     }
+
+    /** @test */
+    public function testHasDefaultValue(): void
+    {
+        $this->assertTrue(
+            Property::create(
+                new \ReflectionClass(PropertyFunctionsSimpleObject::class),
+                'test'
+            )->hasDefaultValue()
+        );
+        $this->assertTrue(
+            Property::create(
+                new \ReflectionClass(PropertyFunctionsNestedTester::class),
+                'test'
+            )->hasDefaultValue()
+        );
+        $this->assertTrue(
+            Property::create(
+                new \ReflectionClass(PropertyFunctionsNestedTester::class),
+                'test0'
+            )->hasDefaultValue()
+        );
+        $this->assertTrue(
+            Property::create(
+                new \ReflectionClass(PropertyFunctionsNestedTester::class),
+                'test1'
+            )->hasDefaultValue()
+        );
+        $this->assertFalse(
+            Property::create(
+                new \ReflectionClass(PropertyFunctionsNestedTester::class),
+                'test2'
+            )->hasDefaultValue()
+        );
+        $this->assertFalse(
+            Property::create(
+                new \ReflectionClass(PropertyFunctionsNestedTester::class),
+                'test3'
+            )->hasDefaultValue()
+        );
+        $this->assertFalse(
+            Property::create(
+                new \ReflectionClass(PropertyFunctionsTester::class),
+                'test'
+            )->hasDefaultValue()
+        );
+        $this->assertTrue(
+            Property::create(
+                new \ReflectionClass(PropertyFunctionsTester::class),
+                'test0'
+            )->hasDefaultValue()
+        );
+        $this->assertTrue(
+            Property::create(
+                new \ReflectionClass(PropertyFunctionsTester::class),
+                'test1'
+            )->hasDefaultValue()
+        );
+        $this->assertFalse(
+            Property::create(
+                new \ReflectionClass(PropertyFunctionsTester::class),
+                'test2'
+            )->hasDefaultValue()
+        );
+        $this->assertFalse(
+            Property::create(
+                new \ReflectionClass(PropertyFunctionsTester::class),
+                'test3'
+            )->hasDefaultValue()
+        );
+        $this->assertFalse(
+            Property::create(
+                new \ReflectionClass(PropertyFunctionsTester::class),
+                'test4'
+            )->hasDefaultValue()
+        );
+    }
 }
 
 #[SimpleObject()]
 class PropertyFunctionsSimpleObject
 {
     public function __construct(
-        public string $test,
+        public ?string $test = null,
     ) {
     }
 }
@@ -274,7 +351,7 @@ class PropertyFunctionsNestedTester
     /**
      * PROPERTY.
      */
-    public ?string $test;
+    public ?string $test = null;
 
     /**
      * PROPERTIES_COLLECTION.
@@ -319,14 +396,14 @@ class PropertyFunctionsNestedTester
     /**
      * SIMPLE_OBJECT.
      */
-    public null|\DateTime $test0;
+    public null|\DateTime $test0 = null;
 
     /**
      * SIMPLE_OBJECTS_COLLECTION.
      *
      * @var \DateTime[]
      */
-    public array $test1;
+    public array $test1 = [];
 
     /**
      * SIMPLE_OBJECT_SIMPLE_OBJECTS_COLLECTION.
@@ -368,7 +445,7 @@ class PropertyFunctionsTester
      *
      * @var PropertyFunctionsNestedTester[]
      */
-    public array $test1;
+    public array $test1 = [];
 
     /**
      * CLASS_OBJECTS_COLLECTION.
