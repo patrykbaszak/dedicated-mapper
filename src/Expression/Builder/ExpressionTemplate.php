@@ -13,42 +13,43 @@ class ExpressionTemplate
 
     public array $expressionFullTemplate = [
         '{{functionDeclarations}}' => [
-            '$this->hasFunctions' => '{{functionDeclarations}}',
-            '$this->nestedExpression?->hasFunctions' => '{{itemFunctionDeclarations}}'
+            '$this->hasFunctions' => '{{functionDeclaration}}',
         ],
         '{{loop}}' => [
-            '$this->isCollectionStorage' => [
-                '{{targetIteratorInitialAssignment}}',
-                "foreach ({{sourceIteratorAssignment}} as \${{index}} => \${{item}}) {\n{{itemExpression}}}\n",
-                '{{targetIteratorFinalAssignment}}'
-            ]
+            "\${{array}} = [];",
+            "foreach ({{sourceIterator}} as \${{index}} => \${{item}}) {\n{{itemExpression}}}\n",
+            '$this->hasCallbacks' => '{{targetCollectionAssignment:var}}',
+            '!$this->hasCallbacks' => '{{targetCollectionAssignment:basic}}',
         ],
         '{{switch}}' => [
             '$this->hasDiscriminator' => '{{switchCase}}',
         ],
         '{{itemExpression}}' => [
-            '$this->hasDiscriminator' => '{{switch}}',
-            '$this->hasOwnInitiator && $this->isInitiatorUsedSource' => '{{initiator}}',
+            '{{itemInitiator}}',
             '$this->hasCallbacks' => '{{callbacks}}',
-            '{{finalAssignment}}'
+            '{{collectionItemAssignment}}'
         ],
         '{{expression}}' => [
-            '$this->hasDiscriminator' => '{{switch}}',
-            '$this->hasOwnInitiator' => '{{initiator}}',
+            '{{initiator}}',
             '$this->hasCallbacks' => '{{callbacks}}',
-            '{{finalAssignment}}'
+            '$this->hasCallbacks' => '{{setterAssignment:var}}',
+            '!$this->hasCallbacks' => '{{setterAssignment:basic}}'
         ],
         '{{notFoundExpression}}' => [
             '$this->hasNotFoundCallbacks' => '{{notFoundCallbacks}}',
         ],
+        '{{initiator}}' => [
+            '$this->isCollectionStorage' => '{{loop}}',
+            '$this->hasOwnInitiator' => '{{switch}}',
+        ],
         '{{init}}' => [
             '$this->checkIfSourceValueIsNotEmpty' => [
-                '$this->hasDefaultValue || $this->hasNotFoundCallbacks' => "if ({{existsStatement}}) {\n{{functionDeclarations}}{{loop}}{{expression}}} else {\n{{notFoundExpression}}}\n",
-                '(!$this->hasDefaultValue && !$this->hasNotFoundCallbacks) || ($this->hasOwnInitiator && $this->isInitiatorUsedSource)' => "if ({{existsStatement}}) {\n{{functionDeclarations}}{{loop}}{{expression}}}\n",
+                '$this->hasDefaultValue || $this->hasNotFoundCallbacks' => "if ({{existsStatement}}) {\n{{expression}}} else {\n{{notFoundExpression}}}\n",
+                '(!$this->hasDefaultValue && !$this->hasNotFoundCallbacks) || ($this->hasOwnInitiator && $this->isInitiatorUsedSource)' => "if ({{existsStatement}}) {\n{{expression}}}\n",
             ],
             '!$this->checkIfSourceValueIsNotEmpty' => [
-                '$this->hasNotFoundCallbacks && !$this->hasDefaultValue' => "if (!{{existsStatement}}) {\n{{notFoundCallbacks}}}\n{{functionDeclarations}}{{loop}}{{expression}}",
-                '!$this->hasDefaultValue && !$this->hasNotFoundCallbacks' => "{{functionDeclarations}}{{loop}}{{expression}}",
+                '$this->hasNotFoundCallbacks && !$this->hasDefaultValue' => "if (!{{existsStatement}}) {\n{{notFoundCallbacks}}}\n{{expression}}",
+                '!$this->hasDefaultValue && !$this->hasNotFoundCallbacks' => "{{expression}}",
             ]
         ]
     ];
