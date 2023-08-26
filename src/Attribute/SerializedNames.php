@@ -11,7 +11,7 @@ namespace PBaszak\DedicatedMapper\Attribute;
 class SerializedNames
 {
     /**
-     * @param string[]  $names    property name in serialized resource, in order of prioritys
+     * @param string[]  $names    property name in serialized resource, in order of priorities
      * @param mixed[] $options - any options required but custom actions
      */
     public function __construct(

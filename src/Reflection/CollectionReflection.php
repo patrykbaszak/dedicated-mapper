@@ -23,5 +23,4 @@ class CollectionReflection
      * @var AttributeReflection $attributes
      */
     protected AttributeReflection $attributes;
-    
 }

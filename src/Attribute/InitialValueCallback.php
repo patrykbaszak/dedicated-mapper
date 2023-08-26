@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace PBaszak\DedicatedMapper\Attribute;
 
-// #[\Attribute(\Attribute::TARGET_PROPERTY)] @see https://github.com/patrykbaszak/dedicated-mapper/issues/11
+#[\Attribute(\Attribute::TARGET_PROPERTY)]
 class InitialValueCallback
 {
     /**
