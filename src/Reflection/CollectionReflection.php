@@ -8,19 +8,45 @@ use ArrayObject;
 
 class CollectionReflection
 {
-    /** 
-     * @var null|PropertyReflection|self $parent collection can be nested in another collection,
-     *                    if `null` then it is root collection
-     */
-    protected null|PropertyReflection|self $parent;
+    public function __construct(
+        /** 
+         * @var null|PropertyReflection|SimpleObjectReflection|self $parent  
+         * collection can be nested in another collection, if `null` then it is root collection
+         */
+        protected null|PropertyReflection|SimpleObjectReflection|self $parent,
+
+        /**
+         * @var ArrayObject<ClassReflection|CollectionReflection|SimpleObjectReflection|TypeReflection> $children
+         */
+        protected ArrayObject $children,
+
+        /**
+         * @var AttributeReflection $attributes
+         */
+        protected AttributeReflection $attributes,
+    ) {}
 
     /**
-     * @var ClassReflection|PropertyReflection|CollectionReflection|TypeReflection $children
+     * @return null|PropertyReflection|SimpleObjectReflection|self
      */
-    protected ArrayObject $children;
-    
+    public function getParent(): null|PropertyReflection|SimpleObjectReflection|self
+    {
+        return $this->parent;
+    }
+
     /**
-     * @var AttributeReflection $attributes
+     * @return ArrayObject<ClassReflection|CollectionReflection|SimpleObjectReflection|TypeReflection>
      */
-    protected AttributeReflection $attributes;
+    public function getChildren(): ArrayObject
+    {
+        return $this->children;
+    }
+
+    /**
+     * @return AttributeReflection
+     */
+    public function getAttributes(): AttributeReflection
+    {
+        return $this->attributes;
+    }
 }
