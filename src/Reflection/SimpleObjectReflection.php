@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace PBaszak\DedicatedMapper\Reflection;
 
+use ReflectionClass;
+
 class SimpleObjectReflection
 {
     public function __construct(
@@ -26,6 +28,11 @@ class SimpleObjectReflection
          * @var CollectionReflection|null $collection if `null`, then property is not collection
          */
         protected ?CollectionReflection $collection = null,
+
+        /**
+         * @var ReflectionClass|null $reflection
+         */
+        protected ?ReflectionClass $reflection = null,
     ) {}
 
     /**

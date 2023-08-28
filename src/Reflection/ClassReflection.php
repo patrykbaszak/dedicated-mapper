@@ -5,32 +5,10 @@ declare(strict_types=1);
 namespace PBaszak\DedicatedMapper\Reflection;
 
 use ArrayObject;
-use PBaszak\DedicatedMapper\Utils\getAttributes;
 use ReflectionClass;
 
 class ClassReflection
 {
-    use getAttributes;
-
-    public static function createFromReflection(\ReflectionClass $reflection, null|CollectionReflection|PropertyReflection $parent): self
-    {
-        $ref = new ReflectionClass(self::class);
-        /** @var ClassReflection $instance */
-        $instance = $ref->newInstanceWithoutConstructor();
-        $ref->getProperty('reflection')->setValue($instance, $reflection);
-        $ref->getProperty('parent')->setValue($instance, $parent);
-        $attributes = new AttributeReflection($instance, self::getAttributesFromReflection($reflection));
-        $ref->getProperty('attributes')->setValue($instance, $attributes);
-
-        $properties = new ArrayObject();
-        foreach ($reflection->getProperties() as $property) {
-            // $properties[$property->getName()] = PropertyReflection::createFromReflection($property);
-        }
-        $ref->getProperty('properties')->setValue($instance, $properties);
-
-        return $instance;
-    }
-
     public function __construct(
         /**
          * @var null|\ReflectionClass $reflection `null` is available for reversed mapping

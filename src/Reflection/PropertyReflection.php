@@ -4,31 +4,8 @@ declare(strict_types=1);
 
 namespace PBaszak\DedicatedMapper\Reflection;
 
-use PBaszak\DedicatedMapper\Utils\getAttributes;
-
 class PropertyReflection
 {
-    use getAttributes;
-
-    public static function createFromReflection(\ReflectionProperty $reflection, ClassReflection $parent): self
-    {
-        $ref = new \ReflectionClass(self::class);
-        /** @var PropertyReflection $instance */
-        $instance = $ref->newInstanceWithoutConstructor();
-        $ref->getProperty('parent')->setValue($instance, $parent);
-        $ref->getProperty('name')->setValue($instance, $reflection->getName());
-        $ref->getProperty('reflection')->setValue($instance, $reflection);
-        $constructorParameterReflection = $parent->getReflection()->getConstructor()?->getParameters()[$reflection->getName()] ?? null;
-        $ref->getProperty('reflectionParameter')->setValue($instance, $constructorParameterReflection);
-        $attributes = new AttributeReflection($instance, self::getAttributesFromReflection($reflection));
-        $ref->getProperty('attributes')->setValue($instance, $attributes);
-        $ref->getProperty('options')->setValue($instance, new Options());
-
-        // type
-
-        return $instance;
-    }
-
     public function __construct(
         /**
          * @var ClassReflection $parent each property must have parent class
