@@ -2,22 +2,24 @@
 
 declare(strict_types=1);
 
-namespace PBaszak\DedicatedMapper\Reflection;
+namespace PBaszak\DedicatedMapper\Reflection\Type;
 
+use PBaszak\DedicatedMapper\Reflection\AttributeReflection;
+use PBaszak\DedicatedMapper\Reflection\PropertyReflection;
 use ReflectionClass;
 
-class SimpleObjectReflection
+class SimpleObjectType implements TypeInterface
 {
     public function __construct(
         /** 
-         * @var CollectionReflection|PropertyReflection $parent
+         * @var CollectionType|PropertyReflection $parent
          */
-        protected CollectionReflection|PropertyReflection $parent,
+        protected CollectionType|PropertyReflection $parent,
 
         /**
-         * @var TypeReflection $type of simpleObject main property
+         * @var Type $type of simpleObject main property
          */
-        protected TypeReflection $type,
+        protected Type $type,
 
         /**
          * @var AttributeReflection $attributes
@@ -25,9 +27,9 @@ class SimpleObjectReflection
         protected AttributeReflection $attributes,
 
         /**
-         * @var CollectionReflection|null $collection if `null`, then property is not collection
+         * @var CollectionType|null $collection if `null`, then property is not collection
          */
-        protected ?CollectionReflection $collection = null,
+        protected ?CollectionType $collection = null,
 
         /**
          * @var ReflectionClass|null $reflection
@@ -36,17 +38,17 @@ class SimpleObjectReflection
     ) {}
 
     /**
-     * @return CollectionReflection|PropertyReflection
+     * @return CollectionType|PropertyReflection
      */
-    public function getParent(): CollectionReflection|PropertyReflection
+    public function getParent(): CollectionType|PropertyReflection
     {
         return $this->parent;
     }
 
     /**
-     * @return TypeReflection
+     * @return Type
      */
-    public function getType(): TypeReflection
+    public function getType(): Type
     {
         return $this->type;
     }
@@ -60,9 +62,9 @@ class SimpleObjectReflection
     }
 
     /**
-     * @return null|CollectionReflection
+     * @return null|CollectionType
      */
-    public function getCollection(): ?CollectionReflection
+    public function getCollection(): ?CollectionType
     {
         return $this->collection;
     }

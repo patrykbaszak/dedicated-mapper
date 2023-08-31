@@ -2,21 +2,23 @@
 
 declare(strict_types=1);
 
-namespace PBaszak\DedicatedMapper\Reflection;
+namespace PBaszak\DedicatedMapper\Reflection\Type;
 
 use ArrayObject;
+use PBaszak\DedicatedMapper\Reflection\AttributeReflection;
+use PBaszak\DedicatedMapper\Reflection\PropertyReflection;
 
-class CollectionReflection
+class CollectionType implements TypeInterface
 {
     public function __construct(
         /** 
-         * @var null|PropertyReflection|SimpleObjectReflection|self $parent  
+         * @var null|PropertyReflection|SimpleObjectType|self $parent  
          * collection can be nested in another collection, if `null` then it is root collection
          */
-        protected null|PropertyReflection|SimpleObjectReflection|self $parent,
+        protected null|PropertyReflection|SimpleObjectType|self $parent,
 
         /**
-         * @var ArrayObject<ClassReflection|CollectionReflection|SimpleObjectReflection|TypeReflection> $children
+         * @var ArrayObject<ClassReflection|CollectionType|SimpleObjectType|Type> $children
          */
         protected ArrayObject $children,
 
@@ -27,15 +29,15 @@ class CollectionReflection
     ) {}
 
     /**
-     * @return null|PropertyReflection|SimpleObjectReflection|self
+     * @return null|PropertyReflection|SimpleObjectType|self
      */
-    public function getParent(): null|PropertyReflection|SimpleObjectReflection|self
+    public function getParent(): null|PropertyReflection|SimpleObjectType|self
     {
         return $this->parent;
     }
 
     /**
-     * @return ArrayObject<ClassReflection|CollectionReflection|SimpleObjectReflection|TypeReflection>
+     * @return ArrayObject<ClassReflection|CollectionType|SimpleObjectType|Type>
      */
     public function getChildren(): ArrayObject
     {

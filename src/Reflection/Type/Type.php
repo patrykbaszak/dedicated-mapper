@@ -2,18 +2,19 @@
 
 declare(strict_types=1);
 
-namespace PBaszak\DedicatedMapper\Reflection;
+namespace PBaszak\DedicatedMapper\Reflection\Type;
 
-use phpDocumentor\Reflection\Type;
+use PBaszak\DedicatedMapper\Reflection\PropertyReflection;
+use phpDocumentor\Reflection\Type as PhpDocumentorType;
 use ReflectionType;
 
-class TypeReflection
+class Type implements TypeInterface
 {
     public function __construct(
         /** 
-         * @var CollectionReflection|PropertyReflection|SimpleObjectReflection $parent each type must have resource
+         * @var CollectionType|PropertyReflection|SimpleObjectType $parent each type must have resource
          */
-        protected CollectionReflection|PropertyReflection|SimpleObjectReflection $parent,
+        protected CollectionType|PropertyReflection|SimpleObjectType $parent,
 
         /**
          * @var array<string> $types
@@ -56,15 +57,15 @@ class TypeReflection
         protected null|ReflectionType $reflectionType = null,
 
         /**
-         * @var null|Type $phpDocumentorReflectionType
+         * @var null|PhpDocumentorType $phpDocumentorReflectionType
          */
-        protected null|Type $phpDocumentorReflectionType = null,
+        protected null|PhpDocumentorType $phpDocumentorReflectionType = null,
     ) {}
 
     /**
-     * @return CollectionReflection|PropertyReflection|SimpleObjectReflection
+     * @return CollectionType|PropertyReflection|SimpleObjectType
      */
-    public function getParent(): CollectionReflection|PropertyReflection|SimpleObjectReflection
+    public function getParent(): CollectionType|PropertyReflection|SimpleObjectType
     {
         return $this->parent;
     }
@@ -131,5 +132,13 @@ class TypeReflection
     public function getReflectionType(): null|ReflectionType
     {
         return $this->reflectionType;
+    }
+
+    /**
+     * @return null|PhpDocumentorType
+     */
+    public function getPhpDocumentorReflectionType(): null|PhpDocumentorType
+    {
+        return $this->phpDocumentorReflectionType;
     }
 }

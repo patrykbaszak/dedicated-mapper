@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace PBaszak\DedicatedMapper\Reflection;
 
+use PBaszak\DedicatedMapper\Reflection\Type\CollectionType;
+use PBaszak\DedicatedMapper\Reflection\Type\SimpleObjectType;
+use PBaszak\DedicatedMapper\Reflection\Type\Type;
+
 class PropertyReflection
 {
     public function __construct(
@@ -28,9 +32,9 @@ class PropertyReflection
         protected Options $options,
         
         /**
-         * @var TypeReflection $type
+         * @var Type $type
          */
-        protected TypeReflection $type,
+        protected Type $type,
 
         /** 
          * @var ClassReflection|null $class if `null`, then property is not class
@@ -38,14 +42,14 @@ class PropertyReflection
         protected ?ClassReflection $class = null,
 
         /**
-         * @var CollectionReflection|null $collection if `null`, then property is not collection
+         * @var CollectionType|null $collection if `null`, then property is not collection
          */
-        protected ?CollectionReflection $collection = null,
+        protected ?CollectionType $collection = null,
 
         /**
-         * @var ?SimpleObjectReflection $simpleObject if `null`, then property is not simpleObject
+         * @var ?SimpleObjectType $simpleObject if `null`, then property is not simpleObject
          */
-        protected ?SimpleObjectReflection $simpleObject = null,
+        protected ?SimpleObjectType $simpleObject = null,
         
         /**
          * @var null|\ReflectionProperty $reflection `null` is available for reversed mapping
@@ -94,9 +98,9 @@ class PropertyReflection
     }
     
     /**
-    * @return TypeReflection
+    * @return Type
     */
-    public function getType(): TypeReflection
+    public function getType(): Type
     {
         return $this->type;
     }
@@ -118,9 +122,9 @@ class PropertyReflection
     }
 
     /**
-     * @return null|CollectionReflection
+     * @return null|CollectionType
      */
-    public function getCollection(): ?CollectionReflection
+    public function getCollection(): ?CollectionType
     {
         return $this->collection;
     }
@@ -134,9 +138,9 @@ class PropertyReflection
     }
 
     /**
-     * @return null|SimpleObjectReflection
+     * @return null|SimpleObjectType
      */
-    public function getSimpleObject(): ?SimpleObjectReflection
+    public function getSimpleObject(): ?SimpleObjectType
     {
         return $this->simpleObject;
     }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace PBaszak\DedicatedMapper\Reflection;
 
 use ArrayObject;
+use PBaszak\DedicatedMapper\Reflection\Type\CollectionType;
 use ReflectionClass;
 
 class ClassReflection
@@ -17,9 +18,9 @@ class ClassReflection
         protected null|\ReflectionClass $reflection = null,
     
         /**
-         * @var PropertyReflection|CollectionReflection|null $parent if `null`, then it is root class
+         * @var PropertyReflection|CollectionType|null $parent if `null`, then it is root class
          */
-        protected null|CollectionReflection|PropertyReflection $parent = null,
+        protected null|CollectionType|PropertyReflection $parent = null,
     
         /**
          * @var AttributeReflection $attributes
@@ -41,9 +42,9 @@ class ClassReflection
     }
 
     /**
-     * @return PropertyReflection|CollectionReflection|null
+     * @return PropertyReflection|CollectionType|null
      */
-    public function getParent(): null|CollectionReflection|PropertyReflection
+    public function getParent(): null|CollectionType|PropertyReflection
     {
         return $this->parent;
     }

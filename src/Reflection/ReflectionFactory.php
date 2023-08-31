@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace PBaszak\DedicatedMapper\Reflection;
 
 use ArrayObject;
+use PBaszak\DedicatedMapper\Reflection\Type\CollectionType;
+use PBaszak\DedicatedMapper\Reflection\Type\SimpleObjectType;
 use ReflectionClass;
 
 class ReflectionFactory
@@ -13,14 +15,14 @@ class ReflectionFactory
      * @param class-string $class
      * @throws LogicException if class does not exist
      */
-    public function createReflectionFromPhpClass(string $class, bool $asCollection = false): ClassReflection|CollectionReflection
+    public function createReflectionFromPhpClass(string $class, bool $asCollection = false): ClassReflection|CollectionType
     {
         if (!class_exists($class, false)) {
             throw new \LogicException('Class does not exist');
         }
 
         return match ($asCollection) {
-            true => $this->createCollectionReflection(
+            true => $this->createCollectionType(
                 null,
                 new ArrayObject([
                     $this->createClassReflection($class, null),
@@ -31,7 +33,7 @@ class ReflectionFactory
         };
     }
 
-    protected function createClassReflection(string $class, null|CollectionReflection|PropertyReflection $parent): ClassReflection
+    protected function createClassReflection(string $class, null|CollectionType|PropertyReflection $parent): ClassReflection
     {
         $reflection = new ReflectionClass($class);
         $ref = new ReflectionClass(ClassReflection::class);
@@ -70,10 +72,10 @@ class ReflectionFactory
         return $instance;
     }
 
-    protected function createCollectionReflection(null|PropertyReflection|SimpleObjectReflection|CollectionReflection $parent, ArrayObject $children, ArrayObject $attributes): CollectionReflection
+    protected function createCollectionType(null|PropertyReflection|SimpleObjectType|CollectionType $parent, ArrayObject $children, ArrayObject $attributes): CollectionType
     {
-        $ref = new \ReflectionClass(CollectionReflection::class);
-        /** @var CollectionReflection $instance */
+        $ref = new \ReflectionClass(CollectionType::class);
+        /** @var CollectionType $instance */
         $instance = $ref->newInstanceWithoutConstructor();
         $ref->getProperty('parent')->setValue($instance, $parent);
         $ref->getProperty('children')->setValue($instance, $children);
@@ -82,10 +84,10 @@ class ReflectionFactory
         return $instance;
     }
 
-    protected function createSimpleObjectReflection(CollectionReflection|PropertyReflection $parent, ReflectionClass $reflection, ArrayObject $attributes): SimpleObjectReflection
+    protected function createSimpleObjectType(CollectionType|PropertyReflection $parent, ReflectionClass $reflection, ArrayObject $attributes): SimpleObjectType
     {
-        $ref = new \ReflectionClass(SimpleObjectReflection::class);
-        /** @var SimpleObjectReflection $instance */
+        $ref = new \ReflectionClass(SimpleObjectType::class);
+        /** @var SimpleObjectType $instance */
         $instance = $ref->newInstanceWithoutConstructor();
 
         return $instance;

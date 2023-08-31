@@ -5,14 +5,16 @@ declare(strict_types=1);
 namespace PBaszak\DedicatedMapper\Reflection;
 
 use ArrayObject;
+use PBaszak\DedicatedMapper\Reflection\Type\CollectionType;
+use PBaszak\DedicatedMapper\Reflection\Type\SimpleObjectType;
 
 class AttributeReflection
 {
     public function __construct(
         /** 
-         * @var ClassReflection|CollectionReflection|PropertyReflection|SimpleObjectReflection $parent each attribute must have resource
+         * @var ClassReflection|CollectionType|PropertyReflection|SimpleObjectType $parent each attribute must have resource
          */
-        protected ClassReflection|CollectionReflection|PropertyReflection|SimpleObjectReflection $parent,
+        protected ClassReflection|CollectionType|PropertyReflection|SimpleObjectType $parent,
 
         /**
          * @var ArrayObject<object{"class": string, "arguments": mixed[]}> $attributes
@@ -21,9 +23,9 @@ class AttributeReflection
     ) {}
 
     /**
-     * @return ClassReflection|CollectionReflection|PropertyReflection|SimpleObjectReflection
+     * @return ClassReflection|CollectionType|PropertyReflection|SimpleObjectType
      */
-    public function getParent(): ClassReflection|CollectionReflection|PropertyReflection|SimpleObjectReflection
+    public function getParent(): ClassReflection|CollectionType|PropertyReflection|SimpleObjectType
     {
         return $this->parent;
     }
