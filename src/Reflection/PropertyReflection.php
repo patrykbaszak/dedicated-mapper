@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace PBaszak\DedicatedMapper\Reflection;
 
-use PBaszak\DedicatedMapper\Reflection\Type\CollectionType;
-use PBaszak\DedicatedMapper\Reflection\Type\SimpleObjectType;
-use PBaszak\DedicatedMapper\Reflection\Type\Type;
+use PBaszak\DedicatedMapper\Reflection\Type\TypeInterface;
 
 class PropertyReflection
 {
@@ -30,27 +28,12 @@ class PropertyReflection
          * @var Options $options
          */
         protected Options $options,
-        
-        /**
-         * @var Type $type
-         */
-        protected Type $type,
-
-        /** 
-         * @var ClassReflection|null $class if `null`, then property is not class
-         */
-        protected ?ClassReflection $class = null,
 
         /**
-         * @var CollectionType|null $collection if `null`, then property is not collection
+         * @var TypeInterface $type
          */
-        protected ?CollectionType $collection = null,
+        protected TypeInterface $type,
 
-        /**
-         * @var ?SimpleObjectType $simpleObject if `null`, then property is not simpleObject
-         */
-        protected ?SimpleObjectType $simpleObject = null,
-        
         /**
          * @var null|\ReflectionProperty $reflection `null` is available for reversed mapping
          */
@@ -98,59 +81,11 @@ class PropertyReflection
     }
     
     /**
-    * @return Type
+    * @return TypeInterface
     */
-    public function getType(): Type
+    public function getType(): TypeInterface
     {
         return $this->type;
-    }
-
-    /**
-     * @return null|ClassReflection
-     */
-    public function getClass(): ?ClassReflection
-    {
-        return $this->class;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isClass(): bool
-    {
-        return $this->class !== null;
-    }
-
-    /**
-     * @return null|CollectionType
-     */
-    public function getCollection(): ?CollectionType
-    {
-        return $this->collection;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isCollection(): bool
-    {
-        return $this->collection !== null;
-    }
-
-    /**
-     * @return null|SimpleObjectType
-     */
-    public function getSimpleObject(): ?SimpleObjectType
-    {
-        return $this->simpleObject;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isSimpleObject(): bool
-    {
-        return $this->simpleObject !== null;
     }
 
     /**
