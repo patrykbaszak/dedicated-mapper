@@ -12,9 +12,9 @@ class Type implements TypeInterface
 {
     public function __construct(
         /** 
-         * @var CollectionType|PropertyReflection|SimpleObjectType $parent each type must have resource
+         * @var PropertyReflection|TypeInterface $parent each type must have resource
          */
-        protected CollectionType|PropertyReflection|SimpleObjectType $parent,
+        protected PropertyReflection|TypeInterface $parent,
 
         /**
          * @var array<string> $types

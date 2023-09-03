@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace PBaszak\DedicatedMapper\Reflection;
 
 use ArrayObject;
-use PBaszak\DedicatedMapper\Reflection\Type\CollectionType;
+use PBaszak\DedicatedMapper\Reflection\Type\ClassType;
 use ReflectionClass;
 
 class ClassReflection
@@ -15,12 +15,12 @@ class ClassReflection
          * @var null|\ReflectionClass $reflection `null` is available for reversed mapping
          *                                        (for creates php class from for example json)
          */
-        protected null|\ReflectionClass $reflection = null,
+        protected null|\ReflectionClass $reflection,
     
         /**
-         * @var PropertyReflection|CollectionType|null $parent if `null`, then it is root class
+         * @var ClassType $parent
          */
-        protected null|CollectionType|PropertyReflection $parent = null,
+        protected ClassType $parent,
     
         /**
          * @var AttributeReflection $attributes
@@ -31,6 +31,11 @@ class ClassReflection
          * @var ArrayObject<string, PropertyReflection> $properties 
          */
         protected ArrayObject $properties,
+        
+        /**
+         * @var Options $options
+         */
+        protected Options $options,
     ) {}
 
     /**
@@ -42,9 +47,9 @@ class ClassReflection
     }
 
     /**
-     * @return PropertyReflection|CollectionType|null
+     * @return ClassType
      */
-    public function getParent(): null|CollectionType|PropertyReflection
+    public function getParent(): ClassType
     {
         return $this->parent;
     }
@@ -83,5 +88,13 @@ class ClassReflection
     public function hasProperty(string $name): bool
     {
         return isset($this->properties[$name]);
+    }
+
+    /**
+     * @return Options
+     */
+    public function getOptions(): Options
+    {
+        return $this->options;
     }
 }

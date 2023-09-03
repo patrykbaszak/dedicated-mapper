@@ -12,13 +12,13 @@ class CollectionType implements TypeInterface
 {
     public function __construct(
         /** 
-         * @var null|PropertyReflection|SimpleObjectType|self $parent  
+         * @var null|PropertyReflection|TypeInterface $parent  
          * collection can be nested in another collection, if `null` then it is root collection
          */
-        protected null|PropertyReflection|SimpleObjectType|self $parent,
+        protected null|PropertyReflection|TypeInterface $parent,
 
         /**
-         * @var ArrayObject<ClassReflection|CollectionType|SimpleObjectType|Type> $children
+         * @var ArrayObject<TypeInterface> $children
          */
         protected ArrayObject $children,
 
@@ -29,15 +29,15 @@ class CollectionType implements TypeInterface
     ) {}
 
     /**
-     * @return null|PropertyReflection|SimpleObjectType|self
+     * @return null|PropertyReflection|TypeInterface
      */
-    public function getParent(): null|PropertyReflection|SimpleObjectType|self
+    public function getParent(): null|PropertyReflection|TypeInterface
     {
         return $this->parent;
     }
 
     /**
-     * @return ArrayObject<ClassReflection|CollectionType|SimpleObjectType|Type>
+     * @return ArrayObject<TypeInterface>
      */
     public function getChildren(): ArrayObject
     {
