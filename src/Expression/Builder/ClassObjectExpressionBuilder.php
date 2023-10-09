@@ -9,9 +9,9 @@ use PBaszak\DedicatedMapper\Expression\GetterBuilderInterface;
 use PBaszak\DedicatedMapper\Expression\SetterBuilderInterface;
 
 /**
- * Expression Builder for StdClass objects.
+ * Expression Builder for any class - using constructors, public properties and methods.
  */
-class AnonymousObjectExpressionBuilder extends AbstractBuilder implements GetterBuilderInterface, SetterBuilderInterface
+class ClassObjectExpressionBuilder extends AbstractBuilder implements GetterBuilderInterface, SetterBuilderInterface
 {
     
 }

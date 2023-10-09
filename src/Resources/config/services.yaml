@@ -8,25 +8,43 @@ services:
         exclude:
             - '../../{Resources,DependencyInjection,DedicatedMapperBundle.php,Mapper.php}'
 
-    PBaszak\DedicatedMapper\Contract\MapperServiceInterface:
-        alias: PBaszak\DedicatedMapper\MapperService
+    pbaszak.dedicated_mapper.encoder:
         public: true
+        alias: PBaszak\DedicatedMapper\Encoder
 
     pbaszak.dedicated_mapper:
         public: true
-        alias: PBaszak\DedicatedMapper\MapperService
+        alias: PBaszak\DedicatedMapper\Mapper
 
-    PBaszak\DedicatedMapper\MapperService:
+    pbaszak.dedicated_mapper.mapper:
+        public: true
+        alias: pbaszak.dedicated_mapper
+
+    pbaszak.dedicated_mapper.normalizer:
+        public: true
+        alias: PBaszak\DedicatedMapper\Normalizer
+
+    pbaszak.dedicated_mapper.serializer:
+        public: true
+        alias: PBaszak\DedicatedMapper\Serializer
+    
+    PBaszak\DedicatedMapper\Contract\EncoderInterface:
+        alias: pbaszak.dedicated_mapper.encoder
+        public: true
+
+    PBaszak\DedicatedMapper\Contract\MapperInterface:
+        alias: pbaszak.dedicated_mapper
+        public: true
+
+    PBaszak\DedicatedMapper\Contract\NormalizerInterface:
+        alias: pbaszak.dedicated_mapper.normalizer
+        public: true
+
+    PBaszak\DedicatedMapper\Contract\SerializerInterface:
+        alias: pbaszak.dedicated_mapper.serializer
+        public: true
+
+    PBaszak\DedicatedMapper\Mapper:
         public: true
         arguments:
             $directory: '%kernel.project_dir%/var/mapper/'
-
-    pbaszak.dedicated_mapper.validated:
-        public: true
-        alias: PBaszak\DedicatedMapper\ValidatedMapperService
-
-    PBaszak\DedicatedMapper\ValidatedMapperService:
-        public: true
-        arguments:
-            $directory: '%kernel.project_dir%/var/mapper/'
-            $validator: '@validator'

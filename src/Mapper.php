@@ -11,6 +11,10 @@ use PBaszak\DedicatedMapper\Expression\SetterBuilderInterface;
 
 class Mapper implements MapperInterface
 {
+    public function __construct(
+        private string $directory
+    ) {}
+
     /**
      * {@inheritdoc}
      */

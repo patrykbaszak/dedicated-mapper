@@ -5,10 +5,6 @@ declare(strict_types=1);
 namespace PBaszak\DedicatedMapper;
 
 use PBaszak\DedicatedMapper\Contract\EncoderInterface;
-use PBaszak\DedicatedMapper\Contract\MapperInterface;
-use PBaszak\DedicatedMapper\Expression\GetterBuilderInterface;
-use PBaszak\DedicatedMapper\Expression\AbstractBuilder;
-use PBaszak\DedicatedMapper\Expression\SetterBuilderInterface;
 
 class Encoder implements EncoderInterface
 {

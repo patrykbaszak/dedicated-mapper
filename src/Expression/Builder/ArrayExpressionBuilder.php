@@ -8,6 +8,9 @@ use PBaszak\DedicatedMapper\Expression\AbstractBuilder;
 use PBaszak\DedicatedMapper\Expression\GetterBuilderInterface;
 use PBaszak\DedicatedMapper\Expression\SetterBuilderInterface;
 
+/**
+ * Expression Builder for arrays.
+ */
 class ArrayExpressionBuilder extends AbstractBuilder implements GetterBuilderInterface, SetterBuilderInterface
 {
     
