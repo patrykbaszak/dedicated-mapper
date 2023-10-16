@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 use PBaszak\DedicatedMapper\Expression\Builder\AnonymousObjectExpressionBuilder;
 use PBaszak\DedicatedMapper\Expression\Builder\ArrayExpressionBuilder;
-use PBaszak\DedicatedMapper\Expression\Builder\ReflectionClassExpressionBuilder;
+use PBaszak\DedicatedMapper\Expression\Builder\ReflectionClassObjectExpressionBuilder;
 use PBaszak\DedicatedMapper\Tests\assets\Dummy;
 use PBaszak\DedicatedMapper\Tests\assets\EmbeddedDTO;
 use PBaszak\DedicatedMapper\Tests\assets\ItemDTO;
@@ -119,7 +119,7 @@ return [
             ],
         ],
     ],
-    ReflectionClassExpressionBuilder::class => new Dummy(...[
+    ReflectionClassObjectExpressionBuilder::class => new Dummy(...[
         'id' => 'e2a85ae5-490b-4747-abc1-6efa3352a587',
         'name' => 'test',
         'description' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla nec velit vitae arcu aliquam tincidunt.',
