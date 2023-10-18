@@ -7,9 +7,23 @@ namespace PBaszak\DedicatedMapper\Reflection\Type;
 use ArrayObject;
 use PBaszak\DedicatedMapper\Reflection\AttributeReflection;
 use PBaszak\DedicatedMapper\Reflection\PropertyReflection;
+use PBaszak\DedicatedMapper\Utils\ToArrayTrait;
 
 class CollectionType implements TypeInterface
 {
+    public function toArray(): array
+    {
+        return [
+            'children' => array_map(fn (TypeInterface $child) => $child->toArray(), $this->children->getArrayCopy()),
+            'attributes' => $this->attributes->toArray(),
+        ];
+    }
+
+    public static function supports(PropertyReflection $property, Type $type, int $depth): bool
+    {
+        return $type->isCollection();
+    }
+
     public function __construct(
         /** 
          * @var null|PropertyReflection|TypeInterface $parent  
@@ -26,7 +40,8 @@ class CollectionType implements TypeInterface
          * @var AttributeReflection $attributes
          */
         protected AttributeReflection $attributes,
-    ) {}
+    ) {
+    }
 
     /**
      * @return null|PropertyReflection|TypeInterface

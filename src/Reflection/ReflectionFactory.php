@@ -7,6 +7,7 @@ namespace PBaszak\DedicatedMapper\Reflection;
 use ArrayObject;
 use PBaszak\DedicatedMapper\Attribute\ApplyToCollectionItems;
 use PBaszak\DedicatedMapper\Reflection\Type\ClassType;
+use PBaszak\DedicatedMapper\Reflection\Type\TypeFactory;
 use PBaszak\DedicatedMapper\Reflection\Type\TypeInterface;
 use PBaszak\DedicatedMapper\Utils\GetParametersFromObject;
 use ReflectionClass;
@@ -49,8 +50,7 @@ class ReflectionFactory
         $attributes = new AttributeReflection($instance, $this->getAttributesFromReflection($reflection));
         $ref->getProperty('attributes')->setValue($instance, $attributes);
         $ref->getProperty('options')->setValue($instance, new Options());
-
-        // type
+        $ref->getProperty('type')->setValue($instance, (new TypeFactory($this))->createType($instance));
 
         return $instance;
     }

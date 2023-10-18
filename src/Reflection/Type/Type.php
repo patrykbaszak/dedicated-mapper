@@ -5,62 +5,90 @@ declare(strict_types=1);
 namespace PBaszak\DedicatedMapper\Reflection\Type;
 
 use PBaszak\DedicatedMapper\Reflection\PropertyReflection;
+use PBaszak\DedicatedMapper\Utils\ToArrayTrait;
 use phpDocumentor\Reflection\Type as PhpDocumentorType;
 use ReflectionType;
 
 class Type implements TypeInterface
 {
-    public function __construct(
-        /** 
-         * @var PropertyReflection|TypeInterface $parent each type must have resource
-         */
-        protected PropertyReflection|TypeInterface $parent,
+    /** 
+     * @var PropertyReflection|TypeInterface $parent each type must have resource
+     */
+    protected PropertyReflection|TypeInterface $parent;
 
-        /**
-         * @var array<string> $types
-         */
-        protected array $types,
+    /**
+     * @var array<string> $types
+     */
+    protected array $types;
 
-        /**
-         * @var bool $nullable
-         */
-        protected bool $nullable,
+    /**
+     * @var null|TypeInterface $innerType
+     */
+    protected ?TypeInterface $innerType = null;
 
-        /**
-         * @var bool $union
-         */
-        protected bool $union,
+    /**
+     * @var bool $nullable
+     */
+    protected bool $nullable = false;
 
-        /**
-         * @var bool $intersection
-         */
-        protected bool $intersection,
+    /**
+     * @var bool $union
+     */
+    protected bool $union = false;
 
-        /**
-         * @var bool $class
-         */
-        protected bool $class,
+    /**
+     * @var bool $intersection
+     */
+    protected bool $intersection = false;
 
-        /**
-         * @var bool $collection
-         */
-        protected bool $collection,
+    /**
+     * @var bool $class
+     */
+    protected bool $class = false;
 
-        /**
-         * @var bool $simpleObject
-         */
-        protected bool $simpleObject,
+    /**
+     * @var bool $collection
+     */
+    protected bool $collection = false;
 
-        /**
-         * @var null|ReflectionType $reflectionType
-         */
-        protected null|ReflectionType $reflectionType = null,
+    /**
+     * @var bool $simpleObject
+     */
+    protected bool $simpleObject = false;
 
-        /**
-         * @var null|PhpDocumentorType $phpDocumentorReflectionType
-         */
-        protected null|PhpDocumentorType $phpDocumentorReflectionType = null,
-    ) {}
+    /**
+     * @var null|ReflectionType $reflectionType
+     */
+    protected null|ReflectionType $reflectionType = null;
+
+    /**
+     * @var null|PhpDocumentorType $phpDocumentorReflectionType
+     */
+    protected null|PhpDocumentorType $phpDocumentorReflectionType = null;
+    
+    public function toArray(): array
+    {
+        return [
+            'types' => $this->types,
+            'innerType' => $this->innerType?->toArray(),
+            'nullable' => $this->nullable,
+            'union' => $this->union,
+            'intersection' => $this->intersection,
+            'class' => $this->class,
+            'collection' => $this->collection,
+            'simpleObject' => $this->simpleObject,
+        ];
+    }
+
+    public static function supports(PropertyReflection $property, self $type, int $depth): bool
+    {
+        return true;
+    }
+
+    public static function create(PropertyReflection|TypeInterface $parent, Type $type): TypeInterface
+    {
+        return $type;
+    }
 
     /**
      * @return CollectionType|PropertyReflection|SimpleObjectType
@@ -76,6 +104,14 @@ class Type implements TypeInterface
     public function getTypes(): array
     {
         return $this->types;
+    }
+
+    /**
+     * @return null|TypeInterface
+     */
+    public function getInnerType(): null|TypeInterface
+    {
+        return $this->innerType;
     }
 
     /**

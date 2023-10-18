@@ -10,6 +10,18 @@ use PBaszak\DedicatedMapper\Reflection\Type\SimpleObjectType;
 
 class AttributeReflection
 {
+    public function toArray(): array
+    {
+        return array_map(
+            fn (object $attribute) => [
+                'class' => $attribute->class,
+                'arguments' => $attribute->arguments,
+                'instance' => var_export($attribute->instance, true),
+            ],
+            $this->attributes->getArrayCopy()
+        );
+    }
+
     public function __construct(
         /** 
          * @var ClassReflection|CollectionType|PropertyReflection|SimpleObjectType $parent each attribute must have resource
@@ -20,7 +32,8 @@ class AttributeReflection
          * @var ArrayObject<object{"class": string, "arguments": mixed[]}> $attributes
          */
         protected ArrayObject $attributes,
-    ) {}
+    ) {
+    }
 
     /**
      * @return ClassReflection|CollectionType|PropertyReflection|SimpleObjectType

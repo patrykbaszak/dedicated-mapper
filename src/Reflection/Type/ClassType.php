@@ -9,11 +9,49 @@ use PBaszak\DedicatedMapper\Reflection\PropertyReflection;
 
 class ClassType implements TypeInterface
 {
+    public static array $classTypes = [];
+    
+    /**
+     * @param class-string $class
+     */
+    public static function isClassTypeExists(string $class): bool
+    {
+        return isset(self::$classTypes[$class]);
+    }
+
+    public static function storeClassType(ClassType $instance): void
+    {
+        $class = $instance->getReflection()->getReflection()?->getName();
+        if (!class_exists($class, false)) {
+            throw new \InvalidArgumentException(sprintf('Class %s does not exists', $class));
+        }
+        self::$classTypes[$class] = $instance;
+    }
+
+    public static function supports(Type $type): bool
+    {
+        foreach ($type->getTypes() as $t) {
+            if (class_exists($t, false)) {
+                return true;
+            }
+        }
+    }
+
+    public static function create(Type $type): TypeInterface
+    {
+        
+    }
+
+    public function toArray(): array
+    {
+        return $this->reflection?->toArray();
+    }
+
     public function __construct(
         /**
-         * @var null|ClassReflection $reflection if `null`, then it is root class
+         * @var ClassReflection $reflection
          */
-        protected null|ClassReflection $reflection = null,
+        protected ClassReflection $reflection,
     
         /**
          * @var PropertyReflection|TypeInterface|null $parent if `null`, then it is root class

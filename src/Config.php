@@ -4,19 +4,23 @@ declare(strict_types=1);
 
 namespace PBaszak\DedicatedMapper;
 
+use LogicException;
 use PBaszak\DedicatedMapper\Reflection\ClassReflection;
 use PBaszak\DedicatedMapper\Reflection\ReflectionFactory;
+use PBaszak\DedicatedMapper\Reflection\Type\ClassType;
+use PBaszak\DedicatedMapper\Reflection\Type\TypeFactory;
 
 class Config
 {
-    /** @var array<string> */
-    protected array $usedFiles = [];
-    protected ClassReflection $classReflection;
+    /**
+     * @var array<string, ClassType>
+     */
+    protected array $classes;
 
     /**
      * @param class-string $className
      */
-    public function __construct(private string $className)
+    public function __construct(protected string $className)
     {
         if (!class_exists($this->className, false)) {
             throw new \InvalidArgumentException(
@@ -27,30 +31,37 @@ class Config
 
     public function reflect(): self
     {
-        $this->classReflection = (new ReflectionFactory())->createClassReflection($this->className, null);
+        ClassType::$classTypes = [];
+        (new TypeFactory(new ReflectionFactory()))->createClassType(
+            new \ReflectionClass($this->className),
+            null
+        );
+
+        $this->classes = ClassType::$classTypes;
 
         return $this;
     }
 
-    public function getClassReflection(): ClassReflection
+    public function getMainClassType(): ClassType
     {
-        return $this->classReflection;
+        return $this->classes[$this->className];
     }
 
     public function export(): array
     {
+        if (!isset($this->classes)) {
+            throw new LogicException('Class reflection is not set. You need to call reflect() method first.');
+        }
+
         return [
-            'className' => $this->className,
-            'classReflection' => $this->classReflection,
-            'usedFiles' => $this->usedFiles,
+            'main' => $this->className,
+            'classes' => array_map(fn (ClassType $class) => $class->toArray(), $this->classes),
         ];
     }
 
     public static function import(array $data): self
     {
         $config = new self($data['className']);
-        $config->classReflection = $data['classReflection'];
-        $config->usedFiles = $data['usedFiles'];
 
         return $config;
     }

@@ -6,10 +6,22 @@ namespace PBaszak\DedicatedMapper\Reflection;
 
 use ArrayObject;
 use PBaszak\DedicatedMapper\Reflection\Type\ClassType;
+use PBaszak\DedicatedMapper\Utils\ToArrayTrait;
 use ReflectionClass;
+use Serializable;
 
 class ClassReflection
 {
+    public function toArray(): array
+    {
+        return [
+            'attributes' => $this->attributes->toArray(),
+            'className' => $this->reflection?->getName(),
+            'options' => $this->options->toArray(),
+            'properties' => array_map(fn (PropertyReflection $property) => $property->toArray(), $this->properties->getArrayCopy()),
+        ];
+    }
+    
     public function __construct(
         /**
          * @var null|\ReflectionClass $reflection `null` is available for reversed mapping

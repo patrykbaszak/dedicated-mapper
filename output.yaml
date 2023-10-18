@@ -1,0 +1,92 @@
+main: PBaszak\DedicatedMapper\Tests\assets\Dummy
+classes:
+    PBaszak\DedicatedMapper\Tests\assets\Dummy:
+        attributes: {  }
+        className: PBaszak\DedicatedMapper\Tests\assets\Dummy
+        options: {  }
+        properties:
+            id:
+                attributes:
+                    -
+                        class: Symfony\Component\Validator\Constraints\NotBlank
+                        arguments: {  }
+                        instance: "\\Symfony\\Component\\Validator\\Constraints\\NotBlank::__set_state(array(\n   'payload' => NULL,\n   'message' => 'This value should not be blank.',\n   'allowNull' => false,\n   'normalizer' => NULL,\n))"
+                    -
+                        class: Symfony\Component\Serializer\Annotation\Groups
+                        arguments:
+                            - test
+                        instance: "\\Symfony\\Component\\Serializer\\Annotation\\Groups::__set_state(array(\n   'groups' => \n  array (\n    0 => 'test',\n  ),\n))"
+                name: id
+                options: {  }
+                type:
+                    types:
+                        - string
+                    innerType: null
+                    nullable: false
+                    union: false
+                    intersection: false
+                    class: false
+                    collection: false
+                    simpleObject: false
+            name:
+                attributes:
+                    -
+                        class: Symfony\Component\Validator\Constraints\Length
+                        arguments:
+                            min: 3
+                            max: 255
+                        instance: "\\Symfony\\Component\\Validator\\Constraints\\Length::__set_state(array(\n   'payload' => NULL,\n   'maxMessage' => 'This value is too long. It should have {{ limit }} character or less.|This value is too long. It should have {{ limit }} characters or less.',\n   'minMessage' => 'This value is too short. It should have {{ limit }} character or more.|This value is too short. It should have {{ limit }} characters or more.',\n   'exactMessage' => 'This value should have exactly {{ limit }} character.|This value should have exactly {{ limit }} characters.',\n   'charsetMessage' => 'This value does not match the expected {{ charset }} charset.',\n   'max' => 255,\n   'min' => 3,\n   'charset' => 'UTF-8',\n   'normalizer' => NULL,\n   'countUnit' => 'codepoints',\n))"
+                    -
+                        class: Symfony\Component\Serializer\Annotation\Groups
+                        arguments:
+                            - test
+                        instance: "\\Symfony\\Component\\Serializer\\Annotation\\Groups::__set_state(array(\n   'groups' => \n  array (\n    0 => 'test',\n  ),\n))"
+                name: name
+                options: {  }
+                type:
+                    types:
+                        - string
+                    innerType: null
+                    nullable: false
+                    union: false
+                    intersection: false
+                    class: false
+                    collection: false
+                    simpleObject: false
+            description:
+                attributes: {  }
+                name: description
+                options: {  }
+                type:
+                    types:
+                        - string
+                    innerType: null
+                    nullable: false
+                    union: false
+                    intersection: false
+                    class: false
+                    collection: false
+                    simpleObject: false
+            _embedded:
+                attributes:
+                    -
+                        class: Symfony\Component\Validator\Constraints\Valid
+                        arguments: {  }
+                        instance: "\\Symfony\\Component\\Validator\\Constraints\\Valid::__set_state(array(\n   'payload' => NULL,\n   'traverse' => true,\n))"
+                    -
+                        class: Symfony\Component\Serializer\Annotation\Groups
+                        arguments:
+                            - test
+                        instance: "\\Symfony\\Component\\Serializer\\Annotation\\Groups::__set_state(array(\n   'groups' => \n  array (\n    0 => 'test',\n  ),\n))"
+                name: _embedded
+                options: {  }
+                type:
+                    types:
+                        - PBaszak\DedicatedMapper\Tests\assets\EmbeddedDTO
+                    innerType: null
+                    nullable: false
+                    union: false
+                    intersection: false
+                    class: true
+                    collection: false
+                    simpleObject: false

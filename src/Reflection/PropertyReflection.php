@@ -5,9 +5,20 @@ declare(strict_types=1);
 namespace PBaszak\DedicatedMapper\Reflection;
 
 use PBaszak\DedicatedMapper\Reflection\Type\TypeInterface;
+use PBaszak\DedicatedMapper\Utils\ToArrayTrait;
 
 class PropertyReflection
 {
+    public function toArray(): array
+    {
+        return [
+            'attributes' => $this->attributes->toArray(),
+            'name' => $this->name,
+            'options' => $this->options->toArray(),
+            'type' => $this->type->toArray(),
+        ];
+    }
+
     public function __construct(
         /**
          * @var ClassReflection $parent each property must have parent class
