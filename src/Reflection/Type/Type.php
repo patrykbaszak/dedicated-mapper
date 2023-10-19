@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PBaszak\DedicatedMapper\Reflection\Type;
 
+use LogicException;
 use PBaszak\DedicatedMapper\Attribute\ApplyToCollectionItems;
 use PBaszak\DedicatedMapper\Reflection\PropertyReflection;
 use phpDocumentor\Reflection\Type as PhpDocumentorType;
@@ -52,11 +53,6 @@ class Type implements TypeInterface
     protected bool $collection = false;
 
     /**
-     * @var bool $simpleObject
-     */
-    protected bool $simpleObject = false;
-
-    /**
      * @var null|ReflectionType $reflectionType
      */
     protected null|ReflectionType $reflectionType = null;
@@ -87,8 +83,12 @@ class Type implements TypeInterface
             'intersection' => $this->intersection,
             'class' => $this->class,
             'collection' => $this->collection,
-            'simpleObject' => $this->simpleObject,
         ];
+    }
+
+    public function getType(): self
+    {
+        throw new LogicException('Cannot get Type from Type.');
     }
 
     /**
@@ -179,14 +179,6 @@ class Type implements TypeInterface
     public function isCollection(): bool
     {
         return $this->collection;
-    }
-    
-    /**
-     * @return bool
-     */
-    public function isSimpleObject(): bool
-    {
-        return $this->simpleObject;
     }
 
     /**

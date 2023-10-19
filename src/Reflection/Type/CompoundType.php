@@ -47,4 +47,9 @@ class CompoundType implements TypeInterface
             'type' => $this->type->toArray(),
         ];
     }
+
+    public function getType(): Type
+    {
+        return $this->type;
+    }
 }

@@ -50,7 +50,7 @@ class Config
 
         return [
             'main' => $this->className,
-            'classes' => array_map(fn (ClassType $class) => $class->toArray(), $this->classes),
+            'classes' => array_map(fn (ClassType $class) => $class->toArray(false), $this->classes),
         ];
     }
 

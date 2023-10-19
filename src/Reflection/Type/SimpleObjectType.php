@@ -16,9 +16,9 @@ class SimpleObjectType implements TypeInterface
     public const NATIVE_SIMPLE_OBJECTS = [
         \ArrayIterator::class => [],
         \ArrayObject::class => [],
-        \DateTime::class => ['staticConstructor' => NativeSimpleObject::class.'::DateTimeConstructor'],
-        \DateTimeImmutable::class => ['staticConstructor' => NativeSimpleObject::class.'::DateTimeConstructor'],
-        \DateTimeZone::class => ['staticConstructor' => NativeSimpleObject::class.'::DateTimeZoneConstructor'],
+        \DateTime::class => ['staticConstructor' => NativeSimpleObject::class . '::DateTimeConstructor'],
+        \DateTimeImmutable::class => ['staticConstructor' => NativeSimpleObject::class . '::DateTimeConstructor'],
+        \DateTimeZone::class => ['staticConstructor' => NativeSimpleObject::class . '::DateTimeZoneConstructor'],
         \DateInterval::class => [],
     ];
 
@@ -43,7 +43,10 @@ class SimpleObjectType implements TypeInterface
 
         foreach ($type->getTypes() as $t) {
             if (class_exists($t, false)) {
-                if (isset(self::NATIVE_SIMPLE_OBJECTS['\\' . ltrim($t, '\\')])) {
+                if (
+                    array_key_exists($t, self::NATIVE_SIMPLE_OBJECTS)
+                    || array_key_exists(ltrim($t, '\\'), self::NATIVE_SIMPLE_OBJECTS)
+                ) {
                     return true;
                 }
                 $reflection = new ReflectionClass($t);
@@ -52,7 +55,7 @@ class SimpleObjectType implements TypeInterface
                 }
             }
         }
-        
+
         return $type->hasAttribute(SimpleObject::class);
     }
 
@@ -74,7 +77,8 @@ class SimpleObjectType implements TypeInterface
          * @var null|object{"class": string, "arguments": mixed[], "instance": ?object} $simpleObjectAttr
          */
         protected ?object $simpleObjectAttr,
-    ) {}
+    ) {
+    }
 
     /**
      * @return Type

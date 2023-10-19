@@ -99,7 +99,7 @@ class TypeFactory
         if ($reflection) {
             $ref = new ReflectionClass(Type::class);
             $ref->getProperty('reflectionType')->setValue(
-                $instance,
+                $instance instanceof Type ? $instance : $instance->getType(),
                 match (get_class($reflection)) {
                     ReflectionProperty::class => $reflection->getType(),
                     ReflectionType::class => $reflection,
@@ -158,7 +158,7 @@ class TypeFactory
     protected function combineTypes(TypeInterface ...$types): TypeInterface
     {
         $types = array_filter($types);
-        $types = array_map(fn(TypeInterface $type): Type => method_exists($type, 'getType') ? $type->{'getType'}() : $type, $types);
+        $types = array_map(fn (TypeInterface $type): Type => $type instanceof Type ? $type : $type->getType(), $types);
         $ref = new \ReflectionClass(Type::class);
         /** @var Type $instance */
         $instance = $ref->newInstanceWithoutConstructor();
@@ -166,7 +166,7 @@ class TypeFactory
         foreach ($types as $type) {
             $ref->getProperty('parent')->setValue($instance, $type->getParent());
             $instanceTypes = $ref->getProperty('types')->isInitialized($instance) ? $ref->getProperty('types')->getValue($instance) : [];
-            $ref->getProperty('types')->setValue($instance, array_merge($instanceTypes, $type->getTypes()));
+            $ref->getProperty('types')->setValue($instance, array_unique(array_merge($instanceTypes, $type->getTypes())));
             $instanceInnerType = $ref->getProperty('innerType')->getValue($instance);
             if (null === $instanceInnerType) {
                 $ref->getProperty('innerType')->setValue($instance, $type->getInnerType());
@@ -178,7 +178,6 @@ class TypeFactory
             $ref->getProperty('intersection')->setValue($instance, $type->isIntersection() || $ref->getProperty('intersection')->getValue($instance));
             $ref->getProperty('collection')->setValue($instance, $type->isCollection() || $ref->getProperty('collection')->getValue($instance));
             $ref->getProperty('class')->setValue($instance, $type->isClass() || $ref->getProperty('class')->getValue($instance));
-            $ref->getProperty('simpleObject')->setValue($instance, $type->isSimpleObject() || $ref->getProperty('simpleObject')->getValue($instance));
             $ref->getProperty('phpDocumentorReflectionType')->setValue($instance, $type->getPhpDocumentorReflectionType() ?? $ref->getProperty('phpDocumentorReflectionType')->getValue($instance));
             $ref->getProperty('reflectionType')->setValue($instance, $type->getReflectionType() ?? $ref->getProperty('reflectionType')->getValue($instance));
         }

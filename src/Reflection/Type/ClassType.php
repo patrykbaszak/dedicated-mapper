@@ -55,9 +55,11 @@ class ClassType implements TypeInterface
         return $instance;
     }
 
-    public function toArray(): array
+    public function toArray(bool $linkOnly = true): array
     {
-        return [
+        return $linkOnly ? [
+            '@link' => $this->reflection->getReflection()?->getName(),
+        ] : [
             'classType' => self::class,
             'reflection' => $this->reflection?->toArray(),
             'type' => $this->type->toArray(),
