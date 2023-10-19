@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace PBaszak\DedicatedMapper;
 
 use LogicException;
-use PBaszak\DedicatedMapper\Reflection\ClassReflection;
 use PBaszak\DedicatedMapper\Reflection\ReflectionFactory;
 use PBaszak\DedicatedMapper\Reflection\Type\ClassType;
 use PBaszak\DedicatedMapper\Reflection\Type\TypeFactory;
@@ -32,10 +31,7 @@ class Config
     public function reflect(): self
     {
         ClassType::$classTypes = [];
-        $type = (new TypeFactory(new ReflectionFactory()))->createFromReflection(
-            new \ReflectionClass($this->className)
-        );
-        ClassType::create($type);
+        (new TypeFactory())->createFromString($this->className);
         $this->classes = ClassType::$classTypes;
 
         return $this;

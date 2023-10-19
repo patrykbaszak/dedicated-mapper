@@ -36,7 +36,7 @@ class ClassType implements TypeInterface
         return count($classTypes) === 1;
     }
 
-    public static function create(Type $type): self
+    public static function create(Type $type): static
     {
         if (!self::supports($type)) {
             throw new LogicException('Given Type does not support class type.');

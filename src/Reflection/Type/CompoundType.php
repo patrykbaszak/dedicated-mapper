@@ -35,8 +35,8 @@ class CompoundType implements TypeInterface
             throw new InvalidArgumentException('Given type is not a union type.');
         }
 
-        foreach ($type->getTypes() as $type) {
-            $this->types[] = TypeFactory::create($type);
+        foreach ($type->getTypes() as $t) {
+            $this->types[] = (new TypeFactory)->createFromString($t, $type->getPropertyReflection(), $type);
         }
     }
 

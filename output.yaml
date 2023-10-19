@@ -1,5 +1,827 @@
 main: PBaszak\DedicatedMapper\Tests\assets\Dummy
 classes:
+    PBaszak\DedicatedMapper\Tests\assets\MetadataDTO:
+        classType: PBaszak\DedicatedMapper\Reflection\Type\ClassType
+        reflection:
+            attributes: {  }
+            className: PBaszak\DedicatedMapper\Tests\assets\MetadataDTO
+            file:
+                path: /app/tests/assets/Dummy.php
+                hash: 24ba2ede85a4491930ed05f368b3816c
+            options: {  }
+            properties:
+                test:
+                    attributes: {  }
+                    name: test
+                    options: {  }
+                    type:
+                        classType: PBaszak\DedicatedMapper\Reflection\Type\Type
+                        types:
+                            - string
+                        innerType: null
+                        nullable: false
+                        union: false
+                        intersection: false
+                        class: false
+                        collection: false
+                        simpleObject: false
+                test2:
+                    attributes: {  }
+                    name: test2
+                    options: {  }
+                    type:
+                        classType: PBaszak\DedicatedMapper\Reflection\Type\Type
+                        types:
+                            - float
+                        innerType: null
+                        nullable: false
+                        union: false
+                        intersection: false
+                        class: false
+                        collection: false
+                        simpleObject: false
+        type:
+            classType: PBaszak\DedicatedMapper\Reflection\Type\Type
+            types:
+                - \PBaszak\DedicatedMapper\Tests\assets\MetadataDTO
+            innerType: null
+            nullable: false
+            union: false
+            intersection: false
+            class: true
+            collection: false
+            simpleObject: false
+    DateTime:
+        classType: PBaszak\DedicatedMapper\Reflection\Type\ClassType
+        reflection:
+            attributes: {  }
+            className: DateTime
+            file:
+                path: false
+                hash: null
+            options: {  }
+            properties: {  }
+        type:
+            classType: PBaszak\DedicatedMapper\Reflection\Type\Type
+            types:
+                - \DateTime
+            innerType: null
+            nullable: false
+            union: false
+            intersection: false
+            class: true
+            collection: false
+            simpleObject: false
+    PBaszak\DedicatedMapper\Tests\assets\ItemDTO:
+        classType: PBaszak\DedicatedMapper\Reflection\Type\ClassType
+        reflection:
+            attributes: {  }
+            className: PBaszak\DedicatedMapper\Tests\assets\ItemDTO
+            file:
+                path: /app/tests/assets/Dummy.php
+                hash: 24ba2ede85a4491930ed05f368b3816c
+            options: {  }
+            properties:
+                id:
+                    attributes:
+                        -
+                            class: Symfony\Component\Serializer\Annotation\Groups
+                            arguments:
+                                - test
+                            instance: "\\Symfony\\Component\\Serializer\\Annotation\\Groups::__set_state(array(\n   'groups' => \n  array (\n    0 => 'test',\n  ),\n))"
+                    name: id
+                    options: {  }
+                    type:
+                        classType: PBaszak\DedicatedMapper\Reflection\Type\Type
+                        types:
+                            - string
+                        innerType: null
+                        nullable: false
+                        union: false
+                        intersection: false
+                        class: false
+                        collection: false
+                        simpleObject: false
+                name:
+                    attributes:
+                        -
+                            class: Symfony\Component\Serializer\Annotation\Groups
+                            arguments:
+                                - test
+                            instance: "\\Symfony\\Component\\Serializer\\Annotation\\Groups::__set_state(array(\n   'groups' => \n  array (\n    0 => 'test',\n  ),\n))"
+                    name: name
+                    options: {  }
+                    type:
+                        classType: PBaszak\DedicatedMapper\Reflection\Type\Type
+                        types:
+                            - string
+                        innerType: null
+                        nullable: false
+                        union: false
+                        intersection: false
+                        class: false
+                        collection: false
+                        simpleObject: false
+                description:
+                    attributes: {  }
+                    name: description
+                    options: {  }
+                    type:
+                        classType: PBaszak\DedicatedMapper\Reflection\Type\Type
+                        types:
+                            - string
+                        innerType: null
+                        nullable: false
+                        union: false
+                        intersection: false
+                        class: false
+                        collection: false
+                        simpleObject: false
+                price:
+                    attributes: {  }
+                    name: price
+                    options: {  }
+                    type:
+                        classType: PBaszak\DedicatedMapper\Reflection\Type\Type
+                        types:
+                            - float
+                        innerType: null
+                        nullable: false
+                        union: false
+                        intersection: false
+                        class: false
+                        collection: false
+                        simpleObject: false
+                currency:
+                    attributes:
+                        -
+                            class: Symfony\Component\Validator\Constraints\Choice
+                            arguments:
+                                choices:
+                                    - PLN
+                                    - EUR
+                                    - USD
+                            instance: "\\Symfony\\Component\\Validator\\Constraints\\Choice::__set_state(array(\n   'payload' => NULL,\n   'choices' => \n  array (\n    0 => 'PLN',\n    1 => 'EUR',\n    2 => 'USD',\n  ),\n   'callback' => NULL,\n   'multiple' => false,\n   'strict' => true,\n   'min' => NULL,\n   'max' => NULL,\n   'message' => 'The value you selected is not a valid choice.',\n   'multipleMessage' => 'One or more of the given values is invalid.',\n   'minMessage' => 'You must select at least {{ limit }} choice.|You must select at least {{ limit }} choices.',\n   'maxMessage' => 'You must select at most {{ limit }} choice.|You must select at most {{ limit }} choices.',\n   'match' => true,\n))"
+                    name: currency
+                    options: {  }
+                    type:
+                        classType: PBaszak\DedicatedMapper\Reflection\Type\Type
+                        types:
+                            - string
+                        innerType: null
+                        nullable: false
+                        union: false
+                        intersection: false
+                        class: false
+                        collection: false
+                        simpleObject: false
+                quantity:
+                    attributes: {  }
+                    name: quantity
+                    options: {  }
+                    type:
+                        classType: PBaszak\DedicatedMapper\Reflection\Type\Type
+                        types:
+                            - int
+                        innerType: null
+                        nullable: false
+                        union: false
+                        intersection: false
+                        class: false
+                        collection: false
+                        simpleObject: false
+                type:
+                    attributes: {  }
+                    name: type
+                    options: {  }
+                    type:
+                        classType: PBaszak\DedicatedMapper\Reflection\Type\Type
+                        types:
+                            - string
+                        innerType: null
+                        nullable: false
+                        union: false
+                        intersection: false
+                        class: false
+                        collection: false
+                        simpleObject: false
+                category:
+                    attributes: {  }
+                    name: category
+                    options: {  }
+                    type:
+                        classType: PBaszak\DedicatedMapper\Reflection\Type\Type
+                        types:
+                            - string
+                        innerType: null
+                        nullable: false
+                        union: false
+                        intersection: false
+                        class: false
+                        collection: false
+                        simpleObject: false
+                vat:
+                    attributes: {  }
+                    name: vat
+                    options: {  }
+                    type:
+                        classType: PBaszak\DedicatedMapper\Reflection\Type\Type
+                        types:
+                            - int
+                        innerType: null
+                        nullable: false
+                        union: false
+                        intersection: false
+                        class: false
+                        collection: false
+                        simpleObject: false
+                metadata:
+                    attributes: {  }
+                    name: metadata
+                    options: {  }
+                    type:
+                        classType: PBaszak\DedicatedMapper\Reflection\Type\ClassType
+                        reflection:
+                            attributes: {  }
+                            className: PBaszak\DedicatedMapper\Tests\assets\MetadataDTO
+                            file:
+                                path: /app/tests/assets/Dummy.php
+                                hash: 24ba2ede85a4491930ed05f368b3816c
+                            options: {  }
+                            properties:
+                                test:
+                                    attributes: {  }
+                                    name: test
+                                    options: {  }
+                                    type:
+                                        classType: PBaszak\DedicatedMapper\Reflection\Type\Type
+                                        types:
+                                            - string
+                                        innerType: null
+                                        nullable: false
+                                        union: false
+                                        intersection: false
+                                        class: false
+                                        collection: false
+                                        simpleObject: false
+                                test2:
+                                    attributes: {  }
+                                    name: test2
+                                    options: {  }
+                                    type:
+                                        classType: PBaszak\DedicatedMapper\Reflection\Type\Type
+                                        types:
+                                            - float
+                                        innerType: null
+                                        nullable: false
+                                        union: false
+                                        intersection: false
+                                        class: false
+                                        collection: false
+                                        simpleObject: false
+                        type:
+                            classType: PBaszak\DedicatedMapper\Reflection\Type\Type
+                            types:
+                                - \PBaszak\DedicatedMapper\Tests\assets\MetadataDTO
+                            innerType: null
+                            nullable: false
+                            union: false
+                            intersection: false
+                            class: true
+                            collection: false
+                            simpleObject: false
+                created_at:
+                    attributes: {  }
+                    name: created_at
+                    options: {  }
+                    type:
+                        classType: PBaszak\DedicatedMapper\Reflection\Type\ClassType
+                        reflection:
+                            attributes: {  }
+                            className: DateTime
+                            file:
+                                path: false
+                                hash: null
+                            options: {  }
+                            properties: {  }
+                        type:
+                            classType: PBaszak\DedicatedMapper\Reflection\Type\Type
+                            types:
+                                - \DateTime
+                            innerType: null
+                            nullable: false
+                            union: false
+                            intersection: false
+                            class: true
+                            collection: false
+                            simpleObject: false
+                updated_at:
+                    attributes: {  }
+                    name: updated_at
+                    options: {  }
+                    type:
+                        classType: PBaszak\DedicatedMapper\Reflection\Type\ClassType
+                        reflection:
+                            attributes: {  }
+                            className: DateTime
+                            file:
+                                path: false
+                                hash: null
+                            options: {  }
+                            properties: {  }
+                        type:
+                            classType: PBaszak\DedicatedMapper\Reflection\Type\Type
+                            types:
+                                - \DateTime
+                            innerType: null
+                            nullable: false
+                            union: false
+                            intersection: false
+                            class: true
+                            collection: false
+                            simpleObject: false
+                availableActions:
+                    attributes:
+                        -
+                            class: JMS\Serializer\Annotation\Type
+                            arguments:
+                                - array<string>
+                            instance: "\\JMS\\Serializer\\Annotation\\Type::__set_state(array(\n   'name' => 'array<string>',\n))"
+                        -
+                            class: JMS\Serializer\Annotation\SerializedName
+                            arguments:
+                                - availableActions
+                            instance: "\\JMS\\Serializer\\Annotation\\SerializedName::__set_state(array(\n   'name' => 'availableActions',\n))"
+                    name: availableActions
+                    options: {  }
+                    type:
+                        classType: PBaszak\DedicatedMapper\Reflection\Type\CollectionType
+                        type:
+                            classType: PBaszak\DedicatedMapper\Reflection\Type\Type
+                            types:
+                                - array
+                                - array
+                            innerType:
+                                classType: PBaszak\DedicatedMapper\Reflection\Type\Type
+                                types:
+                                    - string
+                                    - mixed
+                                innerType: null
+                                nullable: false
+                                union: false
+                                intersection: false
+                                class: false
+                                collection: false
+                                simpleObject: false
+                            nullable: false
+                            union: false
+                            intersection: false
+                            class: false
+                            collection: true
+                            simpleObject: false
+        type:
+            classType: PBaszak\DedicatedMapper\Reflection\Type\Type
+            types:
+                - \PBaszak\DedicatedMapper\Tests\assets\ItemDTO
+                - mixed
+            innerType: null
+            nullable: false
+            union: false
+            intersection: false
+            class: true
+            collection: false
+            simpleObject: false
+    PBaszak\DedicatedMapper\Tests\assets\EmbeddedDTO:
+        classType: PBaszak\DedicatedMapper\Reflection\Type\ClassType
+        reflection:
+            attributes: {  }
+            className: PBaszak\DedicatedMapper\Tests\assets\EmbeddedDTO
+            file:
+                path: /app/tests/assets/Dummy.php
+                hash: 24ba2ede85a4491930ed05f368b3816c
+            options: {  }
+            properties:
+                page:
+                    attributes:
+                        -
+                            class: Symfony\Component\Serializer\Annotation\Groups
+                            arguments:
+                                - test
+                            instance: "\\Symfony\\Component\\Serializer\\Annotation\\Groups::__set_state(array(\n   'groups' => \n  array (\n    0 => 'test',\n  ),\n))"
+                    name: page
+                    options: {  }
+                    type:
+                        classType: PBaszak\DedicatedMapper\Reflection\Type\Type
+                        types:
+                            - int
+                        innerType: null
+                        nullable: false
+                        union: false
+                        intersection: false
+                        class: false
+                        collection: false
+                        simpleObject: false
+                pageSize:
+                    attributes:
+                        -
+                            class: Symfony\Component\Serializer\Annotation\Groups
+                            arguments:
+                                - test
+                            instance: "\\Symfony\\Component\\Serializer\\Annotation\\Groups::__set_state(array(\n   'groups' => \n  array (\n    0 => 'test',\n  ),\n))"
+                        -
+                            class: JMS\Serializer\Annotation\SerializedName
+                            arguments:
+                                - pageSize
+                            instance: "\\JMS\\Serializer\\Annotation\\SerializedName::__set_state(array(\n   'name' => 'pageSize',\n))"
+                    name: pageSize
+                    options: {  }
+                    type:
+                        classType: PBaszak\DedicatedMapper\Reflection\Type\Type
+                        types:
+                            - int
+                        innerType: null
+                        nullable: false
+                        union: false
+                        intersection: false
+                        class: false
+                        collection: false
+                        simpleObject: false
+                total:
+                    attributes:
+                        -
+                            class: Symfony\Component\Serializer\Annotation\Groups
+                            arguments:
+                                - test
+                            instance: "\\Symfony\\Component\\Serializer\\Annotation\\Groups::__set_state(array(\n   'groups' => \n  array (\n    0 => 'test',\n  ),\n))"
+                    name: total
+                    options: {  }
+                    type:
+                        classType: PBaszak\DedicatedMapper\Reflection\Type\Type
+                        types:
+                            - int
+                        innerType: null
+                        nullable: false
+                        union: false
+                        intersection: false
+                        class: false
+                        collection: false
+                        simpleObject: false
+                items:
+                    attributes:
+                        -
+                            class: Symfony\Component\Validator\Constraints\Valid
+                            arguments: {  }
+                            instance: "\\Symfony\\Component\\Validator\\Constraints\\Valid::__set_state(array(\n   'payload' => NULL,\n   'traverse' => true,\n))"
+                        -
+                            class: JMS\Serializer\Annotation\Type
+                            arguments:
+                                - array<PBaszak\DedicatedMapper\Tests\assets\ItemDTO>
+                            instance: "\\JMS\\Serializer\\Annotation\\Type::__set_state(array(\n   'name' => 'array<PBaszak\\\\DedicatedMapper\\\\Tests\\\\assets\\\\ItemDTO>',\n))"
+                    name: items
+                    options: {  }
+                    type:
+                        classType: PBaszak\DedicatedMapper\Reflection\Type\CollectionType
+                        type:
+                            classType: PBaszak\DedicatedMapper\Reflection\Type\Type
+                            types:
+                                - array
+                                - array
+                            innerType:
+                                classType: PBaszak\DedicatedMapper\Reflection\Type\ClassType
+                                reflection:
+                                    attributes: {  }
+                                    className: PBaszak\DedicatedMapper\Tests\assets\ItemDTO
+                                    file:
+                                        path: /app/tests/assets/Dummy.php
+                                        hash: 24ba2ede85a4491930ed05f368b3816c
+                                    options: {  }
+                                    properties:
+                                        id:
+                                            attributes:
+                                                -
+                                                    class: Symfony\Component\Serializer\Annotation\Groups
+                                                    arguments:
+                                                        - test
+                                                    instance: "\\Symfony\\Component\\Serializer\\Annotation\\Groups::__set_state(array(\n   'groups' => \n  array (\n    0 => 'test',\n  ),\n))"
+                                            name: id
+                                            options: {  }
+                                            type:
+                                                classType: PBaszak\DedicatedMapper\Reflection\Type\Type
+                                                types:
+                                                    - string
+                                                innerType: null
+                                                nullable: false
+                                                union: false
+                                                intersection: false
+                                                class: false
+                                                collection: false
+                                                simpleObject: false
+                                        name:
+                                            attributes:
+                                                -
+                                                    class: Symfony\Component\Serializer\Annotation\Groups
+                                                    arguments:
+                                                        - test
+                                                    instance: "\\Symfony\\Component\\Serializer\\Annotation\\Groups::__set_state(array(\n   'groups' => \n  array (\n    0 => 'test',\n  ),\n))"
+                                            name: name
+                                            options: {  }
+                                            type:
+                                                classType: PBaszak\DedicatedMapper\Reflection\Type\Type
+                                                types:
+                                                    - string
+                                                innerType: null
+                                                nullable: false
+                                                union: false
+                                                intersection: false
+                                                class: false
+                                                collection: false
+                                                simpleObject: false
+                                        description:
+                                            attributes: {  }
+                                            name: description
+                                            options: {  }
+                                            type:
+                                                classType: PBaszak\DedicatedMapper\Reflection\Type\Type
+                                                types:
+                                                    - string
+                                                innerType: null
+                                                nullable: false
+                                                union: false
+                                                intersection: false
+                                                class: false
+                                                collection: false
+                                                simpleObject: false
+                                        price:
+                                            attributes: {  }
+                                            name: price
+                                            options: {  }
+                                            type:
+                                                classType: PBaszak\DedicatedMapper\Reflection\Type\Type
+                                                types:
+                                                    - float
+                                                innerType: null
+                                                nullable: false
+                                                union: false
+                                                intersection: false
+                                                class: false
+                                                collection: false
+                                                simpleObject: false
+                                        currency:
+                                            attributes:
+                                                -
+                                                    class: Symfony\Component\Validator\Constraints\Choice
+                                                    arguments:
+                                                        choices:
+                                                            - PLN
+                                                            - EUR
+                                                            - USD
+                                                    instance: "\\Symfony\\Component\\Validator\\Constraints\\Choice::__set_state(array(\n   'payload' => NULL,\n   'choices' => \n  array (\n    0 => 'PLN',\n    1 => 'EUR',\n    2 => 'USD',\n  ),\n   'callback' => NULL,\n   'multiple' => false,\n   'strict' => true,\n   'min' => NULL,\n   'max' => NULL,\n   'message' => 'The value you selected is not a valid choice.',\n   'multipleMessage' => 'One or more of the given values is invalid.',\n   'minMessage' => 'You must select at least {{ limit }} choice.|You must select at least {{ limit }} choices.',\n   'maxMessage' => 'You must select at most {{ limit }} choice.|You must select at most {{ limit }} choices.',\n   'match' => true,\n))"
+                                            name: currency
+                                            options: {  }
+                                            type:
+                                                classType: PBaszak\DedicatedMapper\Reflection\Type\Type
+                                                types:
+                                                    - string
+                                                innerType: null
+                                                nullable: false
+                                                union: false
+                                                intersection: false
+                                                class: false
+                                                collection: false
+                                                simpleObject: false
+                                        quantity:
+                                            attributes: {  }
+                                            name: quantity
+                                            options: {  }
+                                            type:
+                                                classType: PBaszak\DedicatedMapper\Reflection\Type\Type
+                                                types:
+                                                    - int
+                                                innerType: null
+                                                nullable: false
+                                                union: false
+                                                intersection: false
+                                                class: false
+                                                collection: false
+                                                simpleObject: false
+                                        type:
+                                            attributes: {  }
+                                            name: type
+                                            options: {  }
+                                            type:
+                                                classType: PBaszak\DedicatedMapper\Reflection\Type\Type
+                                                types:
+                                                    - string
+                                                innerType: null
+                                                nullable: false
+                                                union: false
+                                                intersection: false
+                                                class: false
+                                                collection: false
+                                                simpleObject: false
+                                        category:
+                                            attributes: {  }
+                                            name: category
+                                            options: {  }
+                                            type:
+                                                classType: PBaszak\DedicatedMapper\Reflection\Type\Type
+                                                types:
+                                                    - string
+                                                innerType: null
+                                                nullable: false
+                                                union: false
+                                                intersection: false
+                                                class: false
+                                                collection: false
+                                                simpleObject: false
+                                        vat:
+                                            attributes: {  }
+                                            name: vat
+                                            options: {  }
+                                            type:
+                                                classType: PBaszak\DedicatedMapper\Reflection\Type\Type
+                                                types:
+                                                    - int
+                                                innerType: null
+                                                nullable: false
+                                                union: false
+                                                intersection: false
+                                                class: false
+                                                collection: false
+                                                simpleObject: false
+                                        metadata:
+                                            attributes: {  }
+                                            name: metadata
+                                            options: {  }
+                                            type:
+                                                classType: PBaszak\DedicatedMapper\Reflection\Type\ClassType
+                                                reflection:
+                                                    attributes: {  }
+                                                    className: PBaszak\DedicatedMapper\Tests\assets\MetadataDTO
+                                                    file:
+                                                        path: /app/tests/assets/Dummy.php
+                                                        hash: 24ba2ede85a4491930ed05f368b3816c
+                                                    options: {  }
+                                                    properties:
+                                                        test:
+                                                            attributes: {  }
+                                                            name: test
+                                                            options: {  }
+                                                            type:
+                                                                classType: PBaszak\DedicatedMapper\Reflection\Type\Type
+                                                                types:
+                                                                    - string
+                                                                innerType: null
+                                                                nullable: false
+                                                                union: false
+                                                                intersection: false
+                                                                class: false
+                                                                collection: false
+                                                                simpleObject: false
+                                                        test2:
+                                                            attributes: {  }
+                                                            name: test2
+                                                            options: {  }
+                                                            type:
+                                                                classType: PBaszak\DedicatedMapper\Reflection\Type\Type
+                                                                types:
+                                                                    - float
+                                                                innerType: null
+                                                                nullable: false
+                                                                union: false
+                                                                intersection: false
+                                                                class: false
+                                                                collection: false
+                                                                simpleObject: false
+                                                type:
+                                                    classType: PBaszak\DedicatedMapper\Reflection\Type\Type
+                                                    types:
+                                                        - \PBaszak\DedicatedMapper\Tests\assets\MetadataDTO
+                                                    innerType: null
+                                                    nullable: false
+                                                    union: false
+                                                    intersection: false
+                                                    class: true
+                                                    collection: false
+                                                    simpleObject: false
+                                        created_at:
+                                            attributes: {  }
+                                            name: created_at
+                                            options: {  }
+                                            type:
+                                                classType: PBaszak\DedicatedMapper\Reflection\Type\ClassType
+                                                reflection:
+                                                    attributes: {  }
+                                                    className: DateTime
+                                                    file:
+                                                        path: false
+                                                        hash: null
+                                                    options: {  }
+                                                    properties: {  }
+                                                type:
+                                                    classType: PBaszak\DedicatedMapper\Reflection\Type\Type
+                                                    types:
+                                                        - \DateTime
+                                                    innerType: null
+                                                    nullable: false
+                                                    union: false
+                                                    intersection: false
+                                                    class: true
+                                                    collection: false
+                                                    simpleObject: false
+                                        updated_at:
+                                            attributes: {  }
+                                            name: updated_at
+                                            options: {  }
+                                            type:
+                                                classType: PBaszak\DedicatedMapper\Reflection\Type\ClassType
+                                                reflection:
+                                                    attributes: {  }
+                                                    className: DateTime
+                                                    file:
+                                                        path: false
+                                                        hash: null
+                                                    options: {  }
+                                                    properties: {  }
+                                                type:
+                                                    classType: PBaszak\DedicatedMapper\Reflection\Type\Type
+                                                    types:
+                                                        - \DateTime
+                                                    innerType: null
+                                                    nullable: false
+                                                    union: false
+                                                    intersection: false
+                                                    class: true
+                                                    collection: false
+                                                    simpleObject: false
+                                        availableActions:
+                                            attributes:
+                                                -
+                                                    class: JMS\Serializer\Annotation\Type
+                                                    arguments:
+                                                        - array<string>
+                                                    instance: "\\JMS\\Serializer\\Annotation\\Type::__set_state(array(\n   'name' => 'array<string>',\n))"
+                                                -
+                                                    class: JMS\Serializer\Annotation\SerializedName
+                                                    arguments:
+                                                        - availableActions
+                                                    instance: "\\JMS\\Serializer\\Annotation\\SerializedName::__set_state(array(\n   'name' => 'availableActions',\n))"
+                                            name: availableActions
+                                            options: {  }
+                                            type:
+                                                classType: PBaszak\DedicatedMapper\Reflection\Type\CollectionType
+                                                type:
+                                                    classType: PBaszak\DedicatedMapper\Reflection\Type\Type
+                                                    types:
+                                                        - array
+                                                        - array
+                                                    innerType:
+                                                        classType: PBaszak\DedicatedMapper\Reflection\Type\Type
+                                                        types:
+                                                            - string
+                                                            - mixed
+                                                        innerType: null
+                                                        nullable: false
+                                                        union: false
+                                                        intersection: false
+                                                        class: false
+                                                        collection: false
+                                                        simpleObject: false
+                                                    nullable: false
+                                                    union: false
+                                                    intersection: false
+                                                    class: false
+                                                    collection: true
+                                                    simpleObject: false
+                                type:
+                                    classType: PBaszak\DedicatedMapper\Reflection\Type\Type
+                                    types:
+                                        - \PBaszak\DedicatedMapper\Tests\assets\ItemDTO
+                                        - mixed
+                                    innerType: null
+                                    nullable: false
+                                    union: false
+                                    intersection: false
+                                    class: true
+                                    collection: false
+                                    simpleObject: false
+                            nullable: false
+                            union: false
+                            intersection: false
+                            class: false
+                            collection: true
+                            simpleObject: false
+        type:
+            classType: PBaszak\DedicatedMapper\Reflection\Type\Type
+            types:
+                - \PBaszak\DedicatedMapper\Tests\assets\EmbeddedDTO
+            innerType: null
+            nullable: false
+            union: false
+            intersection: false
+            class: true
+            collection: false
+            simpleObject: false
     PBaszak\DedicatedMapper\Tests\assets\Dummy:
         classType: PBaszak\DedicatedMapper\Reflection\Type\ClassType
         reflection:
@@ -89,16 +911,436 @@ classes:
                     name: _embedded
                     options: {  }
                     type:
-                        classType: PBaszak\DedicatedMapper\Reflection\Type\Type
-                        types:
-                            - \PBaszak\DedicatedMapper\Tests\assets\EmbeddedDTO
-                        innerType: null
-                        nullable: false
-                        union: false
-                        intersection: false
-                        class: true
-                        collection: false
-                        simpleObject: false
+                        classType: PBaszak\DedicatedMapper\Reflection\Type\ClassType
+                        reflection:
+                            attributes: {  }
+                            className: PBaszak\DedicatedMapper\Tests\assets\EmbeddedDTO
+                            file:
+                                path: /app/tests/assets/Dummy.php
+                                hash: 24ba2ede85a4491930ed05f368b3816c
+                            options: {  }
+                            properties:
+                                page:
+                                    attributes:
+                                        -
+                                            class: Symfony\Component\Serializer\Annotation\Groups
+                                            arguments:
+                                                - test
+                                            instance: "\\Symfony\\Component\\Serializer\\Annotation\\Groups::__set_state(array(\n   'groups' => \n  array (\n    0 => 'test',\n  ),\n))"
+                                    name: page
+                                    options: {  }
+                                    type:
+                                        classType: PBaszak\DedicatedMapper\Reflection\Type\Type
+                                        types:
+                                            - int
+                                        innerType: null
+                                        nullable: false
+                                        union: false
+                                        intersection: false
+                                        class: false
+                                        collection: false
+                                        simpleObject: false
+                                pageSize:
+                                    attributes:
+                                        -
+                                            class: Symfony\Component\Serializer\Annotation\Groups
+                                            arguments:
+                                                - test
+                                            instance: "\\Symfony\\Component\\Serializer\\Annotation\\Groups::__set_state(array(\n   'groups' => \n  array (\n    0 => 'test',\n  ),\n))"
+                                        -
+                                            class: JMS\Serializer\Annotation\SerializedName
+                                            arguments:
+                                                - pageSize
+                                            instance: "\\JMS\\Serializer\\Annotation\\SerializedName::__set_state(array(\n   'name' => 'pageSize',\n))"
+                                    name: pageSize
+                                    options: {  }
+                                    type:
+                                        classType: PBaszak\DedicatedMapper\Reflection\Type\Type
+                                        types:
+                                            - int
+                                        innerType: null
+                                        nullable: false
+                                        union: false
+                                        intersection: false
+                                        class: false
+                                        collection: false
+                                        simpleObject: false
+                                total:
+                                    attributes:
+                                        -
+                                            class: Symfony\Component\Serializer\Annotation\Groups
+                                            arguments:
+                                                - test
+                                            instance: "\\Symfony\\Component\\Serializer\\Annotation\\Groups::__set_state(array(\n   'groups' => \n  array (\n    0 => 'test',\n  ),\n))"
+                                    name: total
+                                    options: {  }
+                                    type:
+                                        classType: PBaszak\DedicatedMapper\Reflection\Type\Type
+                                        types:
+                                            - int
+                                        innerType: null
+                                        nullable: false
+                                        union: false
+                                        intersection: false
+                                        class: false
+                                        collection: false
+                                        simpleObject: false
+                                items:
+                                    attributes:
+                                        -
+                                            class: Symfony\Component\Validator\Constraints\Valid
+                                            arguments: {  }
+                                            instance: "\\Symfony\\Component\\Validator\\Constraints\\Valid::__set_state(array(\n   'payload' => NULL,\n   'traverse' => true,\n))"
+                                        -
+                                            class: JMS\Serializer\Annotation\Type
+                                            arguments:
+                                                - array<PBaszak\DedicatedMapper\Tests\assets\ItemDTO>
+                                            instance: "\\JMS\\Serializer\\Annotation\\Type::__set_state(array(\n   'name' => 'array<PBaszak\\\\DedicatedMapper\\\\Tests\\\\assets\\\\ItemDTO>',\n))"
+                                    name: items
+                                    options: {  }
+                                    type:
+                                        classType: PBaszak\DedicatedMapper\Reflection\Type\CollectionType
+                                        type:
+                                            classType: PBaszak\DedicatedMapper\Reflection\Type\Type
+                                            types:
+                                                - array
+                                                - array
+                                            innerType:
+                                                classType: PBaszak\DedicatedMapper\Reflection\Type\ClassType
+                                                reflection:
+                                                    attributes: {  }
+                                                    className: PBaszak\DedicatedMapper\Tests\assets\ItemDTO
+                                                    file:
+                                                        path: /app/tests/assets/Dummy.php
+                                                        hash: 24ba2ede85a4491930ed05f368b3816c
+                                                    options: {  }
+                                                    properties:
+                                                        id:
+                                                            attributes:
+                                                                -
+                                                                    class: Symfony\Component\Serializer\Annotation\Groups
+                                                                    arguments:
+                                                                        - test
+                                                                    instance: "\\Symfony\\Component\\Serializer\\Annotation\\Groups::__set_state(array(\n   'groups' => \n  array (\n    0 => 'test',\n  ),\n))"
+                                                            name: id
+                                                            options: {  }
+                                                            type:
+                                                                classType: PBaszak\DedicatedMapper\Reflection\Type\Type
+                                                                types:
+                                                                    - string
+                                                                innerType: null
+                                                                nullable: false
+                                                                union: false
+                                                                intersection: false
+                                                                class: false
+                                                                collection: false
+                                                                simpleObject: false
+                                                        name:
+                                                            attributes:
+                                                                -
+                                                                    class: Symfony\Component\Serializer\Annotation\Groups
+                                                                    arguments:
+                                                                        - test
+                                                                    instance: "\\Symfony\\Component\\Serializer\\Annotation\\Groups::__set_state(array(\n   'groups' => \n  array (\n    0 => 'test',\n  ),\n))"
+                                                            name: name
+                                                            options: {  }
+                                                            type:
+                                                                classType: PBaszak\DedicatedMapper\Reflection\Type\Type
+                                                                types:
+                                                                    - string
+                                                                innerType: null
+                                                                nullable: false
+                                                                union: false
+                                                                intersection: false
+                                                                class: false
+                                                                collection: false
+                                                                simpleObject: false
+                                                        description:
+                                                            attributes: {  }
+                                                            name: description
+                                                            options: {  }
+                                                            type:
+                                                                classType: PBaszak\DedicatedMapper\Reflection\Type\Type
+                                                                types:
+                                                                    - string
+                                                                innerType: null
+                                                                nullable: false
+                                                                union: false
+                                                                intersection: false
+                                                                class: false
+                                                                collection: false
+                                                                simpleObject: false
+                                                        price:
+                                                            attributes: {  }
+                                                            name: price
+                                                            options: {  }
+                                                            type:
+                                                                classType: PBaszak\DedicatedMapper\Reflection\Type\Type
+                                                                types:
+                                                                    - float
+                                                                innerType: null
+                                                                nullable: false
+                                                                union: false
+                                                                intersection: false
+                                                                class: false
+                                                                collection: false
+                                                                simpleObject: false
+                                                        currency:
+                                                            attributes:
+                                                                -
+                                                                    class: Symfony\Component\Validator\Constraints\Choice
+                                                                    arguments:
+                                                                        choices:
+                                                                            - PLN
+                                                                            - EUR
+                                                                            - USD
+                                                                    instance: "\\Symfony\\Component\\Validator\\Constraints\\Choice::__set_state(array(\n   'payload' => NULL,\n   'choices' => \n  array (\n    0 => 'PLN',\n    1 => 'EUR',\n    2 => 'USD',\n  ),\n   'callback' => NULL,\n   'multiple' => false,\n   'strict' => true,\n   'min' => NULL,\n   'max' => NULL,\n   'message' => 'The value you selected is not a valid choice.',\n   'multipleMessage' => 'One or more of the given values is invalid.',\n   'minMessage' => 'You must select at least {{ limit }} choice.|You must select at least {{ limit }} choices.',\n   'maxMessage' => 'You must select at most {{ limit }} choice.|You must select at most {{ limit }} choices.',\n   'match' => true,\n))"
+                                                            name: currency
+                                                            options: {  }
+                                                            type:
+                                                                classType: PBaszak\DedicatedMapper\Reflection\Type\Type
+                                                                types:
+                                                                    - string
+                                                                innerType: null
+                                                                nullable: false
+                                                                union: false
+                                                                intersection: false
+                                                                class: false
+                                                                collection: false
+                                                                simpleObject: false
+                                                        quantity:
+                                                            attributes: {  }
+                                                            name: quantity
+                                                            options: {  }
+                                                            type:
+                                                                classType: PBaszak\DedicatedMapper\Reflection\Type\Type
+                                                                types:
+                                                                    - int
+                                                                innerType: null
+                                                                nullable: false
+                                                                union: false
+                                                                intersection: false
+                                                                class: false
+                                                                collection: false
+                                                                simpleObject: false
+                                                        type:
+                                                            attributes: {  }
+                                                            name: type
+                                                            options: {  }
+                                                            type:
+                                                                classType: PBaszak\DedicatedMapper\Reflection\Type\Type
+                                                                types:
+                                                                    - string
+                                                                innerType: null
+                                                                nullable: false
+                                                                union: false
+                                                                intersection: false
+                                                                class: false
+                                                                collection: false
+                                                                simpleObject: false
+                                                        category:
+                                                            attributes: {  }
+                                                            name: category
+                                                            options: {  }
+                                                            type:
+                                                                classType: PBaszak\DedicatedMapper\Reflection\Type\Type
+                                                                types:
+                                                                    - string
+                                                                innerType: null
+                                                                nullable: false
+                                                                union: false
+                                                                intersection: false
+                                                                class: false
+                                                                collection: false
+                                                                simpleObject: false
+                                                        vat:
+                                                            attributes: {  }
+                                                            name: vat
+                                                            options: {  }
+                                                            type:
+                                                                classType: PBaszak\DedicatedMapper\Reflection\Type\Type
+                                                                types:
+                                                                    - int
+                                                                innerType: null
+                                                                nullable: false
+                                                                union: false
+                                                                intersection: false
+                                                                class: false
+                                                                collection: false
+                                                                simpleObject: false
+                                                        metadata:
+                                                            attributes: {  }
+                                                            name: metadata
+                                                            options: {  }
+                                                            type:
+                                                                classType: PBaszak\DedicatedMapper\Reflection\Type\ClassType
+                                                                reflection:
+                                                                    attributes: {  }
+                                                                    className: PBaszak\DedicatedMapper\Tests\assets\MetadataDTO
+                                                                    file:
+                                                                        path: /app/tests/assets/Dummy.php
+                                                                        hash: 24ba2ede85a4491930ed05f368b3816c
+                                                                    options: {  }
+                                                                    properties:
+                                                                        test:
+                                                                            attributes: {  }
+                                                                            name: test
+                                                                            options: {  }
+                                                                            type:
+                                                                                classType: PBaszak\DedicatedMapper\Reflection\Type\Type
+                                                                                types:
+                                                                                    - string
+                                                                                innerType: null
+                                                                                nullable: false
+                                                                                union: false
+                                                                                intersection: false
+                                                                                class: false
+                                                                                collection: false
+                                                                                simpleObject: false
+                                                                        test2:
+                                                                            attributes: {  }
+                                                                            name: test2
+                                                                            options: {  }
+                                                                            type:
+                                                                                classType: PBaszak\DedicatedMapper\Reflection\Type\Type
+                                                                                types:
+                                                                                    - float
+                                                                                innerType: null
+                                                                                nullable: false
+                                                                                union: false
+                                                                                intersection: false
+                                                                                class: false
+                                                                                collection: false
+                                                                                simpleObject: false
+                                                                type:
+                                                                    classType: PBaszak\DedicatedMapper\Reflection\Type\Type
+                                                                    types:
+                                                                        - \PBaszak\DedicatedMapper\Tests\assets\MetadataDTO
+                                                                    innerType: null
+                                                                    nullable: false
+                                                                    union: false
+                                                                    intersection: false
+                                                                    class: true
+                                                                    collection: false
+                                                                    simpleObject: false
+                                                        created_at:
+                                                            attributes: {  }
+                                                            name: created_at
+                                                            options: {  }
+                                                            type:
+                                                                classType: PBaszak\DedicatedMapper\Reflection\Type\ClassType
+                                                                reflection:
+                                                                    attributes: {  }
+                                                                    className: DateTime
+                                                                    file:
+                                                                        path: false
+                                                                        hash: null
+                                                                    options: {  }
+                                                                    properties: {  }
+                                                                type:
+                                                                    classType: PBaszak\DedicatedMapper\Reflection\Type\Type
+                                                                    types:
+                                                                        - \DateTime
+                                                                    innerType: null
+                                                                    nullable: false
+                                                                    union: false
+                                                                    intersection: false
+                                                                    class: true
+                                                                    collection: false
+                                                                    simpleObject: false
+                                                        updated_at:
+                                                            attributes: {  }
+                                                            name: updated_at
+                                                            options: {  }
+                                                            type:
+                                                                classType: PBaszak\DedicatedMapper\Reflection\Type\ClassType
+                                                                reflection:
+                                                                    attributes: {  }
+                                                                    className: DateTime
+                                                                    file:
+                                                                        path: false
+                                                                        hash: null
+                                                                    options: {  }
+                                                                    properties: {  }
+                                                                type:
+                                                                    classType: PBaszak\DedicatedMapper\Reflection\Type\Type
+                                                                    types:
+                                                                        - \DateTime
+                                                                    innerType: null
+                                                                    nullable: false
+                                                                    union: false
+                                                                    intersection: false
+                                                                    class: true
+                                                                    collection: false
+                                                                    simpleObject: false
+                                                        availableActions:
+                                                            attributes:
+                                                                -
+                                                                    class: JMS\Serializer\Annotation\Type
+                                                                    arguments:
+                                                                        - array<string>
+                                                                    instance: "\\JMS\\Serializer\\Annotation\\Type::__set_state(array(\n   'name' => 'array<string>',\n))"
+                                                                -
+                                                                    class: JMS\Serializer\Annotation\SerializedName
+                                                                    arguments:
+                                                                        - availableActions
+                                                                    instance: "\\JMS\\Serializer\\Annotation\\SerializedName::__set_state(array(\n   'name' => 'availableActions',\n))"
+                                                            name: availableActions
+                                                            options: {  }
+                                                            type:
+                                                                classType: PBaszak\DedicatedMapper\Reflection\Type\CollectionType
+                                                                type:
+                                                                    classType: PBaszak\DedicatedMapper\Reflection\Type\Type
+                                                                    types:
+                                                                        - array
+                                                                        - array
+                                                                    innerType:
+                                                                        classType: PBaszak\DedicatedMapper\Reflection\Type\Type
+                                                                        types:
+                                                                            - string
+                                                                            - mixed
+                                                                        innerType: null
+                                                                        nullable: false
+                                                                        union: false
+                                                                        intersection: false
+                                                                        class: false
+                                                                        collection: false
+                                                                        simpleObject: false
+                                                                    nullable: false
+                                                                    union: false
+                                                                    intersection: false
+                                                                    class: false
+                                                                    collection: true
+                                                                    simpleObject: false
+                                                type:
+                                                    classType: PBaszak\DedicatedMapper\Reflection\Type\Type
+                                                    types:
+                                                        - \PBaszak\DedicatedMapper\Tests\assets\ItemDTO
+                                                        - mixed
+                                                    innerType: null
+                                                    nullable: false
+                                                    union: false
+                                                    intersection: false
+                                                    class: true
+                                                    collection: false
+                                                    simpleObject: false
+                                            nullable: false
+                                            union: false
+                                            intersection: false
+                                            class: false
+                                            collection: true
+                                            simpleObject: false
+                        type:
+                            classType: PBaszak\DedicatedMapper\Reflection\Type\Type
+                            types:
+                                - \PBaszak\DedicatedMapper\Tests\assets\EmbeddedDTO
+                            innerType: null
+                            nullable: false
+                            union: false
+                            intersection: false
+                            class: true
+                            collection: false
+                            simpleObject: false
         type:
             classType: PBaszak\DedicatedMapper\Reflection\Type\Type
             types:

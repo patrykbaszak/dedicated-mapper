@@ -25,13 +25,17 @@ class SimpleObjectType implements TypeInterface
     public function toArray(): array
     {
         return [
+            'classType' => self::class,
+            'simpleObject' => $this->simpleObjectAttr ? [
+                'class' => $this->simpleObjectAttr->class,
+                'arguments' => $this->simpleObjectAttr->arguments,
+                'instance' => var_export($this->simpleObjectAttr->instance, true),
+            ] : null,
             'type' => $this->type->toArray(),
-            'attributes' => $this->attributes->toArray(),
-            'collection' => $this->collection?->toArray(),
         ];
     }
 
-    public static function supports(PropertyReflection $property, Type $type, int $depth): bool
+    public static function supports(Type $type): bool
     {
         if (!$type->isClass()) {
             return false;
@@ -39,61 +43,38 @@ class SimpleObjectType implements TypeInterface
 
         foreach ($type->getTypes() as $t) {
             if (class_exists($t, false)) {
-                if (isset(self::NATIVE_SIMPLE_OBJECTS[$t])) {
+                if (isset(self::NATIVE_SIMPLE_OBJECTS['\\' . ltrim($t, '\\')])) {
                     return true;
                 }
                 $reflection = new ReflectionClass($t);
-                if ($reflection->getAttributes(SimpleObject::class)) {
+                if (!empty($reflection->getAttributes(SimpleObject::class))) {
                     return true;
                 }
             }
         }
         
-        $index = 0;
-        $attributes = $property->getAttributes();
-        do {
-            $attr = $attributes->getAttributes(SimpleObject::class);
-            $attributes = $attributes->getAttributes(ApplyToCollectionItems::class)[0] ?? null;
-            $index++;
-        } while ($index <= $depth && !empty($attributes?->getAttributes(ApplyToCollectionItems::class)));
+        return $type->hasAttribute(SimpleObject::class);
+    }
 
-        return !empty($attr);
+    public static function create(Type $type): static
+    {
+        return new static(
+            $type,
+            $type->getAttribute(SimpleObject::class)
+        );
     }
 
     public function __construct(
-        /** 
-         * @var CollectionType|PropertyReflection $parent
-         */
-        protected CollectionType|PropertyReflection $parent,
-
         /**
          * @var Type $type of simpleObject main property
          */
         protected Type $type,
 
         /**
-         * @var AttributeReflection $attributes
+         * @var null|object{"class": string, "arguments": mixed[], "instance": ?object} $simpleObjectAttr
          */
-        protected AttributeReflection $attributes,
-
-        /**
-         * @var CollectionType|null $collection if `null`, then property is not collection
-         */
-        protected ?CollectionType $collection = null,
-
-        /**
-         * @var ReflectionClass|null $reflection
-         */
-        protected ?ReflectionClass $reflection = null,
+        protected ?object $simpleObjectAttr,
     ) {}
-
-    /**
-     * @return CollectionType|PropertyReflection
-     */
-    public function getParent(): CollectionType|PropertyReflection
-    {
-        return $this->parent;
-    }
 
     /**
      * @return Type
@@ -104,26 +85,10 @@ class SimpleObjectType implements TypeInterface
     }
 
     /**
-     * @return AttributeReflection
+     * @return null|object{"class": string, "arguments": mixed[], "instance": ?object}
      */
-    public function getAttributes(): AttributeReflection
+    public function getAttribute(): ?object
     {
-        return $this->attributes;
-    }
-
-    /**
-     * @return null|CollectionType
-     */
-    public function getCollection(): ?CollectionType
-    {
-        return $this->collection;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isCollection(): bool
-    {
-        return $this->collection !== null;
+        return $this->simpleObjectAttr;
     }
 }

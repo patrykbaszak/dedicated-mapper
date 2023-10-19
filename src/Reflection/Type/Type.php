@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PBaszak\DedicatedMapper\Reflection\Type;
 
+use PBaszak\DedicatedMapper\Attribute\ApplyToCollectionItems;
 use PBaszak\DedicatedMapper\Reflection\PropertyReflection;
 use phpDocumentor\Reflection\Type as PhpDocumentorType;
 use ReflectionType;
@@ -96,6 +97,16 @@ class Type implements TypeInterface
     public function getParent(): null|PropertyReflection|TypeInterface
     {
         return $this->parent;
+    }
+
+    public function getPropertyReflection(): null|PropertyReflection
+    {
+        $ref = $this;
+        do {
+            $ref = $ref->getParent();
+        } while ($ref instanceof TypeInterface);
+
+        return $ref;
     }
 
     /**
@@ -192,5 +203,69 @@ class Type implements TypeInterface
     public function getPhpDocumentorReflectionType(): null|PhpDocumentorType
     {
         return $this->phpDocumentorReflectionType;
+    }
+
+    /**
+     * @param class-string $class
+     */
+    public function hasAttribute(string $class): bool
+    {
+        $ref = $this;
+        $depth = 0;
+        do {
+            $ref = $ref->getParent();
+            $depth++;
+        } while ($ref instanceof TypeInterface);
+
+        if (!$ref) {
+            return false;
+            /** @var PropertyReflection $ref */
+        }
+
+        if ($depth > 1) {
+            $attributes = $ref->getAttributes();
+            $index = 1;
+            do {
+                $attributes = $attributes->getAttribute(ApplyToCollectionItems::class)[0] ?? null;
+                $index++;
+            } while ($index <= $depth && !empty($attributes?->getAttribute(ApplyToCollectionItems::class)));
+            if ($attributes) {
+                return $attributes->getAttribute()->hasAttribute($class);
+            }
+        }
+
+        return $ref->getAttributes()->hasAttribute($class);
+    }
+
+    /**
+     * @param class-string $class
+     */
+    public function getAttribute(string $class): ?object
+    {
+        $ref = $this;
+        $depth = 0;
+        do {
+            $ref = $ref->getParent();
+            $depth++;
+        } while ($ref instanceof TypeInterface);
+
+        if (!$ref) {
+            return null;
+            /** @var PropertyReflection $ref */
+        }
+
+        if ($depth > 1) {
+            $attributes = $ref->getAttributes();
+            $index = 1;
+            do {
+                $attributes = $attributes->getAttributes(ApplyToCollectionItems::class)[0] ?? null;
+                $index++;
+            } while ($index <= $depth && !empty($attributes?->getAttributes(ApplyToCollectionItems::class)));
+            if ($attributes) {
+                return $attributes->getAttributes()->getAttribute($class);
+            }
+        }
+
+        return $ref->getAttributes()->getAttribute($class);
     }
 }

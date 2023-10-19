@@ -138,9 +138,9 @@ class TypeFactory
                     $ref->getProperty('class')->setValue($instance, true);
                 }
             }
-            $types[] = $fqsen ? (string) $fqsen : 'array';
+            $types[] = isset($fqsen) && null !== $fqsen ? (string) $fqsen : 'array';
             $ref->getProperty('collection')->setValue($instance, true);
-            $ref->getProperty('innerTypes')->setValue($instance, $this->createFromPhpDocumentatorType($type->getValueType(), $instance));
+            $ref->getProperty('innerType')->setValue($instance, $this->createFromPhpDocumentatorType($type->getValueType(), $instance));
         } else {
             $t = (string) $type;
             if (class_exists($t, false)) {
@@ -188,6 +188,10 @@ class TypeFactory
 
     protected function resolveTypeInterface(Type $type): TypeInterface
     {
-        return $type;
+        foreach (self::AVAILABLE_TYPES_BY_PRIORITY as $typeClass) {
+            if ($typeClass::supports($type)) {
+                return $typeClass::create($type);   
+            }
+        }
     }
 }
