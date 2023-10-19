@@ -6,17 +6,19 @@ namespace PBaszak\DedicatedMapper\Reflection;
 
 use ArrayObject;
 use PBaszak\DedicatedMapper\Reflection\Type\ClassType;
-use PBaszak\DedicatedMapper\Utils\ToArrayTrait;
 use ReflectionClass;
-use Serializable;
 
-class ClassReflection
+class ClassReflection implements ReflectionInterface
 {
     public function toArray(): array
     {
         return [
             'attributes' => $this->attributes->toArray(),
             'className' => $this->reflection?->getName(),
+            'file' => [
+                'path' => $this->reflection?->getFileName(),
+                'hash' => $this->reflection?->getFileName() ? md5_file($this->reflection->getFileName()) : null,
+            ],
             'options' => $this->options->toArray(),
             'properties' => array_map(fn (PropertyReflection $property) => $property->toArray(), $this->properties->getArrayCopy()),
         ];

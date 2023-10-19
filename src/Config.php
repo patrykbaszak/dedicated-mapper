@@ -32,11 +32,10 @@ class Config
     public function reflect(): self
     {
         ClassType::$classTypes = [];
-        (new TypeFactory(new ReflectionFactory()))->createClassType(
-            new \ReflectionClass($this->className),
-            null
+        $type = (new TypeFactory(new ReflectionFactory()))->createFromReflection(
+            new \ReflectionClass($this->className)
         );
-
+        ClassType::create($type);
         $this->classes = ClassType::$classTypes;
 
         return $this;

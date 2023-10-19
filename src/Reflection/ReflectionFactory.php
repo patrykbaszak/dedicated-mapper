@@ -50,7 +50,7 @@ class ReflectionFactory
         $attributes = new AttributeReflection($instance, $this->getAttributesFromReflection($reflection));
         $ref->getProperty('attributes')->setValue($instance, $attributes);
         $ref->getProperty('options')->setValue($instance, new Options());
-        $ref->getProperty('type')->setValue($instance, (new TypeFactory($this))->createType($instance));
+        $ref->getProperty('type')->setValue($instance, (new TypeFactory($this))->createFromReflection($reflection, $instance));
 
         return $instance;
     }

@@ -5,16 +5,15 @@ declare(strict_types=1);
 namespace PBaszak\DedicatedMapper\Reflection\Type;
 
 use PBaszak\DedicatedMapper\Reflection\PropertyReflection;
-use PBaszak\DedicatedMapper\Utils\ToArrayTrait;
 use phpDocumentor\Reflection\Type as PhpDocumentorType;
 use ReflectionType;
 
 class Type implements TypeInterface
 {
     /** 
-     * @var PropertyReflection|TypeInterface $parent each type must have resource
+     * @var null|PropertyReflection|TypeInterface $parent
      */
-    protected PropertyReflection|TypeInterface $parent;
+    protected null|PropertyReflection|TypeInterface $parent;
 
     /**
      * @var array<string> $types
@@ -65,10 +64,21 @@ class Type implements TypeInterface
      * @var null|PhpDocumentorType $phpDocumentorReflectionType
      */
     protected null|PhpDocumentorType $phpDocumentorReflectionType = null;
-    
+
+    public static function supports(self $type): bool
+    {
+        return true;
+    }
+
+    public static function create(Type $type): TypeInterface
+    {
+        return $type;
+    }
+
     public function toArray(): array
     {
         return [
+            'classType' => self::class,
             'types' => $this->types,
             'innerType' => $this->innerType?->toArray(),
             'nullable' => $this->nullable,
@@ -80,20 +90,10 @@ class Type implements TypeInterface
         ];
     }
 
-    public static function supports(PropertyReflection $property, self $type, int $depth): bool
-    {
-        return true;
-    }
-
-    public static function create(PropertyReflection|TypeInterface $parent, Type $type): TypeInterface
-    {
-        return $type;
-    }
-
     /**
-     * @return CollectionType|PropertyReflection|SimpleObjectType
+     * @return null|PropertyReflection|TypeInterface
      */
-    public function getParent(): CollectionType|PropertyReflection|SimpleObjectType
+    public function getParent(): null|PropertyReflection|TypeInterface
     {
         return $this->parent;
     }
@@ -104,6 +104,22 @@ class Type implements TypeInterface
     public function getTypes(): array
     {
         return $this->types;
+    }
+
+    /**
+     * @return array<class-string>
+     */
+    public function getClassTypes(): array
+    {
+        return array_filter($this->types, fn (string $type) => class_exists($type, false));
+    }
+
+    /**
+     * @return array<string>
+     */
+    public function getScalarTypes(): array
+    {
+        return array_filter($this->types, fn (string $type) => !class_exists($type, false));
     }
 
     /**

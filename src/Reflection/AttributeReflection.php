@@ -5,10 +5,8 @@ declare(strict_types=1);
 namespace PBaszak\DedicatedMapper\Reflection;
 
 use ArrayObject;
-use PBaszak\DedicatedMapper\Reflection\Type\CollectionType;
-use PBaszak\DedicatedMapper\Reflection\Type\SimpleObjectType;
 
-class AttributeReflection
+class AttributeReflection implements ReflectionInterface
 {
     public function toArray(): array
     {
@@ -24,27 +22,27 @@ class AttributeReflection
 
     public function __construct(
         /** 
-         * @var ClassReflection|CollectionType|PropertyReflection|SimpleObjectType $parent each attribute must have resource
+         * @var ClassReflection|PropertyReflection $parent each attribute must have resource
          */
-        protected ClassReflection|CollectionType|PropertyReflection|SimpleObjectType $parent,
+        protected ClassReflection|PropertyReflection $parent,
 
         /**
-         * @var ArrayObject<object{"class": string, "arguments": mixed[]}> $attributes
+         * @var ArrayObject<object{"class": string, "arguments": mixed[], "instance": ?object}> $attributes
          */
         protected ArrayObject $attributes,
     ) {
     }
 
     /**
-     * @return ClassReflection|CollectionType|PropertyReflection|SimpleObjectType
+     * @return ClassReflection|PropertyReflection
      */
-    public function getParent(): ClassReflection|CollectionType|PropertyReflection|SimpleObjectType
+    public function getParent(): ClassReflection|PropertyReflection
     {
         return $this->parent;
     }
 
     /**
-     * @return ArrayObject<object{"class": string, "arguments": mixed[]}>
+     * @return ArrayObject<object{"class": string, "arguments": mixed[], "instance": ?object}>
      */
     public function getAttributes(): ArrayObject
     {
@@ -54,7 +52,7 @@ class AttributeReflection
     /**
      * @param class-string $class
      * 
-     * @return null|object{"class": string, "arguments": mixed[]}
+     * @return null|object{"class": string, "arguments": mixed[], "instance": ?object}
      */
     public function getAttribute(string $class): ?object
     {

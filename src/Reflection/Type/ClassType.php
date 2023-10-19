@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace PBaszak\DedicatedMapper\Reflection\Type;
 
+use LogicException;
 use PBaszak\DedicatedMapper\Reflection\ClassReflection;
-use PBaszak\DedicatedMapper\Reflection\PropertyReflection;
+use PBaszak\DedicatedMapper\Reflection\ReflectionFactory;
 
 class ClassType implements TypeInterface
 {
@@ -30,21 +31,37 @@ class ClassType implements TypeInterface
 
     public static function supports(Type $type): bool
     {
-        foreach ($type->getTypes() as $t) {
-            if (class_exists($t, false)) {
-                return true;
-            }
-        }
+        $classTypes = $type->getClassTypes();
+
+        return count($classTypes) === 1;
     }
 
-    public static function create(Type $type): TypeInterface
+    public static function create(Type $type): self
     {
-        
+        if (!self::supports($type)) {
+            throw new LogicException('Given Type does not support class type.');
+        }
+
+        $class = $type->getClassTypes()[0];
+        $ref = new \ReflectionClass(self::class);
+        /** @var ClassType $instance */
+        $instance = $ref->newInstanceWithoutConstructor();
+        $ref->getProperty('type')->setValue($instance, $type);
+        $reflection = (new ReflectionFactory())->createClassReflection($class, $instance);
+        $ref->getProperty('reflection')->setValue($instance, $reflection);
+
+        self::storeClassType($instance);
+
+        return $instance;
     }
 
     public function toArray(): array
     {
-        return $this->reflection?->toArray();
+        return [
+            'classType' => self::class,
+            'reflection' => $this->reflection?->toArray(),
+            'type' => $this->type->toArray(),
+        ];
     }
 
     public function __construct(
@@ -52,11 +69,11 @@ class ClassType implements TypeInterface
          * @var ClassReflection $reflection
          */
         protected ClassReflection $reflection,
-    
+
         /**
-         * @var PropertyReflection|TypeInterface|null $parent if `null`, then it is root class
+         * @var Type $type
          */
-        protected null|PropertyReflection|TypeInterface $parent = null,
+        protected Type $type,
     ) {}
 
     /**
@@ -68,10 +85,10 @@ class ClassType implements TypeInterface
     }
 
     /**
-     * @return PropertyReflection|TypeInterface|null
+     * @return Type
      */
-    public function getParent(): null|PropertyReflection|TypeInterface
+    public function getType(): Type
     {
-        return $this->parent;
+        return $this->type;
     }
 }

@@ -5,9 +5,8 @@ declare(strict_types=1);
 namespace PBaszak\DedicatedMapper\Reflection;
 
 use PBaszak\DedicatedMapper\Reflection\Type\TypeInterface;
-use PBaszak\DedicatedMapper\Utils\ToArrayTrait;
 
-class PropertyReflection
+class PropertyReflection implements ReflectionInterface
 {
     public function toArray(): array
     {

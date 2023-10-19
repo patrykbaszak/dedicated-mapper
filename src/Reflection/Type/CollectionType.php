@@ -14,14 +14,20 @@ class CollectionType implements TypeInterface
     public function toArray(): array
     {
         return [
-            'children' => array_map(fn (TypeInterface $child) => $child->toArray(), $this->children->getArrayCopy()),
             'attributes' => $this->attributes->toArray(),
+            'classType' => self::class,
+            'type' => $this->type->toArray(), 
         ];
     }
 
-    public static function supports(PropertyReflection $property, Type $type, int $depth): bool
+    public static function supports(Type $type): bool
     {
         return $type->isCollection();
+    }
+
+    public static function create(Type $type): TypeInterface
+    {
+        
     }
 
     public function __construct(
@@ -32,9 +38,9 @@ class CollectionType implements TypeInterface
         protected null|PropertyReflection|TypeInterface $parent,
 
         /**
-         * @var ArrayObject<TypeInterface> $children
+         * @var Type $type
          */
-        protected ArrayObject $children,
+        protected Type $type,
 
         /**
          * @var AttributeReflection $attributes
@@ -52,11 +58,11 @@ class CollectionType implements TypeInterface
     }
 
     /**
-     * @return ArrayObject<TypeInterface>
+     * @return Type
      */
-    public function getChildren(): ArrayObject
+    public function getType(): Type
     {
-        return $this->children;
+        return $this->type;
     }
 
     /**
