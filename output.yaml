@@ -266,7 +266,6 @@ classes:
                                 classType: PBaszak\DedicatedMapper\Reflection\Type\Type
                                 types:
                                     - string
-                                    - mixed
                                 innerType: null
                                 nullable: false
                                 union: false
@@ -282,7 +281,6 @@ classes:
             classType: PBaszak\DedicatedMapper\Reflection\Type\Type
             types:
                 - \PBaszak\DedicatedMapper\Tests\assets\ItemDTO
-                - mixed
             innerType: null
             nullable: false
             union: false

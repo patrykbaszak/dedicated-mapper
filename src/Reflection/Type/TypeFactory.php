@@ -152,6 +152,7 @@ class TypeFactory
         $types = array_unique($types);
         $ref->getProperty('types')->setValue($instance, $types);
 
+        $this->sanitizeTypes($instance);
         return $this->resolveTypeInterface($instance);
     }
 
@@ -182,6 +183,7 @@ class TypeFactory
             $ref->getProperty('reflectionType')->setValue($instance, $type->getReflectionType() ?? $ref->getProperty('reflectionType')->getValue($instance));
         }
         
+        $this->sanitizeTypes($instance);
         return $this->resolveTypeInterface($instance);
     }
 
@@ -192,5 +194,21 @@ class TypeFactory
                 return $typeClass::create($type);   
             }
         }
+    }
+
+    protected function sanitizeTypes(Type $type): void
+    {
+        $types = $type->getTypes();
+
+        if ($type->isNullable() && !in_array('null', $types)) {
+            $types[] = 'null';
+        }
+
+        if (in_array('mixed', $types) && count($types) > 1) {
+            $types = array_diff($types, ['mixed']);
+        }
+
+        $ref = new \ReflectionClass(Type::class);
+        $ref->getProperty('types')->setValue($type, $types);
     }
 }
