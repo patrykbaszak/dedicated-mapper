@@ -39,21 +39,4 @@ It's even **37** times faster than **JMS Serializer** and even **2500** times fa
 |                                   | min    | 0.0006108283996582 s   | 4.7922134399414E-5 s   | 12.75x faster         |
 |                                   | max    | 0.0049350261688232 s   | 0.00013303756713867 s  | 37.09x faster         |
 
-#### Symfony Serializer vs Dedicated Mapper
-
-| Test Case                         | Metric | Symfony Serializer     | Dedicated Mapper       | Performance Gain      |
-|:---------------------------------:|:------:|-----------------------:|-----------------------:|----------------------:|
-| Build & Use                       | avg    | 0.14696174383163 s     | 0.00022732496261597 s  | 646.48x faster        |
-|                                   | min    | 0.14242696762085 s     | 9.2983245849609E-5 s   | 1531.75x faster       |
-|                                   | max    | 0.16421699523926 s     | 0.00034117698669434 s  | 481.32x faster        |
-| Use (one time)                    | avg    | 0.14963219642639 s     | 0.0002064323425293 s   | 724.85x faster        |
-|                                   | min    | 0.14522504806519 s     | 0.00019288063049316 s  | 752.93x faster        |
-|                                   | max    | 0.16044902801514 s     | 0.00027704238891602 s  | 579.15x faster        |
-| Second Use (Same Data)            | avg    | 0.0007201623916626 s   | 5.2292346954346E-5 s   | 13.77x faster         |
-|                                   | min    | 0.00066900253295898 s  | 4.7922134399414E-5 s   | 13.96x faster         |
-|                                   | max    | 0.00089192390441895 s  | 0.0001518726348877 s   | 5.87x faster          |
-| Second Use (Different Data)       | avg    | 0.15525386810303 s     | 6.2630176544189E-5 s   | 2478.9x faster        |
-|                                   | min    | 0.14795207977295 s     | 5.8174133300781E-5 s   | 2543.26x faster       |
-|                                   | max    | 0.16473388671875 s     | 9.0122222900391E-5 s   | 1827.89x faster       |
-
 <sub>*Tables generated using Chat GPT-4 based on test data. This information is here because the chat is not a perfect tool and could mess up the measured times for example.</sub>
