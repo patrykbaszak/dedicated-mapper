@@ -70,10 +70,13 @@ class Expression
 
         $hasFunction = !empty($this->function);
         $isPathUsed = (bool) $this->function?->pathVariable;
+        $initialCallback = $target->hasDedicatedInitCallback(true) ? $target->getInitialCallbackAttribute(true) : null;
+        $useInitialCallbackInsteadOfGetter = $initialCallback?->useSourceInsteadIfExists ?? false;
 
         if ($target->isCollection()) {
             $itemExpressionArgs = [
-                $target->hasDedicatedInitCallback(true),
+                (bool) $initialCallback,
+                $useInitialCallbackInsteadOfGetter,
                 true,
                 false,
                 !empty($this->collectionItemCallbacksExpression),
@@ -97,8 +100,13 @@ class Expression
                 $itemExpression = str_replace(array_keys($itemExpressionPlaceholders), array_values($itemExpressionPlaceholders), $itemExpression);
             } while ($this->hasNotFilledPlaceholders(array_keys($itemExpressionPlaceholders), $itemExpression));
 
+            
+            $initialCallback = $target->hasDedicatedInitCallback(false) ? $target->getInitialCallbackAttribute(false) : null;
+            $useInitialCallbackInsteadOfGetter = $initialCallback?->useSourceInsteadIfExists ?? false;
+
             $expressionArgs = [
                 $target->hasDedicatedInitCallback(false),
+                $useInitialCallbackInsteadOfGetter,
                 $this->throwExceptionOnMissingRequiredValue,
                 $target->hasDefaultValue(),
                 !empty($this->callbacksExpression),
@@ -113,8 +121,11 @@ class Expression
             [$expression, $expressionPlaceholders] = $this->newExpression(...$expressionArgs);
             $expressionPlaceholders['{{preAssignmentExpression}}'] = $itemExpression;
         } else {
+            $initialCallback = $target->hasDedicatedInitCallback(false) ? $target->getInitialCallbackAttribute(false) : null;
+            $useInitialCallbackInsteadOfGetter = $initialCallback?->useSourceInsteadIfExists ?? false;
             $expressionArgs = [
                 $target->hasDedicatedInitCallback(false),
+                $useInitialCallbackInsteadOfGetter,
                 $this->throwExceptionOnMissingRequiredValue,
                 $target->hasDefaultValue(),
                 !empty($this->callbacksExpression),
@@ -197,6 +208,7 @@ class Expression
      */
     private function newExpression(
         bool $hasDedicatedGetter,
+        bool $useInitialCallbackInsteadOfGetter,
         bool $throwExceptionOnMissingRequiredValue,
         bool $hasDefaultValue,
         bool $hasCallbacks,
@@ -209,6 +221,7 @@ class Expression
     ): array {
         $getterExpressionArgs = [
             $hasDedicatedGetter,
+            $useInitialCallbackInsteadOfGetter,
             $throwExceptionOnMissingRequiredValue,
             $hasDefaultValue,
             $hasCallbacks,

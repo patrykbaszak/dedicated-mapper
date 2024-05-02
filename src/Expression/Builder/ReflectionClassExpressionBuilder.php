@@ -107,15 +107,16 @@ class ReflectionClassExpressionBuilder extends AbstractBuilder implements Setter
 
         $expressions = [];
         $expressionTemplates = [];
-        for ($i = 0; $i < 128; ++$i) {
-            $key = str_pad(decbin($i), 7, '0', STR_PAD_LEFT);
+        for ($i = 0; $i < 256; ++$i) {
+            $key = str_pad(decbin($i), 8, '0', STR_PAD_LEFT);
             $hasDedicatedGetter = '1' === $key[0];
-            $throwExceptionOnMissingRequiredValue = '1' === $key[1];
-            $hasDefaultValue = '1' === $key[2];
-            $hasCallbacks = '1' === $key[3];
-            $hasValueNotFoundCallbacks = '1' === $key[4];
-            $isCollection = '1' === $key[5];
-            $preAssignmentExpression = '1' === $key[6];
+            $useInitialCallbackInsteadOfGetter = '1' === $key[1];
+            $throwExceptionOnMissingRequiredValue = '1' === $key[2];
+            $hasDefaultValue = '1' === $key[3];
+            $hasCallbacks = '1' === $key[4];
+            $hasValueNotFoundCallbacks = '1' === $key[5];
+            $isCollection = '1' === $key[6];
+            $preAssignmentExpression = '1' === $key[7];
 
             if ($hasDefaultValue) {
                 $throwExceptionOnMissingRequiredValue = true;
@@ -143,7 +144,7 @@ class ReflectionClassExpressionBuilder extends AbstractBuilder implements Setter
                 '{{varAssignment:basic:default}}' => $preAssignmentExpression ? "\${{var}} ??= {{defaultValue}};\n" : "\${{var}} = {{getterAssignment:basic:default}};\n",
                 '{{varAssignnmet:item}}' => "\${{var}} = \$item;\n",
                 '{{varAssignment:dedicated}}' => "\${{var}} = {{dedicatedGetter}};\n",
-                '{{varAssignment:dedicated:default}}' => "if ({{existsStatement}} && {{defaultValue}} !== {{getterAssignment:basic}}) {\n"
+                '{{varAssignment:dedicated:default}}' => ($useInitialCallbackInsteadOfGetter ? "if (!{{existsStatement}}) {\n" : "if ({{existsStatement}}) {\n")
                     ."\t\${{var}} = {{dedicatedGetter}};\n"
                     ."} else {\n"
                     ."\t\${{var}} = {{defaultValue}};\n"
