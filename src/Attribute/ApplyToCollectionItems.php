@@ -36,7 +36,7 @@ class ApplyToCollectionItems
      *
      * @return object[]
      */
-    public function getAttributes(string $attribute = null): array
+    public function getAttributes(?string $attribute = null): array
     {
         if (null === $attribute) {
             return $this->attributes;

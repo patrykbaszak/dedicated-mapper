@@ -19,7 +19,7 @@ interface MapperServiceInterface
         string $blueprint,
         GetterInterface&AbstractBuilder $getterBuilder,
         SetterInterface&AbstractBuilder $setterBuilder,
-        FunctionInterface $functionBuilder = null,
+        ?FunctionInterface $functionBuilder = null,
         bool $throwExceptionOnMissingProperty = false,
         bool $isCollection = false,
         array $modificators = []

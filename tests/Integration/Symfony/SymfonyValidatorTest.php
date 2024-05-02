@@ -28,7 +28,7 @@ class SymfonyValidatorTest extends KernelTestCase
     /** @test */
     public function shouldThrowValidationException(): void
     {
-        $this->expectException(\Symfony\Component\Validator\Exception\ValidationFailedException::class);
+        $this->expectException(ValidationFailedException::class);
         $this->mapperService->map(
             $this->dummy,
             Dummy::class,

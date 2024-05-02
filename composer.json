@@ -6,19 +6,19 @@
         "php": ">=8.0",
         "phpdocumentor/reflection-docblock": "^5.3",
         "friendsofphp/php-cs-fixer": "^3.22",
-        "symfony/uid": "^5.4 || ^6.0 || ^6.2"
+        "symfony/uid": "^5.4 || ^6 || ^7"
     },
     "require-dev": {
-        "symfony/config": "^5.4 || ^6.0 || ^6.2",
-        "symfony/dependency-injection": "^5.4 || ^6.0 || ^6.2",
-        "symfony/console": "^5.4 || ^6.0 || ^6.2",
-        "symfony/http-kernel": "^5.4 || ^6.0 || ^6.2",
-        "symfony/runtime": "^5.4 || ^6.0 || ^6.2",
-        "symfony/phpunit-bridge": "^5.4 || ^6.0 || ^6.2",
-        "symfony/framework-bundle": "^5.4 || ^6.0 || ^6.2",
-        "symfony/yaml": "^5.4 || ^6.0 || ^6.2",
-        "symfony/validator": "^5.4 || ^6.0 || ^6.2",
-        "symfony/serializer": "^5.4 || ^6.0 || ^6.2",
+        "symfony/config": "^5.4 || ^6 || ^7",
+        "symfony/dependency-injection": "^5.4 || ^6 || ^7",
+        "symfony/console": "^5.4 || ^6 || ^7",
+        "symfony/http-kernel": "^5.4 || ^6 || ^7",
+        "symfony/runtime": "^5.4 || ^6 || ^7",
+        "symfony/phpunit-bridge": "^5.4 || ^6 || ^7",
+        "symfony/framework-bundle": "^5.4 || ^6 || ^7",
+        "symfony/yaml": "^5.4 || ^6 || ^7",
+        "symfony/validator": "^5.4 || ^6 || ^7",
+        "symfony/serializer": "^5.4 || ^6 || ^7",
         "symfony/serializer-pack": "^1.2",
         "phpstan/extension-installer": "^1.2",
         "phpstan/phpstan": "^1.9",
@@ -60,6 +60,7 @@
         "phpunit": "vendor/bin/phpunit --colors=always",
         "test:unit": "@phpunit --group unit tests",
         "test:func": "@phpunit --group func tests",
+        "test:e2e": "@phpunit --group e2e tests",
         "test:integration": "@phpunit --group integration tests",
         "test:performance": [
             "@putenv APP_DEBUG=0",
@@ -70,11 +71,13 @@
             "@code:analyse",
             "@test:unit",
             "@test:func",
+            "@test:e2e",
             "@test:integration"
         ],
         "test:all": [
             "@test:unit",
             "@test:func",
+            "@test:e2e",
             "@test:integration",
             "@test:performance"
         ]

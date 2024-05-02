@@ -9,7 +9,7 @@ class NativeSimpleObject
     /**
      * @param string|array{timezone?: ?string, date?: ?string}|object{timezone?: ?string, date?: ?string}|null $value
      */
-    public static function DateTimeConstructor(string|array|object $value = null): \DateTime
+    public static function DateTimeConstructor(string|array|object|null $value = null): \DateTime
     {
         if (null === $value) {
             return new \DateTime();
@@ -30,7 +30,7 @@ class NativeSimpleObject
     /**
      * @param string|array{timezone?: ?string}|object{timezone?: ?string}|null $value
      */
-    public static function DateTimeZoneConstructor(string|array|object $value = null): \DateTimeZone
+    public static function DateTimeZoneConstructor(string|array|object|null $value = null): \DateTimeZone
     {
         if (null === $value) {
             $timezone = (new \DateTime())->getTimezone();
@@ -68,7 +68,7 @@ class NativeSimpleObject
     /**
      * @param string|array{from_string?: bool, date_string?: string, y?: ?int, m?: ?int, d?: ?int, h?: ?int, i?: ?int, s?: ?int, f?: ?float, invert?: ?int, days?: mixed}|object{from_string?: bool, date_string?: string, y?: ?int, m?: ?int, d?: ?int, h?: ?int, i?: ?int, s?: ?int, f?: ?float, invert?: ?int, days?: mixed}|null $value
      */
-    public static function DateIntervalConstructor(string|array|object $value = null): \DateInterval
+    public static function DateIntervalConstructor(string|array|object|null $value = null): \DateInterval
     {
         if (null === $value) {
             throw new \ArgumentCountError('DateInterval::__construct() expects exactly 1 argument, 0 given.');

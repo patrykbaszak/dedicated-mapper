@@ -396,7 +396,7 @@ class PropertyFunctionsNestedTester
     /**
      * SIMPLE_OBJECT.
      */
-    public null|\DateTime $test0 = null;
+    public ?\DateTime $test0 = null;
 
     /**
      * SIMPLE_OBJECTS_COLLECTION.
@@ -410,7 +410,7 @@ class PropertyFunctionsNestedTester
      *
      * @var \ArrayObject<\DateTime>
      */
-    public \ArrayObject|null $test2;
+    public ?\ArrayObject $test2;
 
     /**
      * SIMPLE_OBJECT_SIMPLE_OBJECTS_COLLECTION.
@@ -434,7 +434,7 @@ class PropertyFunctionsTester
     public PropertyFunctionsNestedTester $test;
 
     public function __construct(
-        PropertyFunctionsNestedTester $test = null
+        ?PropertyFunctionsNestedTester $test = null
     ) {
         $this->test = $test ?? new PropertyFunctionsNestedTester();
     }

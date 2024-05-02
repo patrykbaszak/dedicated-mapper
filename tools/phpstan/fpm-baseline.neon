@@ -1,6 +1,16 @@
 parameters:
 	ignoreErrors:
 		-
+			message: "#^Method PBaszak\\\\DedicatedMapper\\\\DedicatedMapperBundle\\:\\:getContainerExtension\\(\\) should return Symfony\\\\Component\\\\DependencyInjection\\\\Extension\\\\ExtensionInterface but returns Symfony\\\\Component\\\\DependencyInjection\\\\Extension\\\\ExtensionInterface\\|false\\.$#"
+			count: 1
+			path: ../../src/DedicatedMapperBundle.php
+
+		-
+			message: "#^Cannot access offset 0 on PBaszak\\\\DedicatedMapper\\\\Attribute\\\\TargetProperty\\.$#"
+			count: 1
+			path: ../../src/Expression/ExpressionBuilder.php
+
+		-
 			message: "#^Access to an undefined property Symfony\\\\Component\\\\Validator\\\\Constraint\\:\\:\\$message\\.$#"
 			count: 2
 			path: ../../src/Expression/Modificator/Symfony/SymfonyValidator.php

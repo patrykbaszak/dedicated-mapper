@@ -20,7 +20,7 @@ class Blueprint
     /**
      * @param class-string $class
      */
-    public static function create(string $class, bool $isCollection = false, Property $parent = null): self
+    public static function create(string $class, bool $isCollection = false, ?Property $parent = null): self
     {
         $reflection = new \ReflectionClass($class);
         $properties = [];

@@ -26,7 +26,7 @@ trait Children
     /**
      * @return Property[]
      */
-    public function getAllParents(int $depth = null): array
+    public function getAllParents(?int $depth = null): array
     {
         $parents = [];
         $property = $this;

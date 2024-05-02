@@ -111,8 +111,8 @@ class ExpressionBuilder
     protected function newPropertyExpression(
         Property $source,
         Property $target,
-        FunctionExpression $function = null,
-        string $functionVar = null,
+        ?FunctionExpression $function = null,
+        ?string $functionVar = null,
         array $callbacks = [] // it is required by tests, do not recommend to use it
     ): Expression {
         $expression = new Expression(

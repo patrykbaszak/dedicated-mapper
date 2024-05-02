@@ -65,8 +65,8 @@ class Property
     public function __construct(
         public string $originName,
         \ReflectionProperty $reflection,
-        \ReflectionParameter $constructorParameter = null,
-        self $parent = null,
+        ?\ReflectionParameter $constructorParameter = null,
+        ?self $parent = null,
     ) {
         $this->reflection = $reflection;
         $this->constructorParameter = $constructorParameter;
@@ -81,7 +81,7 @@ class Property
     }
 
     /** @param class-string $name */
-    public static function create(\ReflectionClass $class, string $name, self $parent = null): self
+    public static function create(\ReflectionClass $class, string $name, ?self $parent = null): self
     {
         $reflection = $class->getProperty($name);
         $constructorParameter = ($parameters = $class->getConstructor()?->getParameters()) ? array_filter($parameters, fn (\ReflectionParameter $param) => $param->getName() === $name)[0] ?? null : null;
@@ -249,7 +249,7 @@ class Property
     /**
      * @return array<\ReflectionAttribute>
      */
-    public function getAttributes(string $attribute = null): array
+    public function getAttributes(?string $attribute = null): array
     {
         return $this->reflection->getAttributes($attribute);
     }

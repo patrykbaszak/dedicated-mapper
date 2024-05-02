@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace PBaszak\DedicatedMapper;
 
+/**
+ * The Mapper class is a simple wrapper around a string that contains a PHP code.
+ */
 class Mapper implements \Stringable
 {
     public function __construct(
