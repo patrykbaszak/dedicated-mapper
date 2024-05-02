@@ -71,7 +71,7 @@ and using it in the mapping process.
 > ```sh
 > git clone https://github.com/patrykbaszak/dedicated-mapper.git
 > bash start.sh
-> docker exec composer test:performance
+> docker exec php composer test:performance
 > ``` 
 
 ### Comparison Results
