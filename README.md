@@ -1,4 +1,4 @@
-# Dedicated Mapper (Bundle*) #
+# [Deprecated] Dedicated Mapper (Bundle*) #
 **I present to You the fastest PHP Dedicated Mapper ever created!**<br>
 It's even **31** times faster than **JMS Serializer** and even **43** times faster than **Symfony Serializer** in denormalization!<br>
 <sub>*The package supports Symfony Bundle system but not require to be used with Symfony.</sub>
