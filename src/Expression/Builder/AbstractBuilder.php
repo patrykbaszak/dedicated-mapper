@@ -55,8 +55,9 @@ abstract class AbstractBuilder
 
     /**
      * @return string
-     *                Placeholders list:
-     *                {{name}}
+     *
+     * Placeholders list:
+     * {{name}}
      *
      * {{setterAssignment:var}}
      * {{setterAssignment:basic}}
@@ -128,9 +129,10 @@ abstract class AbstractBuilder
 
     /**
      * @return string
-     *                Placeholders list:
-     *                {{getterExpression}}
-     *                {{sourceIteratorAssignment}}
+     *
+     * Placeholders list:
+     * {{getterExpression}}
+     * {{sourceIteratorAssignment}}
      *
      * {{function}}
      * {{functionVariable}}
